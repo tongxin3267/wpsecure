@@ -91,5 +91,5 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/default/assets/js/Server/#name#.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/Server/#name#.js"></script>
 {% endblock %}

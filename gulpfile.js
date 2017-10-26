@@ -6,35 +6,46 @@ var uglify = require('gulp-uglify');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 
-gulp.task('css-rev', function () {
-    return gulp.src('public/default/assets/css/*/*.css', {
+gulp.task('copy-public', function () {
+    console.log('to css-rev ...');
+    return gulp.src('public/**', {
             base: 'public'
         })
-        .pipe(gulp.dest('build')) // copy original assets to build dir 
+        .pipe(gulp.dest('build'));
+});
+
+gulp.task('css-rev', ['copy-public'], function () {
+    console.log('to css-rev ...');
+    return gulp.src('build/default/assets/css/*/*.css', {
+            base: 'build'
+        })
+        // .pipe(gulp.dest('build')) // copy original assets to build dir 
         .pipe(rev())
         // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
         .pipe(rev.manifest({
             path: 'rev-manifest-css.json'
         }))
         .pipe(gulp.dest('build'));
-    //动态的css需要处理
-    // return gulp.src('public/default/assets/css/*/*.css', {
-    //         base: '.'
-    //     })
-    //     .pipe(cleanCSS({
-    //         compatibility: 'ie8'
-    //     }))
-    //     .pipe(gulp.dest('build'));
 });
 
 gulp.task('css', ['css-rev'], function () {
-    console.log('开始--修改 css 引用链接的资源版本号...');
+    console.log('to css ...');
     return gulp.src(['build/rev-manifest-css.json', 'views/**/*.html'])
         .pipe(revCollector())
-        .pipe(gulp.dest('views'));
+        .pipe(gulp.dest('build/views'));
 });
 
-gulp.task('compressJs', function (cb) {
+gulp.task('compressCss', ['css'], function () {
+    return gulp.src('build/default/assets/css/*/*.css', {
+            base: 'build'
+        })
+        .pipe(cleanCSS({
+            compatibility: 'ie8'
+        }))
+        .pipe(gulp.dest('build'));
+});
+
+gulp.task('compressJs', ['minify-css', 'compressJs'], function (cb) {
     //动态的js需要处理
     // pump([
     //         gulp.src(['public/default/assets/js/*/*.js'], {
@@ -90,6 +101,6 @@ gulp.task('compress', function (cb) {
 //         .pipe(gulp.dest('dist/test'));
 // });
 
-gulp.task('default', ['css'], function () {
+gulp.task('default', ['compressCss'], function () {
     // place code for your default task here
 });
