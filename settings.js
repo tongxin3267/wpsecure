@@ -5,5 +5,6 @@ module.exports = {
     port: '10105',
     username: 'root',
     password: 'root',
-    pageSize: 14
+    pageSize: 14,
+    websiteTitle: "百分百教育"
 };

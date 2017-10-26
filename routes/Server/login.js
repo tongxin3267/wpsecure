@@ -9,10 +9,12 @@ module.exports = function (app) {
     app.get('/admin/login', function (req, res) {
         res.render('Server/login.html', {
             title: '登录',
-            user: req.session.admin
+            user: req.session.admin,
+            websiteTitle: model.db.config.websiteTitle
         });
     });
 
+    // app.post('/admin/login', auth.checkSecure([0]));
     app.post('/admin/login', checkNotLogin);
     app.post('/admin/login', function (req, res) {
         //生成密码的 md5 值
@@ -33,25 +35,11 @@ module.exports = function (app) {
                 }
 
                 //用户名密码都匹配后，将用户信息存入 session
-                switch (user.role) {
-                    case 10:
-                        req.session.adminRollCall = user;
-                        res.redirect('/admin/adminRollCallList'); //登陆成功后跳转到主页
-                        break;
-                    case 7:
-                        req.session.admin = user;
-                        res.redirect('/admin/adminBookList'); //登陆成功后跳转到主页
-                        break
-                    default:
-                        req.session.admin = user;
-                        res.redirect('/admin/adminEnrollTrainList'); //登陆成功后跳转到主页
-
-                }
+                req.session.admin = user;
+                res.redirect('/admin');
             })
             .catch(function (err) {
                 //error to handle
             });
     });
 }
-
-//"e18eb774e4c5025df2caef84a0e09234"
