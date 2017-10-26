@@ -21,7 +21,7 @@ var path = require('path'),
     app = express();
 
 app.set('port', process.env.PORT || 2369);
-app.set('views', path.join(__dirname, settings.root + 'views'));
+app.set('views', path.join(__dirname, (settings.root && settings.root + '/') + 'views'));
 nunjucks.configure('views', {
     autoescape: true,
     express: app

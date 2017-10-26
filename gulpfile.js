@@ -27,7 +27,7 @@ gulp.task('css-rev', ['copy-public', 'copy-views'], function () {
     return gulp.src('build/default/assets/css/*/*.css', {
             base: 'build'
         })
-        // .pipe(gulp.dest('build')) // copy original assets to build dir 
+        .pipe(gulp.dest('build')) // copy original assets to build dir 
         .pipe(rev())
         // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
         .pipe(rev.manifest({
