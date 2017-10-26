@@ -7,14 +7,22 @@ var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 
 gulp.task('copy-public', function () {
-    console.log('to css-rev ...');
+    console.log('to copy-public ...');
     return gulp.src('public/**', {
             base: 'public'
         })
         .pipe(gulp.dest('build'));
 });
 
-gulp.task('css-rev', ['copy-public'], function () {
+gulp.task('copy-views', function () {
+    console.log('to copy-views ...');
+    return gulp.src('views/**', {
+            base: '.'
+        })
+        .pipe(gulp.dest('build'));
+});
+
+gulp.task('css-rev', ['copy-public', 'copy-views'], function () {
     console.log('to css-rev ...');
     return gulp.src('build/default/assets/css/*/*.css', {
             base: 'build'
@@ -30,7 +38,7 @@ gulp.task('css-rev', ['copy-public'], function () {
 
 gulp.task('css', ['css-rev'], function () {
     console.log('to css ...');
-    return gulp.src(['build/rev-manifest-css.json', 'views/**/*.html'])
+    return gulp.src(['build/rev-manifest-css.json', 'build/views/**/*.html'])
         .pipe(revCollector())
         .pipe(gulp.dest('build/views'));
 });
