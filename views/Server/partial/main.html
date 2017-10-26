@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>百分百</title>
+    <link rel="stylesheet" href="/default/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/default/assets/css/Server/admin.css?v=1.0">
+    <link rel="stylesheet" href="/default/assets/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/default/assets/css/formValidation.css">
+    <link rel="stylesheet" href="/default/assets/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/default/assets/js/Server/index.js?v=1.002"></script>
+    <script type="text/javascript" src="/default/assets/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/default/assets/js/formValidation.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
+</head>
+
+<body>
+    <div class="admin-header">
+        <div class="logo pull-left">百分百</div>
+        <div class="menu-top pull-left">
+            <ul class="nav nav-pills">
+                {% if user.role < 7 %} 
+                <li id="header_btnEnroll" role="presentation">课程报名</li>
+                <li id="header_btnClass" role="presentation">课程管理</li>
+                <li id="header_btnStudent" role="presentation">学生管理</li>
+                <li id="header_btnFinancial" role="presentation">财务管理</li>
+                <li id="header_btnBasic" role="presentation">基本设置</li>
+                <li id="header_btnEnrollExam" role="presentation">测试报名</li>
+                {% endif %}
+                
+                {% if (user.role == 0 or user.role == 7) %} 
+                <li id="header_btnBook" role="presentation">课本管理</li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="userinfo pull-right">
+            用户: {{ user.name }}
+            <a href="/admin/logout">退出</a>
+        </div>
+    </div>
+    <div class="admin-content">
+        <div class="admin-left">
+            {% block left %}{% endblock %}
+        </div>
+        <div class="admin-main">
+            {% block main %}{% endblock %}
+        </div>
+    </div>
+    {% block modal %}{% endblock %}
+    <div class="modal fade bs-example-modal-sm" id="loadingIndicator" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" style="margin-top: 50vh;" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    加载中。。。
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

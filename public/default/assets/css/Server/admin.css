@@ -1,0 +1,17 @@
+* {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    .modal-max {
+        width: 1000px;
+    }
+}
+
+body {
+    background-color: #fff;
+    height: 100%;
+    font-family: "Microsoft YaHei";
+}

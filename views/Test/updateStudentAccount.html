@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>百分百</title>
+    <link rel="stylesheet" href="/default/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/default/assets/css/admin.css">
+    <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/default/assets/js/index.js"></script>
+</head>
+
+<body>
+
+    <form id="form1" name="directFrm">
+        <div style="width:200px; margin: 0 auto;">
+            <div>{{ title }}</div>
+            <div>accountId：<input type="text" name="count" id="count" maxlength="50" size="25" value="" style="color:#000000;font-size:14px;"></div>
+            <div>studentId: <input type="text" name="studentId" id="studentId" maxlength="50" size="25" value="" style="color:#000000;font-size:14px;"></div>
+            <div><input type="button" name="button" id="button" value="提交" /></div>
+            <div><input type="button" name="btnRecover" id="btnRecover" value="恢复学生" /></div>
+            <div id="result"></div>
+        </div>
+    </form>
+    <script>
+        $("#button").on("click", function() {
+            selfAjax("post", "/updateStudent", {
+                accountId: $("#count").val(),
+                studentId: $("#studentId").val()
+            }, function(data) {
+                if (data && data.sucess) {
+                    $("#result").text("更新成功");
+                } else {
+                    $("#result").text("更新失败");
+                }
+            })
+        });
+
+        $("#btnRecover").on("click", function() {
+            selfAjax("post", "/recoverStudent", {
+                studentId: $("#studentId").val()
+            }, function(data) {
+                if (data && data.sucess) {
+                    $("#result").text("恢复成功");
+                } else {
+                    $("#result").text("恢复失败");
+                }
+            })
+        });
+    </script>
+</body>
+
+</html>

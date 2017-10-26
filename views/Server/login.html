@@ -1,0 +1,20 @@
+{% extends "Server/partial/header.html" %} {% block main %}
+<main class="col-md-24">
+    <div class="login content_body">
+        <form method="post">
+            <div class="form-group">
+                <label>用户名</label>
+                <input class="form-control" type="text" name="name" />
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input class="form-control" type="password" name="password" />
+            </div>
+            <div class="form-group">
+                <label style="height:34px;">&nbsp;</label>
+                <input class="pull-right btn btn-large btn-primary" type="submit" value="登录" />
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

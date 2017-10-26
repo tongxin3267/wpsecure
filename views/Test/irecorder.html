@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="https://sdk.17kouyu.com/jssdk/v3.0/iload.js"></script>
+</head>
+
+<body>
+    <div id="iRecorder"></div>
+    <div>分数：<span id="score"></span></div>
+    <div>
+        <button onclick="startRecord();" class="btn btn-app btn-primary" title="开始录音">开始录音</button>
+        <button onclick="startReplay();" class="btn btn-app btn-primary" title="开始回放">开始回放</button>
+    </div>
+    <script type="text/javascript">
+        var recorder = new _17kouyu.IRecorder({
+            id: "iRecorder", //这里为HTML节点对应的id
+            appKey: "17KouyuTestAppKey",
+            secretKey: "17KouyuTestSecretKey",
+            mode: 2,
+            onFlashLoad: function (code, message) {
+                //Flash加载完成的回调，其他所有与录音机的操作必须在这个回调之后进行。
+                //code值有：50000
+            },
+            onConnectorStatusChange: function (code, message) {
+                //连接器状态发生改变时回调
+                //code值有：50100, 50103, 50104, 50109
+            },
+            onMicStatusChange: function (code, message) {
+                //麦克风状态发生改变时回调。第一次加载Flash时也会触发该回调
+                //code值有：50001, 50002, 50003
+            }
+        });
+
+        var lastRecordId;
+
+        function startRecord() {
+            recorder.record({
+                duration: 3000, //录音时长，单位ms
+                serverParams: { //录音评分参数，具体取决于服务类型
+                    coreType: "word.eval",
+                    refText: "best",
+                    rank: 100,
+                    userId: "guest"
+                },
+                onRecordIdGenerated: function (code, message) {
+                    //服务器返回唯一的ID: message.recordId
+                    if (message.recordId) {
+                        lastRecordId = message.recordId;
+                    }
+                },
+                onStart: function () { //录音开始的回调
+                },
+                onStop: function () { //到达指定时间，录音自动停止的回调
+                    getScore(lastRecordId);
+                }
+            });
+        };
+
+        function getScore(lastRecordId) {
+            recorder.getScores({
+                recordId: lastRecordId, //指定的录音ID
+                success: function (data) { //评分获得后回调。这里可能是评分成功，或者评分出错
+                    //详细评分结果在 data[lastRecordId].result
+                    //如果没有 result字段，则表明评分超时；如果 result字段中含有
+                    //err 或者 error字段，则评分出错。具体出错原因为result.errID
+                    if (data[lastRecordId]) {
+                        document.getElementById("score").innerText = data[lastRecordId].result.overall;
+                    }
+                }
+            });
+        };
+
+        function startReplay() {
+            recorder.startReplay({
+                recordId: lastRecordId,
+                onStart: function () { //回放开始的回调
+                },
+                onStop: function () { //回放自动停止的回调
+                }
+            });
+        };
+        //598c1e8d1c77e7002a000001
+    </script>
+</body>
+
+</html>
