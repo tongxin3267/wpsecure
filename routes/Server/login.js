@@ -1,11 +1,19 @@
 var crypto = require('crypto'),
     model = require("../../model.js"),
     User = model.user,
-    auth = require("./auth"),
-    checkNotLogin = auth.checkNotLogin;
+    auth = require("./auth");
 
 module.exports = function (app) {
-    app.get('/admin/login', checkNotLogin);
+    app.get('/admin', auth.checkLogin)
+    app.get('/admin', function (req, res) {
+        res.render('Server/index.html', {
+            title: '主页',
+            user: req.session.admin,
+            websiteTitle: model.db.config.websiteTitle
+        });
+    });
+
+    app.get('/admin/login', auth.checkNotLogin);
     app.get('/admin/login', function (req, res) {
         res.render('Server/login.html', {
             title: '登录',
@@ -15,7 +23,7 @@ module.exports = function (app) {
     });
 
     // app.post('/admin/login', auth.checkSecure([0]));
-    app.post('/admin/login', checkNotLogin);
+    app.post('/admin/login', auth.checkNotLogin);
     app.post('/admin/login', function (req, res) {
         //生成密码的 md5 值
         var md5 = crypto.createHash('md5'),

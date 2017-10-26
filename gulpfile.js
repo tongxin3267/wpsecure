@@ -2,11 +2,21 @@ var gulp = require('gulp');
 var htmlmin = require('gulp-htmlmin');
 var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
-var pump = require('pump');
+// var pump = require('pump');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 
-gulp.task('minify-css', function () {
+gulp.task('css-rev', function () {
+    return gulp.src('public/default/assets/css/*/*.css', {
+            base: 'public'
+        })
+        .pipe(gulp.dest('build')) // copy original assets to build dir 
+        .pipe(rev())
+        // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
+        .pipe(rev.manifest({
+            path: 'rev-manifest-css.json'
+        }))
+        .pipe(gulp.dest('build'));
     //动态的css需要处理
     // return gulp.src('public/default/assets/css/*/*.css', {
     //         base: '.'
@@ -15,6 +25,13 @@ gulp.task('minify-css', function () {
     //         compatibility: 'ie8'
     //     }))
     //     .pipe(gulp.dest('build'));
+});
+
+gulp.task('css', ['css-rev'], function () {
+    console.log('开始--修改 css 引用链接的资源版本号...');
+    return gulp.src(['build/rev-manifest-css.json', 'views/**/*.html'])
+        .pipe(revCollector())
+        .pipe(gulp.dest('views'));
 });
 
 gulp.task('compressJs', function (cb) {
@@ -73,6 +90,6 @@ gulp.task('compress', function (cb) {
 //         .pipe(gulp.dest('dist/test'));
 // });
 
-gulp.task('default', ['copy-static', 'replace', 'compress'], function () {
+gulp.task('default', ['css'], function () {
     // place code for your default task here
 });

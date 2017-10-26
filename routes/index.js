@@ -11,6 +11,8 @@ module.exports = function (app) {
     generator(app);
 
     app.use(function (req, res) {
-        res.render("404.html");
+        res.render("404.html", {
+            websiteTitle: settings.websiteTitle
+        });
     });
 };
