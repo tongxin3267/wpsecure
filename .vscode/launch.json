@@ -19,7 +19,7 @@
             "program": "${workspaceRoot}\\app.js",
             "cwd": "${workspaceRoot}",
             "env": {
-                "NODE_ENV": ""
+                "NODE_ENV": "development"
             }
         },
         {

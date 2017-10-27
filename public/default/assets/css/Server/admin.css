@@ -50,7 +50,7 @@ body {
 }
 
 .admin-header .userinfo a {
-    color: white;
+    /* color: white; */
     margin-left: 20px;
 }
 
@@ -80,7 +80,7 @@ body {
 }
 
 .admin-nav .menu-top li.active {
-    color: #faff64;
+    color: #1AAD16;
 }
 
 .admin-nav .menu-top li:first-child {
@@ -144,13 +144,13 @@ body {
 }
 
 .admin-left li.active {
-    background-color: #475d76;
-    color: white;
+    background-color: #d6dbe0;
+    /* color: white; */
 }
 
 .admin-left li.active:hover {
-    background-color: #475d76;
-    color: white;
+    background-color: #d6dbe0;
+    /* color: white; */
 }
 
 .admin-main {

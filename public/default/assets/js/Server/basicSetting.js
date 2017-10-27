@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    $("#left_btnAdmin").on("click", function (e) {
-        location.href = "/admin/adminList";
+    $("#left_btnUser").on("click", function (e) {
+        location.href = "/admin/userList";
     });
 
     $("#left_btnSchool").on("click", function (e) {
@@ -36,10 +36,5 @@ $(document).ready(function () {
         location.href = "/admin/timeType";
     });
 
-    $(".admin-header .menu-top #header_btnBasic").addClass("active");
-
-    var a = [1];
-    a.forEach(b => {
-        console.log(b);
-    });
+    $(".admin-nav .menu-top #header_btnUser").addClass("active");
 });
