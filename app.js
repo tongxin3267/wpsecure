@@ -27,7 +27,7 @@ nunjucks.configure(path.join(settings.root, 'views'), {
     express: app
 });
 
-app.use(favicon(path.join(__dirname, (settings.root || 'public'), '/default/assets/images/favicon.ico')));
+app.use(favicon(path.join(__dirname, settings.root, 'public', '/default/assets/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(logger('combined', {
     stream: accessLog
@@ -48,7 +48,7 @@ app.use(session({
     saveUninitialized: true
 }));
 //app.use(flash());
-app.use(express.static(path.join(__dirname, (settings.root || 'public'))));
+app.use(express.static(path.join(__dirname, settings.root, 'public')));
 
 routes(app);
 

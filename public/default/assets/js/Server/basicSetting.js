@@ -37,4 +37,9 @@ $(document).ready(function () {
     });
 
     $(".admin-header .menu-top #header_btnBasic").addClass("active");
+
+    var a = [1];
+    a.forEach(b => {
+        console.log(b);
+    });
 });

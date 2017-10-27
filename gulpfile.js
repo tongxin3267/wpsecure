@@ -1,17 +1,22 @@
 var gulp = require('gulp');
 var htmlmin = require('gulp-htmlmin');
 var cleanCSS = require('gulp-clean-css');
-var uglify = require('gulp-uglify');
-// var pump = require('pump');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
+var babel = require("gulp-babel");
+
+var uglify = require('gulp-uglify');
+var pump = require('pump');
+var uglifyjs = require('uglify-es');
+var composer = require('gulp-uglify/composer');
+var minify = composer(uglifyjs, console);
 
 gulp.task('copy-public', function () {
     console.log('to copy-public ...');
     return gulp.src('public/**', {
             base: 'public'
         })
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/public'));
 });
 
 gulp.task('copy-views', function () {
@@ -24,46 +29,75 @@ gulp.task('copy-views', function () {
 
 gulp.task('css-rev', ['copy-public', 'copy-views'], function () {
     console.log('to css-rev ...');
-    return gulp.src('build/default/assets/css/*/*.css', {
-            base: 'build'
+    return gulp.src('build/public/default/assets/css/*/*.css', {
+            base: 'build/public'
         })
-        .pipe(gulp.dest('build')) // copy original assets to build dir 
+        .pipe(gulp.dest('build/public')) // copy original assets to build dir 
         .pipe(rev())
         // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
         .pipe(rev.manifest({
             path: 'rev-manifest-css.json'
         }))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/public'));
 });
 
 gulp.task('css', ['css-rev'], function () {
     console.log('to css ...');
-    return gulp.src(['build/rev-manifest-css.json', 'build/views/**/*.html'])
+    return gulp.src(['build/public/rev-manifest-css.json', 'build/views/**/*.html'])
         .pipe(revCollector())
         .pipe(gulp.dest('build/views'));
 });
 
 gulp.task('compressCss', ['css'], function () {
-    return gulp.src('build/default/assets/css/*/*.css', {
-            base: 'build'
+    return gulp.src('build/public/default/assets/css/*/*.css', {
+            base: 'build/public'
         })
         .pipe(cleanCSS({
             compatibility: 'ie8'
         }))
-        .pipe(gulp.dest('build'));
+        .pipe(gulp.dest('build/public'));
 });
 
-gulp.task('compressJs', ['minify-css', 'compressJs'], function (cb) {
-    //动态的js需要处理
-    // pump([
-    //         gulp.src(['public/default/assets/js/*/*.js'], {
-    //             base: '.'
-    //         }),
-    //         uglify(),
-    //         gulp.dest('build')
-    //     ],
-    //     cb
-    // );
+
+gulp.task('js-rev', ['compressCss'], function () {
+    console.log('to js-rev ...');
+    return gulp.src('build/public/default/assets/js/*/*.js', {
+            base: 'build/public'
+        })
+        .pipe(gulp.dest('build/public')) // copy original assets to build dir 
+        .pipe(rev())
+        // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
+        .pipe(rev.manifest({
+            path: 'rev-manifest-js.json'
+        }))
+        .pipe(gulp.dest('build/public'));
+});
+
+gulp.task('js', ['js-rev'], function () {
+    console.log('to js ...');
+    return gulp.src(['build/public/rev-manifest-js.json', 'build/views/**/*.html'])
+        .pipe(revCollector())
+        .pipe(gulp.dest('build/views'));
+});
+
+// babel is working but I don't want use it
+// gulp.task('toES5', ['js'], function () {
+//     return gulp.src("build/default/assets/js/*/*.js") // ES6 源码存放的路径
+//         .pipe(babel())
+//         .pipe(gulp.dest("build/default/assets/js/")); //转换成 ES5 存放的路径
+// });
+
+gulp.task('compressJs', ['js'], function (cb) {
+    // 动态的js需要处理
+    pump([
+            gulp.src(['build/public/default/assets/js/*/*.js'], {
+                base: 'build'
+            }),
+            minify({}),
+            gulp.dest('build')
+        ],
+        cb
+    );
 });
 
 gulp.task('rev', ['minify-css', 'compressJs'], function () {
@@ -109,6 +143,6 @@ gulp.task('compress', function (cb) {
 //         .pipe(gulp.dest('dist/test'));
 // });
 
-gulp.task('default', ['compressCss'], function () {
+gulp.task('default', ['compressJs'], function () {
     // place code for your default task here
 });
