@@ -21,7 +21,7 @@ gulp.task('copy-public', function () {
 
 gulp.task('copy-views', function () {
     console.log('to copy-views ...');
-    return gulp.src('views/**', {
+    return gulp.src(['views/**', 'package.json'], {
             base: '.'
         })
         .pipe(gulp.dest('build'));
@@ -100,31 +100,33 @@ gulp.task('compressJs', ['js'], function (cb) {
     );
 });
 
-gulp.task('rev', ['minify-css', 'compressJs'], function () {
-    // return gulp.src(['build/public/**/*.css', 'build/public/**/*.js'])
-    //     .pipe(gulp.dest('build/public')) // copy original assets to build dir 
-    //     .pipe(rev())
-    //     .pipe(gulp.dest('dist/public')) // write rev'd assets to build dir 
-    //     .pipe(rev.manifest())
-    //     .pipe(gulp.dest('dist/public'));
+gulp.task('compressHtml', ['compressJs'], function () {
+    var options = {
+        removeComments: true, //清除HTML注释
+        collapseWhitespace: true //压缩HTML
+        // collapseBooleanAttributes: true, //省略布尔属性的值 <input checked="true"/> ==> <input />
+        // removeEmptyAttributes: true, //删除所有空格作属性值 <input id="" /> ==> <input />
+        // removeScriptTypeAttributes: true, //删除<script>的type="text/javascript"
+        // removeStyleLinkTypeAttributes: true, //删除<style>和<link>的type="text/css"
+        // minifyJS: true, //压缩页面JS
+        // minifyCSS: true //压缩页面CSS
+    };
+    return gulp.src('build/views/**/*.html')
+        .pipe(htmlmin(options))
+        .pipe(gulp.dest('build/views'));
+
 });
 
-gulp.task('replace', ['rev'], function () {
-    // return gulp.src(['dist/public/rev-manifest.json', 'views/**/*.html'])
-    //     .pipe(revCollector({
-    //         replaceReved: true,
-    //     }))
-    //     .pipe(htmlmin({
-    //         collapseWhitespace: true
-    //     }))
-    //     .pipe(gulp.dest('dist/views'));
-});
-
-gulp.task('copy-static', function (cb) {
-    // return gulp.src(['public/default/assets/css/*.css', 'public/default/assets/js/*.js'], {
-    //         base: '.'
-    //     })
-    //     .pipe(gulp.dest('dist'));
+gulp.task('compressNode', ['compressHtml'], function (cb) {
+    pump([
+            gulp.src(['settings.js', 'model.js', 'db.js', 'app.js', 'routes/**/*.js', 'models/**/*.js'], {
+                base: '.'
+            }),
+            minify({}),
+            gulp.dest('build')
+        ],
+        cb
+    );
 });
 
 gulp.task('compress', function (cb) {
@@ -143,6 +145,6 @@ gulp.task('compress', function (cb) {
 //         .pipe(gulp.dest('dist/test'));
 // });
 
-gulp.task('default', ['compressJs'], function () {
+gulp.task('default', ['compressNode'], function () {
     // place code for your default task here
 });

@@ -21,13 +21,12 @@ var path = require('path'),
     app = express();
 
 app.set('port', process.env.PORT || 2369);
-// app.set('views', path.join(__dirname, settings.root, 'views'));
-nunjucks.configure(path.join(settings.root, 'views'), {
+nunjucks.configure('views', {
     autoescape: true,
     express: app
 });
 
-app.use(favicon(path.join(__dirname, settings.root, 'public', '/default/assets/images/favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', '/default/assets/images/favicon.ico')));
 app.use(logger('dev'));
 app.use(logger('combined', {
     stream: accessLog
@@ -48,7 +47,7 @@ app.use(session({
     saveUninitialized: true
 }));
 //app.use(flash());
-app.use(express.static(path.join(__dirname, settings.root, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 routes(app);
 
