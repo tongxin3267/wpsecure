@@ -22,7 +22,8 @@ var sequelize = new Sequelize(config.db, config.username, config.password, {
         min: 0,
         idle: 30000,
         acquire: 30000
-    }
+    },
+    timezone: '+08:00' //东八时区
 });
 
 const ID_TYPE = Sequelize.STRING(50);
