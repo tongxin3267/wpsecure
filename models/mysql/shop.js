@@ -18,6 +18,16 @@ const Shop = db.defineModel('shops', {
         // 分店地址
         type: db.STRING(200),
         defaultValue: ''
+    },
+    phone:{
+        // 电话
+        type: db.STRING(20),
+        defaultValue: ''
+    },
+    openTime:{
+        // 营业时间
+        type: db.STRING(50),
+        defaultValue: ''
     }
 });
 module.exports = Shop;
