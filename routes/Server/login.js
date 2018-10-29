@@ -6,8 +6,8 @@ var crypto = require('crypto'),
 module.exports = function (app) {
     app.get('/admin', auth.checkLogin)
     app.get('/admin', function (req, res) {
-        res.render('Server/index.html', {
-            title: '主页',
+        res.render('Server/adminList.html', {
+            title: '>管理员设置',
             user: req.session.admin,
             websiteTitle: model.db.config.websiteTitle
         });

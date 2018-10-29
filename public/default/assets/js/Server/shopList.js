@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btn#Name#").addClass("active");
+            $("#left_btnShop").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -25,10 +25,10 @@ $(document).ready(function () {
                 that.destroy();
                 that.addValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #myModalLabel').text("新增门店");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
-                $('#myModal #sequence').val(0);
+                $('#myModal #address').val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -38,13 +38,13 @@ $(document).ready(function () {
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/#name#/add",
+                    var postURI = "/admin/shop/add",
                         postObj = {
                             name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            address: $.trim($('#address').val())
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/#name#/edit";
+                        postURI = "/admin/shop/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -65,7 +65,7 @@ $(document).ready(function () {
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
-                $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #address').val(entity.address);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/#name#/delete", {
+                    selfAjax("post", "/admin/shop/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -88,6 +88,11 @@ $(document).ready(function () {
                         location.reload();
                     });
                 });
+            });
+
+            $("#gridBody").on("click", "td.link", function (e) {
+                var obj = e.currentTarget;
+                location.href = "/shop/{0}/goodList".format($(obj).attr("id"));
             });
         },
         initData: function () {
@@ -100,12 +105,12 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/#name#List/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/shopList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                        var $tr = $('<tr ><td id=' + record._id + ' class="link">' + record.name + '</td><td>' +
+                            (record.address || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

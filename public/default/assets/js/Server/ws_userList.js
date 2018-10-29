@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btn#Name#").addClass("active");
+            $("#left_btnUser").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -38,13 +38,13 @@ $(document).ready(function () {
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/#name#/add",
+                    var postURI = "/admin/ws_user/add",
                         postObj = {
                             name: $.trim($('#name').val()),
                             sequence: $.trim($('#sequence').val())
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/#name#/edit";
+                        postURI = "/admin/ws_user/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/#name#/delete", {
+                    selfAjax("post", "/admin/ws_user/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -100,7 +100,7 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/#name#List/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/ws_userList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {

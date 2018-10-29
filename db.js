@@ -42,10 +42,15 @@ function defineModel(name, attributes) {
             };
         }
     }
-    attrs._id = {
-        type: ID_TYPE,
-        primaryKey: true
-    };
+
+    if (!attrs._id) {
+        attrs._id = {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true, //自动递增, 
+            comment: "主键，自增"
+        };
+    }
     attrs.createdBy = {
         type: Sequelize.STRING(50),
         defaultValue: ''
@@ -84,13 +89,7 @@ function defineModel(name, attributes) {
         hooks: {
             beforeValidate: function (obj) {
                 let now = Date.now();
-                if (obj.isNewRecord) {
-                    console.log('will create entity...' + obj);
-                    if (!obj._id) {
-                        obj._id = generateId();
-                    }
-                } else {
-                    console.log('will update entity...');
+                if (!obj.isNewRecord) {
                     obj.updatedDate = now;
                     obj.version++;
                 }

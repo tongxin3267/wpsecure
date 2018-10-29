@@ -1,27 +1,14 @@
 $(document).ready(function () {
-    $("#header_btnUser").on("click", function (e) {
-        location.href = "/admin/userList";
+    $("#header_btnGood").on("click", function (e) {
+        location.href = "/admin/goodTypeList";
     });
-    $("#header_btnClass").on("click", function (e) {
-        location.href = "/admin/trainClassList";
-    });
-    $("#header_btnStudent").on("click", function (e) {
-        location.href = "/admin/studentAccountList";
-    });
-    $("#header_btnFinancial").on("click", function (e) {
-        location.href = "/admin/schoolReportList";
-    });
+
     $("#header_btnBasic").on("click", function (e) {
-        location.href = "/admin/schoolAreaList";
+        location.href = "/admin/adminList";
     });
-    $("#header_btnEnrollExam").on("click", function (e) {
-        location.href = "/admin/adminEnrollExamList";
-    });
-    $("#header_btnRollCall").on("click", function (e) {
-        location.href = "/admin/adminRollCallList";
-    });
-    $("#header_btnBook").on("click", function (e) {
-        location.href = "/admin/adminBookList";
+
+    $("#header_shop_btnShop").on("click", function (e) {
+        location.href = "/shop/{0}/goodList".format($("#shopId").val());
     });
 });
 

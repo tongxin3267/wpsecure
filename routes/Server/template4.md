@@ -1,4 +1,6 @@
-var #Name# = require('../../models/#name#.js'),
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    #Name# = model.#name#,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -13,13 +15,12 @@ module.exports = function(app) {
 
     app.post('/admin/#name#/add', checkLogin);
     app.post('/admin/#name#/add', function(req, res) {
-        var #name# = new #Name#({
+        #Name#.create({
             name: req.body.name,
-            address: req.body.address,
+            sequence: req.body.sequence,
             createdBy: req.session.admin._id
-        });
-
-        #name#.save().then(function(result){
+        })
+        .then(function(result){
             if(result)
             {
                  res.jsonp(result);
@@ -29,12 +30,16 @@ module.exports = function(app) {
 
     app.post('/admin/#name#/edit', checkLogin);
     app.post('/admin/#name#/edit', function(req, res) {
-        var #name# = new #Name#({
+        #Name#.update({
             name: req.body.name,
-            address: req.body.address
-        });
-
-        #name#.update(req.body.id)
+            sequence: req.body.sequence,
+            deletedBy: req.session.admin._id,
+            updatedDate: new Date()
+        }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
             .then(function () {
                 res.jsonp({
                     sucess: true
@@ -44,9 +49,20 @@ module.exports = function(app) {
 
     app.post('/admin/#name#/delete', checkLogin);
     app.post('/admin/#name#/delete', function(req, res) {
-        #Name#.delete(req.body.id, req.session.admin._id).then(function(result){
-           res.jsonp({ sucess: true });
-        });
+        #Name#.update({
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function (result) {
+                res.jsonp({
+                    sucess: true
+                });
+            });
     });
 
     app.post('/admin/#name#List/search', checkLogin);
@@ -56,24 +72,23 @@ module.exports = function(app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {};
-        if (req.body.name) {
-            var reg = new RegExp(req.body.name, 'i')
+        if (req.body.name && req.body.name.trim()) {
             filter.name = {
-                $regex: reg
+                $like: `%${req.body.name.trim()}%`
             };
         }
+        if (req.body.grade) {
+            filter.gradeId = req.body.grade;
+        }
 
-        #Name#.getAll(null, page, filter, function(err, #name#s, total) {
-            if (err) {
-                #name#s = [];
-            }
-            res.jsonp({
-                #name#s: #name#s,
-                total: total,
-                page: page,
-                isFirstPage: (page - 1) == 0,
-                isLastPage: ((page - 1) * 14 + #name#s.length) == total
+        #Name#.getFiltersWithPage(page, filter)
+            .then(function (result) {
+               res.jsonp({
+                    records: result.rows,
+                    total: result.count,
+                    page: page,
+                    pageSize: pageSize
+                });
             });
-        });
     });
 }

@@ -3,38 +3,43 @@
 const db = require('../../db'),
     config = require('../../settings');
 
-// 章节默认为4级，每级4位 最多16位
-const Ws_user = db.defineModel('ws_users', {
-    wxId: {
-        type: db.STRING(50)
+const OpLog = db.defineModel('opLogs', {
+    userId: {
+        type: db.INTEGER
+    },
+    description: {
+        type: db.STRING(100),
+        defaultValue: ""
     }
 });
-module.exports = Ws_user;
+module.exports = OpLog;
 
 //读取用户信息
-Ws_user.getFilter = function (filter) {
+OpLog.getFilter = function (filter) {
     filter.isDeleted = false;
-    return Ws_user.findOne({
+    return OpLog.findOne({
         'where': filter
     });
 };
 
-Ws_user.getFilters = function (filter) {
+OpLog.getFilters = function (filter) {
     filter.isDeleted = false;
-    return Ws_user.findAll({
+    return OpLog.findAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
     });
 };
 
-Ws_user.getFiltersWithPage = function (page, filter) {
+OpLog.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return Ws_user.findAndCountAll({
+    return OpLog.findAndCountAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ],

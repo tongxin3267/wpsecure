@@ -5,21 +5,31 @@ const db = require('../../db'),
 
 const User = db.defineModel('users', {
     name: {
-        type: db.STRING(20)
-    },
-    password: db.STRING(50),
-    email: {
-        type: db.STRING(50),
-        allowNull: true
-    },
-    mobile: {
         type: db.STRING(20),
-        allowNull: true
+        defaultValue: ''
+    },
+    password: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    wxId: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    shopName: {
+        // 分店名称
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    shopId: {
+        // 分店Id
+        type: db.INTEGER,
+        defaultValue: 0
     },
     role: {
         type: db.INTEGER,
         defaultValue: 0
-    } //0 superAdmin, 3 schoolAdmin, 10 rollCallUser, 7 team leader
+    } //100 superAdmin, 5 normalAdmin
 });
 module.exports = User;
 

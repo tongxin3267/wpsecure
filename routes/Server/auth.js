@@ -31,10 +31,10 @@ module.exports = {
                 return;
             } else {
                 if (req.method == "GET") {
-                    res.render("404.html");
+                    res.render("401.html");
                     return;
                 } else {
-                    res.status(404).send("NOT FOUND");
+                    res.status(401).send("NOT FOUND");
                     return;
                 }
             }

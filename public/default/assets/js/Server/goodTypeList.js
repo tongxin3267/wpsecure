@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btn#Name#").addClass("active");
+            $("#left_btnGoodType").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -25,7 +25,7 @@ $(document).ready(function () {
                 that.destroy();
                 that.addValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #myModalLabel').text("新增商品种类");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
@@ -38,13 +38,13 @@ $(document).ready(function () {
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/#name#/add",
+                    var postURI = "/admin/goodType/add",
                         postObj = {
                             name: $.trim($('#name').val()),
                             sequence: $.trim($('#sequence').val())
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/#name#/edit";
+                        postURI = "/admin/goodType/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/#name#/delete", {
+                    selfAjax("post", "/admin/goodType/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -100,12 +100,12 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/#name#List/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/goodTypeList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            (record.sequence || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

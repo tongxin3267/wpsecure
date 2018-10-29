@@ -9,10 +9,29 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btn#Name#").addClass("active");
+            $("#left_btnGood").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+        },
+        initDropDown: function (callback) {
+            // init goodtypes
+            selfAjax("post", "/admin/goodTypeList/all", null,
+                function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    $("#myModal #goodType").empty();
+                    if (data && data.length > 0) {
+                        var d = $(document.createDocumentFragment());
+                        data.forEach(function (record) {
+                            d.append('<option value="{0}">{1}</option>'.format(record._id, record.name));
+                        });
+                        $("#myModal #goodType").append(d);
+                    }
+                    return callback && callback();
+                });
         },
         initEvents: function () {
             var that = this;
@@ -25,26 +44,34 @@ $(document).ready(function () {
                 that.destroy();
                 that.addValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #myModalLabel').text("新增商品");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
+                $('#myModal #goodPrice').val(0);
+                $('#myModal #img').val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
                 });
+
+                that.initDropDown();
             });
 
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/#name#/add",
+                    var postURI = "/admin/good/add",
                         postObj = {
                             name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            sequence: $.trim($('#sequence').val()),
+                            goodPrice: $.trim($('#myModal #goodPrice').val()),
+                            img: $.trim($('#myModal #img').val()),
+                            goodTypeId: $('#myModal #goodType').val(),
+                            goodTypeName: $('#myModal #goodType').find("option:selected").text()
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/#name#/edit";
+                        postURI = "/admin/good/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -66,10 +93,16 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #goodPrice').val(entity.goodPrice);
+                $('#myModal #img').val(entity.img);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
+                });
+
+                that.initDropDown(function () {
+                    $('#myModal #goodType').val(entity.goodTypeId);
                 });
             });
 
@@ -78,7 +111,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/#name#/delete", {
+                    selfAjax("post", "/admin/good/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -100,12 +133,12 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/#name#List/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/goodList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            record.sequence + '</td><td>' + record.goodTypeName + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

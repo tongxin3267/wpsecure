@@ -14,7 +14,7 @@ function readFile(file1, file2, callback) {
         else {
             var str = iconv.decode(data, 'utf-8');
             str = callback(str);
-            fs.appendFile(file2, str, function (err) {
+            fs.writeFile(file2, str, function (err) {
                 if (err)
                     console.log("fail " + err);
                 else
@@ -37,7 +37,7 @@ module.exports = function (app) {
             objCase = objId[0].toUpperCase() + objId.substr(1);
         //generate models
         var modelPath = path.join(root, "models/template4.md"),
-            targetPath = path.join(root, "models/" + objId + ".js");
+            targetPath = path.join(root, "models/mysql/" + objId + ".js");
         readFile(modelPath, targetPath, function (str) {
             var strResult = str.replace(/#name#/g, objId);
             return strResult.replace(/#Name#/g, objCase);
@@ -61,7 +61,7 @@ module.exports = function (app) {
 
         //generate public js
         modelPath = path.join(root, "public/default/assets/js/template4.md"),
-            targetPath = path.join(root, "public/default/assets/js/Server/" + objId + ".js");
+            targetPath = path.join(root, "public/default/assets/js/Server/" + objId + "List.js");
         readFile(modelPath, targetPath, function (str) {
             var strResult = str.replace(/#name#/g, objId);
             return strResult.replace(/#Name#/g, objCase);

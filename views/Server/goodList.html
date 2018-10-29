@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/superGoodSetting.html" %} {%
+endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -30,8 +31,10 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:150px;">校区</th>
-                <th style="width:200px;">地址</th>
+                <th style="width:150px;">名称</th>
+                <th style="width:80px;">顺序</th>
+                <th style="width:200px;">种类</th>
+                <th style="width:100px;">价格</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -40,7 +43,7 @@
     </table>
 </div>
 <div id="mainModal">
- {% include "Server/partial/popuppaging.html" %}
+    {% include "Server/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -59,7 +62,19 @@
                     </div>
                     <div class="form-group">
                         <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
+                        <input type="number" maxlength="10" class="form-control" name="sequence" id="sequence" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="goodType" class="control-label">种类:</label>
+                        <select class="form-control" name="goodType" id="goodType"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="goodPrice" class="control-label">价格:</label>
+                        <input type="text" maxlength="20" class="form-control" name="goodPrice" id="goodPrice" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="img" class="control-label">图标:</label>
+                        <input type="text" maxlength="30" class="form-control" name="img" id="img">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -71,5 +86,5 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/default/assets/js/Server/#name#List.js"></script>
+<script type="text/javascript" src="/default/assets/js/Server/goodList.js"></script>
 {% endblock %}

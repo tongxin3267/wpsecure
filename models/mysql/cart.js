@@ -4,37 +4,46 @@ const db = require('../../db'),
     config = require('../../settings');
 
 // 章节默认为4级，每级4位 最多16位
-const Ws_user = db.defineModel('ws_users', {
-    wxId: {
-        type: db.STRING(50)
+const Cart = db.defineModel('carts', {
+    userId: {
+        type: db.INTEGER
+    },
+    shopGoodId: {
+        type: db.INTEGER
+    },
+    buyCount: {
+        type: db.INTEGER,
+        defaultValue: 1
     }
 });
-module.exports = Ws_user;
+module.exports = Cart;
 
 //读取用户信息
-Ws_user.getFilter = function (filter) {
+Cart.getFilter = function (filter) {
     filter.isDeleted = false;
-    return Ws_user.findOne({
+    return Cart.findOne({
         'where': filter
     });
 };
 
-Ws_user.getFilters = function (filter) {
+Cart.getFilters = function (filter) {
     filter.isDeleted = false;
-    return Ws_user.findAll({
+    return Cart.findAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
     });
 };
 
-Ws_user.getFiltersWithPage = function (page, filter) {
+Cart.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return Ws_user.findAndCountAll({
+    return Cart.findAndCountAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ],
