@@ -18,7 +18,9 @@ module.exports = function (app) {
     app.post('/wechat/shopgoods', function (req, res) {
         GoodType.getFilters({})
             .then(function (categories) {
-                strSql = "select A.* from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId where A.isDeleted=0 ";
+                strSql = "select A.* from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
+                    join goodTypes T on A.goodTypeId=T._id\
+                    where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
                         replacements: {
                             shopId: req.body.shopId
