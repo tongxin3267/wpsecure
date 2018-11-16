@@ -35,4 +35,14 @@ module.exports = function (app) {
                     });
             });
     });
+
+    app.post('/wechat/pay', function (req, res) {
+        // goodId, goodCount
+        // userId
+        var goods = JSON.parse(req.body.goods);
+        // 1. check if there is enough count
+        // 2. order and pay
+
+
+    });
 }
