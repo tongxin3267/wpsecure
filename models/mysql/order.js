@@ -11,6 +11,21 @@ const Order = db.defineModel('orders', {
     totalPrice: {
         type: db.DECIMAL(10, 2),
         defaultValue: 0
+    },
+    orderStatus:{
+        type: db.INTEGER,
+        defaultValue:0,
+        comment: "订单状态 0，未确认；1，已确认；2，已取消；3，无效；4，退货；"
+    },
+    payStatus:{
+        type: db.INTEGER,
+        defaultValue:0,
+        comment:"支付状态；0，未付款；1，付款中；2，已付款"
+    },
+    _id:{
+        type: db.STRING(32),
+        primaryKey: true,
+        comment: "主键，自增"
     }
 });
 module.exports = Order;

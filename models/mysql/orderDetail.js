@@ -6,7 +6,7 @@ const db = require('../../db'),
 // 章节默认为4级，每级4位 最多16位
 const OrderDetail = db.defineModel('orderDetails', {
     orderId: {
-        type: db.INTEGER
+        type: db.STRING(32)
     },
     shopGoodId: {
         type: db.INTEGER
