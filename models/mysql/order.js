@@ -8,21 +8,24 @@ const Order = db.defineModel('orders', {
     userId: {
         type: db.INTEGER
     },
+    shopId: {
+        type: db.INTEGER
+    },
     totalPrice: {
         type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
-    orderStatus:{
+    orderStatus: {
         type: db.INTEGER,
-        defaultValue:0,
+        defaultValue: 0,
         comment: "订单状态 0，未确认；1，已确认；2，已取消；3，无效；4，退货；"
     },
-    payStatus:{
+    payStatus: {
         type: db.INTEGER,
-        defaultValue:0,
-        comment:"支付状态；0，未付款；1，付款中；2，已付款"
+        defaultValue: 0,
+        comment: "支付状态；0，未付款；1，付款中；2，已付款"
     },
-    _id:{
+    _id: {
         type: db.STRING(32),
         primaryKey: true,
         comment: "主键，自增"
@@ -38,27 +41,25 @@ Order.getFilter = function (filter) {
     });
 };
 
-Order.getFilters = function (filter) {
+Order.getFilters = function (filter, orders) {
     filter.isDeleted = false;
     return Order.findAll({
         'where': filter,
-        order: [
-            ['sequence'],
+        order: (orders || [
             ['createdDate'],
             ['_id']
-        ]
+        ])
     });
 };
 
-Order.getFiltersWithPage = function (page, filter) {
+Order.getFiltersWithPage = function (page, filter, orders) {
     filter.isDeleted = false;
     return Order.findAndCountAll({
         'where': filter,
-        order: [
-            ['sequence'],
+        order: (orders || [
             ['createdDate'],
             ['_id']
-        ],
+        ]),
         offset: config.pageSize * (page - 1),
         limit: config.pageSize
     });

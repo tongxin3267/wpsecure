@@ -39,7 +39,6 @@ OrderDetail.getFilters = function (filter) {
     return OrderDetail.findAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
@@ -51,7 +50,6 @@ OrderDetail.getFiltersWithPage = function (page, filter) {
     return OrderDetail.findAndCountAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ],

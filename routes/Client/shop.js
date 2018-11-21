@@ -21,15 +21,15 @@ module.exports = function (app) {
     app.post('/wechat/shopgoods', function (req, res) {
         GoodType.getFilters({})
             .then(function (categories) {
-                strSql = "select A.* from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
+                var strSql = "select A.* from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
                     join goodTypes T on A.goodTypeId=T._id\
                     where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
-                    replacements: {
-                        shopId: req.body.shopId
-                    },
-                    type: model.db.sequelize.QueryTypes.SELECT
-                })
+                        replacements: {
+                            shopId: req.body.shopId
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
                     .then(shopGoods => {
                         res.jsonp({
                             categories: categories,
@@ -54,11 +54,14 @@ module.exports = function (app) {
             goodIds = goods.map(g => {
                 return g._id;
             }),
-            orderId = (new Date().getTime()).toString() + random4();
+            orderId = (new Date().getTime()).toString() + random4(),
+            shopId = req.body.shopId;
 
         Good.getFilters({
-            _id: { $in: goodIds }
-        })
+                _id: {
+                    $in: goodIds
+                }
+            })
             .then(gs => {
                 var total = 0;
                 var bulkOrderDetals = gs.map(g => {
@@ -78,21 +81,31 @@ module.exports = function (app) {
                     };
                 });
                 model.db.sequelize.transaction(function (t1) {
-                    return Order.create({
-                        userId: 1,
-                        totalPrice: total,
-                        _id: orderId
-                    }, { transaction: t1 })
-                        .then(o => {
-                            return OrderDetail.bulkCreate(bulkOrderDetals, {
+                        return Order.create({
+                                userId: 1,
+                                shopId: shopId,
+                                totalPrice: total,
+                                _id: orderId
+                            }, {
                                 transaction: t1
+                            })
+                            .then(o => {
+                                return OrderDetail.bulkCreate(bulkOrderDetals, {
+                                        transaction: t1
+                                    })
+                                    .then(ds => {
+                                        return o;
+                                    });
                             });
-                        });
-                })
+                    })
                     .then(r => {
-                        res.jsonp({
-                            orderId: orderId
-                        });
+                        getSingleOrderDetails(r._id)
+                            .then(ds => {
+                                r.dataValues.details = ds;
+                                res.jsonp({
+                                    order: r
+                                });
+                            });
                     })
                     .catch(e => {
                         res.jsonp({
@@ -102,5 +115,52 @@ module.exports = function (app) {
             });
         // 1. check if there is enough count
         // 2. order and pay
+    });
+
+    function getSingleOrderDetails(orderId) {
+        var strSql = "select B.*, G.name from shopGoods A join orderDetails B on A._id=B.shopGoodId  \
+            join goods G on A.goodId=G._id \
+            where G.isDeleted=0 and B.orderId=:orderId order by B.createdDate, B._id";
+        return model.db.sequelize.query(strSql, {
+            replacements: {
+                orderId: orderId
+            },
+            type: model.db.sequelize.QueryTypes.SELECT
+        });
+    };
+
+    app.post('/wechat/orderList', function (req, res) {
+        // goodId, goodCount
+        // userId
+        // assume there are enough counts
+        var userId = req.body.userId,
+            shopId = req.body.shopId;
+
+        Order.getFilters({
+                userId: 1,
+                shopId: shopId
+            }, [
+                ['createdDate', 'desc'],
+                ['_id', 'desc']
+            ])
+            .then(os => {
+                if (os.length > 0) {
+                    var pArray = [];
+                    os.forEach(o => {
+                        var p = getSingleOrderDetails(o._id)
+                            .then(ds => {
+                                o.dataValues.details = ds;
+                            });
+                        pArray.push(p);
+                    });
+
+                    Promise.all(pArray)
+                        .then(r => {
+                            res.jsonp(os);
+                        });
+                } else {
+                    res.jsonp({});
+                }
+            });
     });
 }
