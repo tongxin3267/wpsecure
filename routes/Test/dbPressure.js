@@ -1,22 +1,38 @@
-var Grade = require('../../models/grade.js');
+// var Grade = require('../../models/grade.js');
+var model = require("../../model.js"),
+    pageSize = model.db.config.pageSize,
+    KeyGenerate = model.keyGenerate;
 
-module.exports = function(app) {
-    app.get('/dbPressure', function(req, res) {
+module.exports = function (app) {
+    app.get('/dbPressure', function (req, res) {
         res.render('Test/dbPressure.html', {
             title: '数据库压力测试'
         });
     });
-    app.post('/dbPressure', function(req, res) {
-        Grade.getAll(null, 1, {}, function(err, grades, total) {
-            if (err) {
-                grades = [];
-            }
-            res.jsonp({
-                title: '测试成功',
-                user: req.session.admin,
-                grades: grades,
-                counts: req.body.counts
+
+    function genkey(i) {
+        if (i <= 1000) {
+            return KeyGenerate.create({})
+                .then(o => {
+                    return genkey(i + 1);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+    }
+
+    app.post('/dbPressure', function (req, res) {
+        // 压力测试
+        var t1 = new Date();
+        genkey(1)
+            .then(o => {
+                var t2 = new Date();
+                console.log(t1.getTime());
+                console.log(t2.getTime());
+                res.jsonp({
+                    sucess: true
+                });
             });
-        });
     });
 };

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/default/assets/css/admin.css">
     <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/default/assets/js/index.js"></script>
+    <script type="text/javascript" src="/default/assets/js/Server/index.js"></script>
 </head>
 
 <body>
@@ -22,11 +22,11 @@
         </div>
     </form>
     <script>
-        $("#button").on("click", function() {
+        $("#button").on("click", function () {
             for (var i = 0; i < parseInt($("#count").val()); i++) {
                 selfAjax("post", "/dbPressure", {
                     counts: i
-                }, function(data) {
+                }, function (data) {
                     var iStr = $("#result").text() + ',' + data.counts;
                     $("#result").text(iStr);
                 })
