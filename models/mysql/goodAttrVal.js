@@ -1,35 +1,42 @@
-// 暂时不用
+// 模板，可以用于自动生成entity
 
 const db = require('../../db'),
     config = require('../../settings');
 
 // 章节默认为4级，每级4位 最多16位
-const GoodAttribute = db.defineModel('goodAttributes', {
+const GoodAttrVal = db.defineModel('goodAttrVals', {
     goodId: {
+        type: db.INTEGER
+    },
+    goodAttrId: {
         type: db.INTEGER
     },
     name: {
         type: db.STRING(20),
         defaultValue: ""
-    }, // 描述信息，用于seo
+    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
+    },
+    price: {
+        type: db.DECIMAL(10, 2),
+        defaultValue: 0
     }
 });
-module.exports = GoodAttribute;
+module.exports = GoodAttrVal;
 
 //读取用户信息
-GoodAttribute.getFilter = function (filter) {
+GoodAttrVal.getFilter = function (filter) {
     filter.isDeleted = false;
-    return GoodAttribute.findOne({
+    return GoodAttrVal.findOne({
         'where': filter
     });
 };
 
-GoodAttribute.getFilters = function (filter) {
+GoodAttrVal.getFilters = function (filter) {
     filter.isDeleted = false;
-    return GoodAttribute.findAll({
+    return GoodAttrVal.findAll({
         'where': filter,
         order: [
             ['sequence'],
@@ -39,9 +46,9 @@ GoodAttribute.getFilters = function (filter) {
     });
 };
 
-GoodAttribute.getFiltersWithPage = function (page, filter) {
+GoodAttrVal.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return GoodAttribute.findAndCountAll({
+    return GoodAttrVal.findAndCountAll({
         'where': filter,
         order: [
             ['sequence'],

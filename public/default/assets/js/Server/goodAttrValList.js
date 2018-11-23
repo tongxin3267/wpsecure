@@ -14,25 +14,6 @@ $(document).ready(function () {
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
         },
-        initDropDown: function (callback) {
-            // init goodtypes
-            selfAjax("post", "/admin/goodTypeList/all", null,
-                function (data) {
-                    if (data.error) {
-                        showAlert(data.error);
-                        return;
-                    }
-                    $("#myModal #goodType").empty();
-                    if (data && data.length > 0) {
-                        var d = $(document.createDocumentFragment());
-                        data.forEach(function (record) {
-                            d.append('<option value="{0}">{1}</option>'.format(record._id, record.name));
-                        });
-                        $("#myModal #goodType").append(d);
-                    }
-                    return callback && callback();
-                });
-        },
         initEvents: function () {
             var that = this;
             $(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
@@ -44,34 +25,30 @@ $(document).ready(function () {
                 that.destroy();
                 that.addValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增商品");
+                $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
                 $('#myModal #goodPrice').val(0);
-                $('#myModal #img').val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
                 });
-
-                that.initDropDown();
             });
 
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/good/add",
+                    var postURI = "/admin/goodAttrVal/add",
                         postObj = {
                             name: $.trim($('#name').val()),
                             sequence: $.trim($('#sequence').val()),
-                            goodPrice: $.trim($('#myModal #goodPrice').val()),
-                            img: $.trim($('#myModal #img').val()),
-                            goodTypeId: $('#myModal #goodType').val(),
-                            goodTypeName: $('#myModal #goodType').find("option:selected").text()
+                            price: $.trim($('#myModal #goodPrice').val()),
+                            goodId: $('#goodId').val(),
+                            attrId: $('#attrId').val()
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/good/edit";
+                        postURI = "/admin/goodAttrVal/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -93,16 +70,11 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
-                $('#myModal #goodPrice').val(entity.goodPrice);
-                $('#myModal #img').val(entity.img);
                 $('#myModal #id').val(entity._id);
+                $('#myModal #goodPrice').val(entity.price);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
-                });
-
-                that.initDropDown(function () {
-                    $('#myModal #goodType').val(entity.goodTypeId);
                 });
             });
 
@@ -111,7 +83,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/good/delete", {
+                    selfAjax("post", "/admin/goodAttrVal/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -122,12 +94,6 @@ $(document).ready(function () {
                     });
                 });
             });
-
-            $("#gridBody").on("click", "td .btnSet", function (e) {
-                var obj = e.currentTarget;
-                var entity = $(obj).parent().data("obj");
-                location.href = "/admin/goodAttributeList/" + entity._id;
-            });
         },
         initData: function () {
             this.search();
@@ -135,16 +101,18 @@ $(document).ready(function () {
         search: function (p) {
             var that = this,
                 filter = {
-                    name: $(".mainModal #InfoSearch #Name").val()
+                    name: $(".mainModal #InfoSearch #Name").val(),
+                    attrId: $('#attrId').val()
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/goodList/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/goodAttrValList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            record.sequence + '</td><td>' + record.goodTypeName + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            record.sequence + '</td><td>' +
+                            record.price + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
@@ -154,7 +122,7 @@ $(document).ready(function () {
             });
         },
         getButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnSet">设置</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
             return buttons;
         },
         destroy: function () {
