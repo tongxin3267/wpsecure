@@ -93,7 +93,11 @@ gulp.task('compressJs', ['js'], function (cb) {
             gulp.src(['build/public/default/assets/js/*/*.js'], {
                 base: 'build'
             }),
-            minify({}),
+            minify({
+                mangle: {
+                    properties: {}
+                }
+            }),
             gulp.dest('build')
         ],
         cb
