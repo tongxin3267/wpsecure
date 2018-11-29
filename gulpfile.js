@@ -94,9 +94,9 @@ gulp.task('compressJs', ['js'], function (cb) {
                 base: 'build'
             }),
             minify({
-                mangle: {
-                    properties: {}
-                }
+                // mangle: {
+                //     properties: {}
+                // }
             }),
             gulp.dest('build')
         ],

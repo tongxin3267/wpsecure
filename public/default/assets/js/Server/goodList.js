@@ -1,7 +1,8 @@
 $(document).ready(function () {
     var pageManager = {
         options: {
-            $mainSelectBody: $('.content.mainModal table tbody')
+            $mainSelectBody: $('.content.mainModal table tbody'),
+            isCopy: false
         },
         init: function () {
             this.initStyle();
@@ -33,6 +34,30 @@ $(document).ready(function () {
                     return callback && callback();
                 });
         },
+        editEntity: function (e) {
+            var that = this;
+            that.options.isCopy = false;
+            that.destroy();
+            that.addValidation();
+            var obj = e.currentTarget;
+            var entity = $(obj).parent().data("obj");
+            // $('#name').attr("disabled", "disabled");
+            $('#myModal #myModalLabel').text("修改名称");
+            $('#myModal #name').val(entity.name);
+            $('#myModal #detail').val(entity.detail);
+            $('#myModal #sequence').val(entity.sequence);
+            $('#myModal #goodPrice').val(entity.goodPrice);
+            $('#myModal #img').val(entity.img);
+            $('#myModal #id').val(entity._id);
+            $('#myModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            that.initDropDown(function () {
+                $('#myModal #goodType').val(entity.goodTypeId);
+            });
+        },
         initEvents: function () {
             var that = this;
             $(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
@@ -47,6 +72,7 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("新增商品");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
+                $('#myModal #detail').val("");
                 $('#myModal #sequence').val(0);
                 $('#myModal #goodPrice').val(0);
                 $('#myModal #img').val("");
@@ -63,12 +89,14 @@ $(document).ready(function () {
                 if (validator.isValid()) {
                     var postURI = "/admin/good/add",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val()),
+                            name: $.trim($('#myModal #name').val()),
+                            detail: $.trim($('#myModal #detail').val()),
+                            sequence: $.trim($('#myModal #sequence').val()),
                             goodPrice: $.trim($('#myModal #goodPrice').val()),
                             img: $.trim($('#myModal #img').val()),
                             goodTypeId: $('#myModal #goodType').val(),
-                            goodTypeName: $('#myModal #goodType').find("option:selected").text()
+                            goodTypeName: $('#myModal #goodType').find("option:selected").text(),
+                            isCopy: that.options.isCopy
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/good/edit";
@@ -85,25 +113,7 @@ $(document).ready(function () {
             });
 
             $("#gridBody").on("click", "td .btnEdit", function (e) {
-                that.destroy();
-                that.addValidation();
-                var obj = e.currentTarget;
-                var entity = $(obj).parent().data("obj");
-                // $('#name').attr("disabled", "disabled");
-                $('#myModal #myModalLabel').text("修改名称");
-                $('#myModal #name').val(entity.name);
-                $('#myModal #sequence').val(entity.sequence);
-                $('#myModal #goodPrice').val(entity.goodPrice);
-                $('#myModal #img').val(entity.img);
-                $('#myModal #id').val(entity._id);
-                $('#myModal').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-
-                that.initDropDown(function () {
-                    $('#myModal #goodType').val(entity.goodTypeId);
-                });
+                that.editEntity(e);
             });
 
             $("#gridBody").on("click", "td .btnDelete", function (e) {
@@ -127,6 +137,12 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 location.href = "/admin/goodAttributeList/" + entity._id;
+            });
+
+            $("#gridBody").on("click", "td .btnCopy", function (e) {
+                that.editEntity(e);
+                $('#myModal #myModalLabel').text("复制商品");
+                that.options.isCopy = true;
             });
         },
         initData: function () {
@@ -154,7 +170,7 @@ $(document).ready(function () {
             });
         },
         getButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnSet">设置</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnSet">设置</a><a class="btn btn-default btnCopy">复制</a>';
             return buttons;
         },
         destroy: function () {

@@ -61,6 +61,10 @@ endblock %} {% block main %}
                         <input type="text" maxlength="30" class="form-control" required name="name" id="name">
                     </div>
                     <div class="form-group">
+                        <label for="detail" class="control-label">描述:</label>
+                        <textarea rows="2" style="resize:none" maxlength="30" class="form-control" name="detail" id="detail"></textarea>
+                    </div>
+                    <div class="form-group">
                         <label for="sequence" class="control-label">顺序:</label>
                         <input type="number" maxlength="10" class="form-control" name="sequence" id="sequence" value="0">
                     </div>

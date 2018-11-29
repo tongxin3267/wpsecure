@@ -9,6 +9,10 @@ const Good = db.defineModel('goods', {
         // 商品名称
         type: db.STRING(50)
     },
+    detail: {
+        type: db.STRING(200),
+        defaultValue: ''
+    },
     sequence: {
         // 商品顺序
         type: db.INTEGER,

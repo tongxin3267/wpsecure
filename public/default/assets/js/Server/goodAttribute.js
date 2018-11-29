@@ -33,6 +33,7 @@ $(document).ready(function () {
                     backdrop: 'static',
                     keyboard: false
                 });
+                $('#myModal #isMulti').val(0);
             });
 
             $("#btnSave").on("click", function (e) {
@@ -41,6 +42,7 @@ $(document).ready(function () {
                     var postURI = "/admin/goodAttribute/add",
                         postObj = {
                             name: $.trim($('#name').val()),
+                            isMulti: $('#myModal #isMulti').val(),
                             sequence: $.trim($('#sequence').val()),
                             goodId: $('#goodId').val()
                         };
@@ -66,6 +68,7 @@ $(document).ready(function () {
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
+                $('#myModal #isMulti').val(entity.isMulti ? 1 : 0);
                 $('#myModal #sequence').val(entity.sequence);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({

@@ -5,6 +5,8 @@ var model = require("../../model.js"),
     Order = model.order,
     OrderDetail = model.orderDetail,
     Good = model.good,
+    GoodAttribute = model.goodAttribute,
+    GoodAttrVal = model.goodAttrVal,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -21,8 +23,9 @@ module.exports = function (app) {
     app.post('/wechat/shopgoods', function (req, res) {
         GoodType.getFilters({})
             .then(function (categories) {
-                var strSql = "select A.* from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
+                var strSql = "select A.*, GA.goodId as hasAttr from goods A join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
                     join goodTypes T on A.goodTypeId=T._id\
+                    left join (select distinct goodId from goodattributes where isDeleted=false)GA on A._id=GA.goodId \
                     where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
                         replacements: {
@@ -161,6 +164,29 @@ module.exports = function (app) {
                 } else {
                     res.jsonp({});
                 }
+            });
+    });
+
+    app.post('/wechat/goodAttributes', function (req, res) {
+        // goodId, goodCount
+        // userId
+        // assume there are enough counts
+        var goodId = req.body.goodId,
+            shopId = req.body.shopId;
+
+        GoodAttribute.getFilters({
+                goodId: goodId
+            })
+            .then(attrs => {
+                GoodAttrVal.getFilters({
+                        goodId: goodId
+                    })
+                    .then(vals => {
+                        res.jsonp({
+                            vals: vals,
+                            attrs: attrs
+                        });
+                    });
             });
     });
 }

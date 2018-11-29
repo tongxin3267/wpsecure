@@ -19,6 +19,7 @@ module.exports = function (app) {
     app.post('/admin/goodAttribute/add', function (req, res) {
         GoodAttribute.create({
                 name: req.body.name,
+                isMulti: req.body.isMulti,
                 sequence: req.body.sequence,
                 goodId: req.body.goodId,
                 createdBy: req.session.admin._id
@@ -34,6 +35,7 @@ module.exports = function (app) {
     app.post('/admin/goodAttribute/edit', function (req, res) {
         GoodAttribute.update({
                 name: req.body.name,
+                isMulti: req.body.isMulti,
                 goodId: req.body.goodId,
                 sequence: req.body.sequence,
                 deletedBy: req.session.admin._id,

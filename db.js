@@ -89,10 +89,10 @@ function defineModel(name, attributes) {
         hooks: {
             beforeValidate: function (obj) {
                 let now = Date.now();
-                if (!obj.isNewRecord) {
-                    obj.updatedDate = now;
-                    obj.version++;
-                }
+                // if (!obj.isNewRecord) {
+                obj.updatedDate = now;
+                obj.version++;
+                // }
             }
         },
         charset: 'utf8mb4'

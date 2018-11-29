@@ -137,3 +137,5 @@ String.prototype.format = function () {
     }
     return result;
 };
+
+// 不如找出几个function来简单混淆掉好了

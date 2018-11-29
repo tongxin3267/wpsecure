@@ -60,6 +60,13 @@ endblock %} {% block main %}
                         <input type="text" maxlength="30" class="form-control" required name="name" id="name">
                     </div>
                     <div class="form-group">
+                        <label for="isMulti" class="control-label">选项:</label>
+                        <select class="form-control" name="isMulti" id="isMulti">
+                            <option value="0">单选</option>
+                            <option value="1">多选</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="sequence" class="control-label">顺序:</label>
                         <input type="number" maxlength="10" class="form-control" name="sequence" id="sequence" value="0">
                     </div>

@@ -12,6 +12,10 @@ const GoodAttribute = db.defineModel('goodAttributes', {
         type: db.STRING(20),
         defaultValue: ""
     }, // 描述信息，用于seo
+    isMulti: {
+        type: db.BOOLEAN,
+        defaultValue: false
+    },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
