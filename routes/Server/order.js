@@ -3,51 +3,19 @@ var Order = require('../../models/mysql/order.js'),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.get('/admin/orderList', checkLogin);
-    app.get('/admin/orderList', function (req, res) {
-        res.render('Server/orderList.html', {
-            title: '>校区列表',
-            user: req.session.admin
-        });
-    });
-
-    app.post('/admin/order/add', checkLogin);
-    app.post('/admin/order/add', function (req, res) {
-        var order = new Order({
-            name: req.body.name,
-            address: req.body.address,
-            createdBy: req.session.admin._id
-        });
-
-        order.save().then(function (result) {
-            if (result) {
-                res.jsonp(result);
-            }
-        });
-    });
-
-    app.post('/admin/order/edit', checkLogin);
-    app.post('/admin/order/edit', function (req, res) {
-        var order = new Order({
-            name: req.body.name,
-            address: req.body.address
-        });
-
-        order.update(req.body.id)
-            .then(function () {
-                res.jsonp({
-                    sucess: true
+    app.get('/shop/:id/orderList', checkLogin);
+    app.get('/shop/:id/orderList', function (req, res) {
+        Shop.getFilter({
+                _id: req.params.id
+            })
+            .then(s => {
+                res.render('Server/shopOrderList.html', {
+                    title: '>门店商品',
+                    websiteTitle: s.name,
+                    user: req.session.admin,
+                    shopId: req.params.id
                 });
             });
-    });
-
-    app.post('/admin/order/delete', checkLogin);
-    app.post('/admin/order/delete', function (req, res) {
-        Order.delete(req.body.id, req.session.admin._id).then(function (result) {
-            res.jsonp({
-                sucess: true
-            });
-        });
     });
 
     app.post('/admin/orderList/search', checkLogin);

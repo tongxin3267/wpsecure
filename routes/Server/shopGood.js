@@ -2,15 +2,47 @@ var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     ShopGood = model.shopGood,
     Good = model.good,
+    Shop = model.shop,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
+    app.get('/shop/shopId/:id', checkLogin);
+    app.get('/shop/shopId/:id', function (req, res) {
+        Shop.getFilter({
+                _id: req.params.id
+            })
+            .then(s => {
+                req.session.shop = s;
+                res.redirect('/shop/goodList');
+            });
+    });
+
+    app.get('/shop/goodList', checkLogin);
+    app.get('/shop/goodList', function (req, res) {
+        res.render('Server/shopGoodList.html', {
+            title: '>门店商品',
+            websiteTitle: req.session.shop.name,
+            user: req.session.admin
+        });
+    });
+
+    app.get('/shop/good/:gId/attribute', checkLogin);
+    app.get('/shop/good/:gId/attribute', function (req, res) {
+        res.render('Server/shopGoodAttributeList.html', {
+            title: '>商品属性',
+            websiteTitle: req.session.shop.name,
+            user: req.session.admin,
+            goodId: req.params.gId
+        });
+    });
+
     app.post('/shop/shopGood/on', checkLogin);
     app.post('/shop/shopGood/on', function (req, res) {
+        var shopId = req.session.shop._id;
         ShopGood.getFilter({
                 goodId: req.body.goodId,
-                shopId: req.body.shopId
+                shopId: shopId
             })
             .then(g => {
                 if (g) {
@@ -20,7 +52,7 @@ module.exports = function (app) {
                 } else {
                     ShopGood.getFilterAll({
                             goodId: req.body.goodId,
-                            shopId: req.body.shopId
+                            shopId: shopId
                         })
                         .then(g => {
                             if (g) {
@@ -32,7 +64,7 @@ module.exports = function (app) {
                             } else {
                                 return ShopGood.create({
                                     goodId: req.body.goodId,
-                                    shopId: req.body.shopId,
+                                    shopId: shopId,
                                     goodPrice: req.body.goodPrice,
                                     createdBy: req.session.admin._id
                                 });
@@ -49,9 +81,10 @@ module.exports = function (app) {
 
     app.post('/shop/shopGood/off', checkLogin);
     app.post('/shop/shopGood/off', function (req, res) {
+        var shopId = req.session.shop._id;
         ShopGood.getFilter({
                 goodId: req.body.goodId,
-                shopId: req.body.shopId
+                shopId: shopId
             })
             .then(g => {
                 if (!g) {
@@ -66,7 +99,7 @@ module.exports = function (app) {
                         }, {
                             where: {
                                 goodId: req.body.goodId,
-                                shopId: req.body.shopId
+                                shopId: shopId
                             }
                         })
                         .then(function (result) {
@@ -127,11 +160,12 @@ module.exports = function (app) {
                 var offset = ((page - 1) * pageSize);
                 strSql = "select A.name, A.goodPrice, A.goodTypeName, A._id as goodId,B._id, B.goodPrice as newPrice from goods A left join shopGoods B on A._id=B.goodId and B.shopId=:shopId and B.isDeleted=false where A.isDeleted=0 ";
                 strSql += (whereFilter + " LIMIT " + offset + ", " + pageSize);
+                var shopId = req.session.shop._id;
                 model.db.sequelize.query(strSql, {
                         replacements: {
                             name: "%" + req.body.name + "%",
                             goodTypeId: req.body.goodTypeId,
-                            shopId: req.body.shopId
+                            shopId: shopId
                         },
                         type: model.db.sequelize.QueryTypes.SELECT
                     })

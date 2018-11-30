@@ -28,7 +28,6 @@ $(document).ready(function () {
                             price: $.trim($('#myModal #goodPrice').val()),
                             goodId: $('#goodId').val(),
                             attrId: $('#attrId').val(),
-                            shopId: $('#shopId').val(),
                             valId: $('#myModal #valId').val()
                         };
                     if ($('#id').val()) {
@@ -85,8 +84,7 @@ $(document).ready(function () {
                 filter = {
                     name: $(".mainModal #InfoSearch #Name").val(),
                     goodId: $('#goodId').val(),
-                    attrId: $('#attrId').val(),
-                    shopId: $('#shopId').val()
+                    attrId: $('#attrId').val()
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();

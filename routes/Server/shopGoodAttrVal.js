@@ -5,6 +5,17 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
+    app.get('/shop/good/:gId/attribute/:attrId', checkLogin);
+    app.get('/shop/good/:gId/attribute/:attrId', function (req, res) {
+        res.render('Server/shopGoodAttrValList.html', {
+            title: '>属性值信息',
+            websiteTitle: req.session.shop.name,
+            user: req.session.admin,
+            goodId: req.params.gId,
+            attrId: req.params.attrId
+        });
+    });
+
     app.post('/admin/shopGoodAttrVal/edit', checkLogin);
     app.post('/admin/shopGoodAttrVal/edit', function (req, res) {
         var p;
@@ -21,7 +32,7 @@ module.exports = function (app) {
         } else {
             p = ShopGoodAttrVal.create({
                 price: req.body.price,
-                shopId: req.body.shopId,
+                shopId: req.session.shop._id,
                 goodId: req.body.goodId,
                 goodAttrValId: req.body.valId,
                 createdBy: req.session.admin._id
@@ -67,7 +78,7 @@ module.exports = function (app) {
         }
         model.db.sequelize.query(strSql, {
                 replacements: {
-                    shopId: req.body.shopId,
+                    shopId: req.session.shop._id,
                     attrId: req.body.attrId
                 },
                 type: model.db.sequelize.QueryTypes.SELECT

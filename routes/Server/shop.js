@@ -14,54 +14,6 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/shop/:id/goodList', checkLogin);
-    app.get('/shop/:id/goodList', function (req, res) {
-        Shop.getFilter({
-                _id: req.params.id
-            })
-            .then(s => {
-                res.render('Server/shopGoodList.html', {
-                    title: '>门店商品',
-                    websiteTitle: s.name,
-                    user: req.session.admin,
-                    shopId: req.params.id
-                });
-            });
-    });
-
-    app.get('/shop/:id/good/:gId/attribute', checkLogin);
-    app.get('/shop/:id/good/:gId/attribute', function (req, res) {
-        Shop.getFilter({
-                _id: req.params.id
-            })
-            .then(s => {
-                res.render('Server/shopGoodAttributeList.html', {
-                    title: '>商品属性',
-                    websiteTitle: s.name,
-                    user: req.session.admin,
-                    shopId: req.params.id,
-                    goodId: req.params.gId
-                });
-            });
-    });
-
-    app.get('/shop/:id/good/:gId/attribute/:attrId', checkLogin);
-    app.get('/shop/:id/good/:gId/attribute/:attrId', function (req, res) {
-        Shop.getFilter({
-                _id: req.params.id
-            })
-            .then(s => {
-                res.render('Server/shopGoodAttrValList.html', {
-                    title: '>属性值信息',
-                    websiteTitle: s.name,
-                    user: req.session.admin,
-                    shopId: req.params.id,
-                    goodId: req.params.gId,
-                    attrId: req.params.attrId
-                });
-            });
-    });
-
     app.post('/admin/shop/add', checkLogin);
     app.post('/admin/shop/add', function (req, res) {
         Shop.create({

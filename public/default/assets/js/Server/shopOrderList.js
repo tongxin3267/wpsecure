@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btnGood").addClass("active");
+            $("#left_btnOrder").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -25,7 +25,8 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 selfAjax("post", "/shop/shopGood/on", {
                     goodId: entity.goodId,
-                    goodPrice: entity.goodPrice
+                    goodPrice: entity.goodPrice,
+                    shopId: $("#shopId").val()
                 }, function (data) {
                     if (data.error) {
                         showAlert(data.error);
@@ -39,7 +40,8 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 selfAjax("post", "/shop/shopGood/off", {
-                    goodId: entity.goodId
+                    goodId: entity.goodId,
+                    shopId: $("#shopId").val()
                 }, function (data) {
                     if (data.error) {
                         showAlert(data.error);
@@ -88,7 +90,7 @@ $(document).ready(function () {
             $("#gridBody").on("click", "td .btnSet", function (e) {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
-                location.href = "/shop/good/{0}/attribute".format(entity.goodId);
+                location.href = "/shop/{0}/good/{1}/attribute".format($("#shopId").val(), entity.goodId);
             });
         },
         initData: function () {
@@ -118,7 +120,8 @@ $(document).ready(function () {
             var that = this,
                 filter = {
                     name: $(".mainModal #InfoSearch #Name").val(),
-                    goodTypeId: $("#InfoSearch #goodType").val()
+                    goodTypeId: $("#InfoSearch #goodType").val(),
+                    shopId: $("#shopId").val()
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();

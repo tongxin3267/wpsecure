@@ -92,7 +92,7 @@ $(document).ready(function () {
 
             $("#gridBody").on("click", "td.link", function (e) {
                 var obj = e.currentTarget;
-                location.href = "/shop/{0}/goodList".format($(obj).attr("id"));
+                location.href = "/shop/shopId/{0}".format($(obj).attr("id"));
             });
         },
         initData: function () {

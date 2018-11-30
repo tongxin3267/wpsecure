@@ -219,7 +219,10 @@ module.exports = function (app) {
 
         Order.getFilters({
                 userId: 1,
-                shopId: shopId
+                shopId: shopId,
+                orderStatus: {
+                    $lt: 10
+                }
             }, [
                 ['createdDate', 'desc'],
                 ['_id', 'desc']
