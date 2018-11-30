@@ -33,6 +33,7 @@ module.exports = function (app) {
                                 return ShopGood.create({
                                     goodId: req.body.goodId,
                                     shopId: req.body.shopId,
+                                    goodPrice: req.body.goodPrice,
                                     createdBy: req.session.admin._id
                                 });
                             }

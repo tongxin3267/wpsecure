@@ -25,6 +25,7 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 selfAjax("post", "/shop/shopGood/on", {
                     goodId: entity.goodId,
+                    goodPrice: entity.goodPrice,
                     shopId: $("#shopId").val()
                 }, function (data) {
                     if (data.error) {
