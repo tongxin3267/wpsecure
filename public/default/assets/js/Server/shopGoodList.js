@@ -24,7 +24,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 selfAjax("post", "/shop/shopGood/on", {
-                    goodId: entity._id,
+                    goodId: entity.goodId,
                     shopId: $("#shopId").val()
                 }, function (data) {
                     if (data.error) {
@@ -39,7 +39,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 selfAjax("post", "/shop/shopGood/off", {
-                    goodId: entity._id,
+                    goodId: entity.goodId,
                     shopId: $("#shopId").val()
                 }, function (data) {
                     if (data.error) {
@@ -48,6 +48,48 @@ $(document).ready(function () {
                     }
                     location.reload();
                 });
+            });
+
+            $("#myModal #btnSave").on("click", function (e) {
+                var validator = $('#myModal').data('formValidation').validate();
+                if (validator.isValid()) {
+                    var postURI = "/admin/shopGood/edit",
+                        postObj = {
+                            goodPrice: $.trim($('#myModal #goodPrice').val()),
+                        };
+                    if ($('#id').val()) {
+
+                        postObj.id = $('#id').val();
+                    }
+                    selfAjax("post", postURI, postObj, function (data) {
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        location.reload();
+                    });
+                }
+            });
+
+            $("#gridBody").on("click", "td .btnEdit", function (e) {
+                that.destroy();
+                that.addValidation();
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                // $('#name').attr("disabled", "disabled");
+                $('#myModal #myModalLabel').text("修改价格");
+                $('#myModal #goodPrice').val(entity.goodPrice);
+                $('#myModal #id').val(entity._id);
+                $('#myModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            $("#gridBody").on("click", "td .btnSet", function (e) {
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                location.href = "/shop/{0}/good/{1}/attribute".format($("#shopId").val(), entity.goodId);
             });
         },
         initData: function () {
@@ -87,7 +129,8 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            record.goodPrice + '</td><td>' + record.goodTypeName + '</td><td>' + that.getStatus(record.goodId) + '</td><td><div class="btn-group">' + that.getButtons(record.goodId) + '</div></td></tr>');
+                            record.goodPrice + '</td><td>' + (record.newPrice || '') + '</td><td>' + record.goodTypeName +
+                            '</td><td>' + that.getStatus(record._id) + '</td><td><div class="btn-group">' + that.getButtons(record._id) + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
@@ -103,10 +146,37 @@ $(document).ready(function () {
             return "未上架";
         },
         getButtons: function (goodId) {
+            var strButton = '<a class="btn btn-default btnSet">设置</a>';
             if (goodId) {
-                return '<a class="btn btn-default btnOff">下架</a>';
+                strButton += '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnOff">下架</a>';
+                //<a class="btn btn-default btnSpecial">特价</a>
+            } else {
+                strButton += '<a class="btn btn-default btnOn">上架</a>';
             }
-            return '<a class="btn btn-default btnOn">上架</a>';
+            return strButton;
+        },
+        destroy: function () {
+            var validator = $('#myModal').data('formValidation');
+            if (validator) {
+                validator.destroy();
+            }
+        },
+        addValidation: function (callback) {
+            setTimeout(function () {
+                $('#myModal').formValidation({
+                    // List of fields and their validation rules
+                    fields: {
+                        'goodPrice': {
+                            trigger: "blur change",
+                            validators: {
+                                notEmpty: {
+                                    message: '名称不能为空'
+                                }
+                            }
+                        }
+                    }
+                });
+            }, 0);
         }
     };
 

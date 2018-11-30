@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btnShopGoodAttrVal").addClass("active");
+            $("#left_btnGood").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -20,31 +20,18 @@ $(document).ready(function () {
                 that.search();
             });
 
-            $("#btnAdd").on("click", function (e) {
-                isNew = true;
-                that.destroy();
-                that.addValidation();
-                // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
-                $('#myModal #id').val("");
-                $('#myModal #name').val("");
-                $('#myModal #sequence').val(0);
-                $('#myModal').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            });
-
             $("#btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/shopGoodAttrVal/add",
+                    var postURI = "/admin/shopGoodAttrVal/edit",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            price: $.trim($('#myModal #goodPrice').val()),
+                            goodId: $('#goodId').val(),
+                            attrId: $('#attrId').val(),
+                            shopId: $('#shopId').val(),
+                            valId: $('#myModal #valId').val()
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/shopGoodAttrVal/edit";
                         postObj.id = $('#id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -64,9 +51,9 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
-                $('#myModal #name').val(entity.name);
-                $('#myModal #sequence').val(entity.sequence);
                 $('#myModal #id').val(entity._id);
+                $('#myModal #valId').val(entity.valId);
+                $('#myModal #goodPrice').val(entity.price);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -74,7 +61,7 @@ $(document).ready(function () {
             });
 
             $("#gridBody").on("click", "td .btnDelete", function (e) {
-                showConfirm("确定要删除吗？");
+                showConfirm("确定要重置吗？");
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
@@ -96,7 +83,10 @@ $(document).ready(function () {
         search: function (p) {
             var that = this,
                 filter = {
-                    name: $(".mainModal #InfoSearch #Name").val()
+                    name: $(".mainModal #InfoSearch #Name").val(),
+                    goodId: $('#goodId').val(),
+                    attrId: $('#attrId').val(),
+                    shopId: $('#shopId').val()
                 },
                 pStr = p ? "p=" + p : "";
             this.options.$mainSelectBody.empty();
@@ -105,17 +95,18 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            record.sequence + '</td><td>' +
+                            record.price + '</td><td>' +
+                            (record.newPrice || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
                     that.options.$mainSelectBody.append(d);
                 }
-                setPaging("#mainModal", data, that.search.bind(that));
             });
         },
         getButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">重置</a>';
             return buttons;
         },
         destroy: function () {

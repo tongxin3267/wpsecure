@@ -4,8 +4,11 @@ const db = require('../../db'),
     config = require('../../settings');
 
 const ShopGoodAttrVal = db.defineModel('shopGoodAttrVals', {
-    shopGoodId: {
-        type: db.INTEGER
+    goodId: db.INTEGER,
+    shopId: {
+        // 分店Id
+        type: db.INTEGER,
+        defaultValue: 0
     },
     goodAttrValId: {
         type: db.INTEGER

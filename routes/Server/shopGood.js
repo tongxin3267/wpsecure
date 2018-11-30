@@ -18,10 +18,24 @@ module.exports = function (app) {
                         error: "已经上架了"
                     });
                 } else {
-                    ShopGood.create({
+                    ShopGood.getFilterAll({
                             goodId: req.body.goodId,
-                            shopId: req.body.shopId,
-                            createdBy: req.session.admin._id
+                            shopId: req.body.shopId
+                        })
+                        .then(g => {
+                            if (g) {
+                                //被下架，恢复
+                                g.isDeleted = false;
+                                g.deletedBy = req.session.admin._id;
+                                g.updatedDate = new Date();
+                                return g.save();
+                            } else {
+                                return ShopGood.create({
+                                    goodId: req.body.goodId,
+                                    shopId: req.body.shopId,
+                                    createdBy: req.session.admin._id
+                                });
+                            }
                         })
                         .then(function (result) {
                             if (result) {
@@ -44,7 +58,11 @@ module.exports = function (app) {
                         error: "已经下架了"
                     });
                 } else {
-                    ShopGood.destroy({
+                    ShopGood.update({
+                            isDeleted: true,
+                            deletedBy: req.session.admin._id,
+                            updatedDate: new Date()
+                        }, {
                             where: {
                                 goodId: req.body.goodId,
                                 shopId: req.body.shopId
@@ -57,6 +75,30 @@ module.exports = function (app) {
                         });
                 }
             });
+    });
+
+    app.post('/admin/shopGood/edit', checkLogin);
+    app.post('/admin/shopGood/edit', function (req, res) {
+        if (req.body.id) {
+            ShopGood.update({
+                    goodPrice: req.body.goodPrice,
+                    deletedBy: req.session.admin._id,
+                    updatedDate: new Date()
+                }, {
+                    where: {
+                        _id: req.body.id
+                    }
+                })
+                .then(o => {
+                    res.jsonp({
+                        sucess: true
+                    });
+                });
+        } else {
+            res.jsonp({
+                sucess: true
+            });
+        }
     });
 
     app.post('/admin/shopGoodList/search', checkLogin);
@@ -82,7 +124,7 @@ module.exports = function (app) {
             })
             .then(counts => {
                 var offset = ((page - 1) * pageSize);
-                strSql = "select A.*,B._id as goodId from goods A left join shopGoods B on A._id=B.goodId and B.shopId=:shopId where A.isDeleted=0 ";
+                strSql = "select A.name, A.goodPrice, A.goodTypeName, A._id as goodId,B._id, B.goodPrice as newPrice from goods A left join shopGoods B on A._id=B.goodId and B.shopId=:shopId and B.isDeleted=false where A.isDeleted=0 ";
                 strSql += (whereFilter + " LIMIT " + offset + ", " + pageSize);
                 model.db.sequelize.query(strSql, {
                         replacements: {

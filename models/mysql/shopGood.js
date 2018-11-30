@@ -47,6 +47,11 @@ const ShopGood = db.defineModel('shopGoods', {
         // 是否上架
         type: db.BOOLEAN,
         defaultValue: 0
+    },
+    specialTypeId: {
+        // 特价种类Id
+        type: db.INTEGER,
+        defaultValue: 0
     }
 });
 module.exports = ShopGood;
@@ -54,6 +59,12 @@ module.exports = ShopGood;
 //读取用户信息
 ShopGood.getFilter = function (filter) {
     filter.isDeleted = false;
+    return ShopGood.findOne({
+        'where': filter
+    });
+};
+
+ShopGood.getFilterAll = function (filter) {
     return ShopGood.findOne({
         'where': filter
     });

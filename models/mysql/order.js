@@ -18,7 +18,7 @@ const Order = db.defineModel('orders', {
     orderStatus: {
         type: db.INTEGER,
         defaultValue: 0,
-        comment: "订单状态 0，未确认；1，已确认；2，已取消；3，无效；4，退货；"
+        comment: "订单状态 0，未确认；1，已完成；2，已取消；3，无效；4，退货；"
     },
     payStatus: {
         type: db.INTEGER,

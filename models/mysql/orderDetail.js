@@ -15,6 +15,11 @@ const OrderDetail = db.defineModel('orderDetails', {
         type: db.DECIMAL(10, 2),
         defaultValue: 0
     },
+    attrDetail: {
+        // 规格参数
+        type: db.STRING(100),
+        defaultValue: ""
+    },
     buyCount: {
         type: db.INTEGER,
         defaultValue: 1
@@ -22,7 +27,7 @@ const OrderDetail = db.defineModel('orderDetails', {
     status: {
         type: db.INTEGER,
         defaultValue: 0
-    } // 0 排队 1 待取
+    } // 0 排队 1 已取
 });
 module.exports = OrderDetail;
 

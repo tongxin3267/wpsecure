@@ -39,8 +39,10 @@ endblock %} {% block main %}
             <tr>
                 <th style="width:150px;">商品</th>
                 <th style="width:150px;">价格</th>
+                <th style="width:150px;">新价格</th>
                 <th style="width:150px;">类别</th>
                 <th style="width:150px;">状态</th>
+                <!-- <th style="width:150px;">特价</th> -->
                 <th>操作</th>
             </tr>
         </thead>
@@ -63,13 +65,8 @@ endblock %} {% block main %}
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" required name="name" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence"
-                            value="0">
+                        <label for="goodPrice" class="control-label">价格:</label>
+                        <input type="text" maxlength="20" class="form-control" name="goodPrice" id="goodPrice" value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

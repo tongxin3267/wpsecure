@@ -1,12 +1,14 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Shop = model.shop,
+    ShopGood = model.shopGood,
     GoodType = model.goodType,
     Order = model.order,
     OrderDetail = model.orderDetail,
     Good = model.good,
     GoodAttribute = model.goodAttribute,
     GoodAttrVal = model.goodAttrVal,
+    ShopGoodAttrVal = model.shopGoodAttrVal,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -51,7 +53,6 @@ module.exports = function (app) {
         // goodId, goodCount
         // userId
         // assume there are enough counts
-
         var goods = JSON.parse(req.body.goods),
             _id = req.body._id,
             goodIds = goods.map(g => {
@@ -59,62 +60,74 @@ module.exports = function (app) {
             }),
             orderId = (new Date().getTime()).toString() + random4(),
             shopId = req.body.shopId;
-
-        Good.getFilters({
-                _id: {
+        ShopGood.getFilters({
+                goodId: {
                     $in: goodIds
                 }
             })
             .then(gs => {
-                var total = 0;
-                var bulkOrderDetals = gs.map(g => {
-                    var count;
-                    goods.some(c => {
-                        if (g._id == c._id) {
-                            count = c.count;
-                            return true;
-                        }
-                    });
-                    total += count * g.goodPrice;
-                    return {
-                        orderId: orderId,
-                        shopGoodId: g._id,
-                        goodPrice: g.goodPrice,
-                        buyCount: count
-                    };
-                });
-                model.db.sequelize.transaction(function (t1) {
-                        return Order.create({
-                                userId: 1,
-                                shopId: shopId,
-                                totalPrice: total,
-                                _id: orderId
-                            }, {
-                                transaction: t1
-                            })
-                            .then(o => {
-                                return OrderDetail.bulkCreate(bulkOrderDetals, {
-                                        transaction: t1
-                                    })
-                                    .then(ds => {
-                                        return o;
-                                    });
-                            });
+                var strSql = "select A.price, AV.goodId, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
+                    and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
+                model.db.sequelize.query(strSql, {
+                        replacements: {
+                            shopId: req.body.shopId,
+                            goodIds: goodIds
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
                     })
-                    .then(r => {
-                        getSingleOrderDetails(r._id)
-                            .then(ds => {
-                                r.dataValues.details = ds;
-                                res.jsonp({
-                                    order: r
-                                });
-                            });
-                    })
-                    .catch(e => {
-                        res.jsonp({
-                            error: "订单生成失败"
-                        });
+                    .then(avs => {
+
                     });
+                // var total = 0;
+                // var bulkOrderDetals = gs.map(g => {
+                //     var count;
+                //     goods.some(c => {
+                //         if (g._id == c._id) {
+                //             count = c.count;
+                //             return true;
+                //         }
+                //     });
+
+                //     total += count * g.goodPrice;
+                //     return {
+                //         orderId: orderId,
+                //         shopGoodId: g._id,
+                //         goodPrice: g.goodPrice,
+                //         buyCount: count
+                //     };
+                // });
+                // model.db.sequelize.transaction(function (t1) {
+                //         return Order.create({
+                //                 userId: 1,
+                //                 shopId: shopId,
+                //                 totalPrice: total,
+                //                 _id: orderId
+                //             }, {
+                //                 transaction: t1
+                //             })
+                //             .then(o => {
+                //                 return OrderDetail.bulkCreate(bulkOrderDetals, {
+                //                         transaction: t1
+                //                     })
+                //                     .then(ds => {
+                //                         return o;
+                //                     });
+                //             });
+                //     })
+                //     .then(r => {
+                //         getSingleOrderDetails(r._id)
+                //             .then(ds => {
+                //                 r.dataValues.details = ds;
+                //                 res.jsonp({
+                //                     order: r
+                //                 });
+                //             });
+                //     })
+                //     .catch(e => {
+                //         res.jsonp({
+                //             error: "订单生成失败"
+                //         });
+                //     });
             });
         // 1. check if there is enough count
         // 2. order and pay
