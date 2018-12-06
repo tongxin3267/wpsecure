@@ -1,22 +1,21 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
-    #Name# = model.#name#,
+    OrderSep = model.orderSep,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-    app.get('/admin/#name#List', checkLogin);
-    app.get('/admin/#name#List', function(req, res) {
-        res.render('Server/#name#List.html', {
+    app.get('/admin/orderSepList', checkLogin);
+    app.get('/admin/orderSepList', function(req, res) {
+        res.render('Server/orderSepList.html', {
             title: '>校区列表',
-            websiteTitle: model.db.config.websiteTitle,
             user: req.session.admin
         });
     });
 
-    app.post('/admin/#name#/add', checkLogin);
-    app.post('/admin/#name#/add', function(req, res) {
-        #Name#.create({
+    app.post('/admin/orderSep/add', checkLogin);
+    app.post('/admin/orderSep/add', function(req, res) {
+        OrderSep.create({
             name: req.body.name,
             sequence: req.body.sequence,
             createdBy: req.session.admin._id
@@ -29,9 +28,9 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/admin/#name#/edit', checkLogin);
-    app.post('/admin/#name#/edit', function(req, res) {
-        #Name#.update({
+    app.post('/admin/orderSep/edit', checkLogin);
+    app.post('/admin/orderSep/edit', function(req, res) {
+        OrderSep.update({
             name: req.body.name,
             sequence: req.body.sequence,
             deletedBy: req.session.admin._id,
@@ -48,9 +47,9 @@ module.exports = function(app) {
             });
     });
 
-    app.post('/admin/#name#/delete', checkLogin);
-    app.post('/admin/#name#/delete', function(req, res) {
-        #Name#.update({
+    app.post('/admin/orderSep/delete', checkLogin);
+    app.post('/admin/orderSep/delete', function(req, res) {
+        OrderSep.update({
                 isDeleted: true,
                 deletedBy: req.session.admin._id,
                 deletedDate: new Date()
@@ -66,8 +65,8 @@ module.exports = function(app) {
             });
     });
 
-    app.post('/admin/#name#List/search', checkLogin);
-    app.post('/admin/#name#List/search', function(req, res) {
+    app.post('/admin/orderSepList/search', checkLogin);
+    app.post('/admin/orderSepList/search', function(req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -82,7 +81,7 @@ module.exports = function(app) {
             filter.gradeId = req.body.grade;
         }
 
-        #Name#.getFiltersWithPage(page, filter)
+        OrderSep.getFiltersWithPage(page, filter)
             .then(function (result) {
                res.jsonp({
                     records: result.rows,

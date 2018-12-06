@@ -4,6 +4,7 @@ var model = require("../../model.js"),
     ShopGood = model.shopGood,
     GoodType = model.goodType,
     Order = model.order,
+    OrderSeq = model.orderSeq,
     OrderDetail = model.orderDetail,
     Good = model.good,
     GoodAttribute = model.goodAttribute,
@@ -65,14 +66,18 @@ module.exports = function (app) {
             orderId = (new Date().getTime()).toString() + random4(),
             shopId = req.body.shopId;
         // 获取所有商品价格
-        ShopGood.getFilters({
-                goodId: {
-                    $in: goodIds
-                }
+        var strSql = "select S._id, S.goodPrice, S.goodId, G.orderTypeId, G.orderTypeName from shopGoods S join goods G on S.goodId=G._id and G.isDeleted=false \
+                     where  S.isDeleted=false and S.shopId=:shopId and S.goodId in (:goodIds)";
+        model.db.sequelize.query(strSql, {
+                replacements: {
+                    shopId: req.body.shopId,
+                    goodIds: goodIds
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(gs => {
                 //获取所有属性价格
-                var strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
+                strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
                     and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
                 model.db.sequelize.query(strSql, {
                         replacements: {
@@ -84,6 +89,7 @@ module.exports = function (app) {
                     .then(avs => {
                         var total = 0,
                             bulkOrderDetals = [],
+                            bulkOrderSeqs = [],
                             gObj = {};
                         // good array to JSON
                         gs.forEach(g => {
@@ -102,7 +108,18 @@ module.exports = function (app) {
 
                         // 根据客户端数据计算价格
                         goods.forEach(g => {
+                            // 下面处理订单商品的价格和详情
                             var sysGood = gObj[g._id];
+                            // 订单商品插入队列里
+                            if (!bulkOrderSeqs.some(bs => {
+                                    return bs.orderTypeId == sysGood.orderTypeId;
+                                })) {
+                                bulkOrderSeqs.push({
+                                    orderId: orderId,
+                                    orderTypeId: sysGood.orderTypeId
+                                });
+                            }
+
                             if (!sysGood) {
                                 throw "商品已经售空:" + g.name;
                             }
@@ -132,6 +149,8 @@ module.exports = function (app) {
                                         orderId: orderId,
                                         shopGoodId: g._id,
                                         goodPrice: sysGood.goodPrice,
+                                        orderTypeId: sysGood.orderTypeId,
+                                        orderTypeName: sysGood.orderTypeName,
                                         buyCount: g.count,
                                         attrDetail: (attrDetail && attrDetail.substr(1))
                                     });
@@ -169,7 +188,12 @@ module.exports = function (app) {
                                                 transaction: t1
                                             })
                                             .then(ds => {
-                                                return o;
+                                                return OrderSeq.bulkCreate(bulkOrderSeqs, {
+                                                        transaction: t1
+                                                    })
+                                                    .then(oseq => {
+                                                        return o;
+                                                    });
                                             });
                                     });
                             })
@@ -220,6 +244,7 @@ module.exports = function (app) {
         Order.getFilters({
                 userId: 1,
                 shopId: shopId,
+                payStatus: 2,
                 orderStatus: {
                     $lt: 10
                 }

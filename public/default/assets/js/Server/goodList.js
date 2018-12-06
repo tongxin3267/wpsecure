@@ -17,20 +17,30 @@ $(document).ready(function () {
         },
         initDropDown: function (callback) {
             // init goodtypes
-            selfAjax("post", "/admin/goodTypeList/all", null,
+            selfAjax("post", "/admin/goodTypeOrderType/all", null,
                 function (data) {
                     if (data.error) {
                         showAlert(data.error);
                         return;
                     }
                     $("#myModal #goodType").empty();
-                    if (data && data.length > 0) {
+                    if (data && data.goodTypes.length > 0) {
                         var d = $(document.createDocumentFragment());
-                        data.forEach(function (record) {
+                        data.goodTypes.forEach(function (record) {
                             d.append('<option value="{0}">{1}</option>'.format(record._id, record.name));
                         });
                         $("#myModal #goodType").append(d);
                     }
+
+                    $("#myModal #orderType").empty();
+                    if (data && data.orderTypes.length > 0) {
+                        var d = $(document.createDocumentFragment());
+                        data.orderTypes.forEach(function (record) {
+                            d.append('<option value="{0}">{1}</option>'.format(record._id, record.name));
+                        });
+                        $("#myModal #orderType").append(d);
+                    }
+
                     return callback && callback();
                 });
         },
@@ -56,6 +66,7 @@ $(document).ready(function () {
 
             that.initDropDown(function () {
                 $('#myModal #goodType').val(entity.goodTypeId);
+                $('#myModal #orderType').val(entity.orderTypeId);
             });
         },
         initEvents: function () {
@@ -96,6 +107,8 @@ $(document).ready(function () {
                             img: $.trim($('#myModal #img').val()),
                             goodTypeId: $('#myModal #goodType').val(),
                             goodTypeName: $('#myModal #goodType').find("option:selected").text(),
+                            orderTypeId: $('#myModal #orderType').val(),
+                            orderTypeName: $('#myModal #orderType').find("option:selected").text(),
                             isCopy: that.options.isCopy
                         };
                     if ($('#id').val()) {
@@ -160,7 +173,8 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            record.sequence + '</td><td>' + record.goodTypeName + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            record.sequence + '</td><td>' + record.goodTypeName + '</td><td>' +
+                            record.orderTypeName + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

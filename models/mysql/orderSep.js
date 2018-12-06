@@ -1,9 +1,10 @@
-// 订单队列，取后删除该分订单
+// 准备去掉这个表，似乎利用率比较低 //TBD
 
 const db = require('../../db'),
     config = require('../../settings');
 
-const OrderSeq = db.defineModel('orderSeqs', {
+// 章节默认为4级，每级4位 最多16位
+const OrderSep = db.defineModel('orderSeps', {
     orderId: {
         type: db.STRING(32)
     },
@@ -11,24 +12,29 @@ const OrderSeq = db.defineModel('orderSeqs', {
         type: db.INTEGER,
         defaultValue: 0
     },
-    status: {
+    orderTypeName: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    sepStatus: {
         type: db.INTEGER,
-        defaultValue: 0
-    } // 0 未支付 1 已支付
+        defaultValue: 0,
+        comment: "订单状态 0，未确认；5:待取 10，已完成；11，已取消；12，无效；13，退货；"
+    },
 });
-module.exports = OrderSeq;
+module.exports = OrderSep;
 
 //读取用户信息
-OrderSeq.getFilter = function (filter) {
+OrderSep.getFilter = function (filter) {
     filter.isDeleted = false;
-    return OrderSeq.findOne({
+    return OrderSep.findOne({
         'where': filter
     });
 };
 
-OrderSeq.getFilters = function (filter) {
+OrderSep.getFilters = function (filter) {
     filter.isDeleted = false;
-    return OrderSeq.findAll({
+    return OrderSep.findAll({
         'where': filter,
         order: [
             ['sequence'],
@@ -38,9 +44,9 @@ OrderSeq.getFilters = function (filter) {
     });
 };
 
-OrderSeq.getFiltersWithPage = function (page, filter) {
+OrderSep.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return OrderSeq.findAndCountAll({
+    return OrderSep.findAndCountAll({
         'where': filter,
         order: [
             ['sequence'],

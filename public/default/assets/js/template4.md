@@ -105,7 +105,7 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

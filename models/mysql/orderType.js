@@ -1,34 +1,31 @@
-// 订单队列，取后删除该分订单
+// 模板，可以用于自动生成entity
 
 const db = require('../../db'),
     config = require('../../settings');
 
-const OrderSeq = db.defineModel('orderSeqs', {
-    orderId: {
-        type: db.STRING(32)
+// 订单类别，用于自动分单
+const OrderType = db.defineModel('orderTypes', {
+    name: {
+        type: db.STRING(50)
     },
-    orderTypeId: {
+    sequence: {
         type: db.INTEGER,
         defaultValue: 0
-    },
-    status: {
-        type: db.INTEGER,
-        defaultValue: 0
-    } // 0 未支付 1 已支付
+    }
 });
-module.exports = OrderSeq;
+module.exports = OrderType;
 
 //读取用户信息
-OrderSeq.getFilter = function (filter) {
+OrderType.getFilter = function (filter) {
     filter.isDeleted = false;
-    return OrderSeq.findOne({
+    return OrderType.findOne({
         'where': filter
     });
 };
 
-OrderSeq.getFilters = function (filter) {
+OrderType.getFilters = function (filter) {
     filter.isDeleted = false;
-    return OrderSeq.findAll({
+    return OrderType.findAll({
         'where': filter,
         order: [
             ['sequence'],
@@ -38,9 +35,9 @@ OrderSeq.getFilters = function (filter) {
     });
 };
 
-OrderSeq.getFiltersWithPage = function (page, filter) {
+OrderType.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return OrderSeq.findAndCountAll({
+    return OrderType.findAndCountAll({
         'where': filter,
         order: [
             ['sequence'],

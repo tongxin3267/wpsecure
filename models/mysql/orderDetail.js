@@ -8,6 +8,14 @@ const OrderDetail = db.defineModel('orderDetails', {
     orderId: {
         type: db.STRING(32)
     },
+    orderTypeId: {
+        type: db.INTEGER,
+        defaultValue: 0
+    },
+    orderTypeName: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     shopGoodId: {
         type: db.INTEGER
     },

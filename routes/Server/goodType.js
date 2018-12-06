@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     GoodType = model.goodType,
+    OrderType = model.orderType,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -96,6 +97,20 @@ module.exports = function (app) {
                 res.jsonp(
                     results
                 );
+            });
+    });
+
+    app.post('/admin/goodTypeOrderType/all', checkLogin);
+    app.post('/admin/goodTypeOrderType/all', function (req, res) {
+        GoodType.getFilters({})
+            .then(function (goodTypes) {
+                OrderType.getFilters({})
+                    .then(orderTypes => {
+                        res.jsonp({
+                            goodTypes: goodTypes,
+                            orderTypes: orderTypes
+                        });
+                    });
             });
     });
 }

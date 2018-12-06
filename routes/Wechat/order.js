@@ -5,10 +5,10 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.get('/shop/orderList', checkLogin);
-    app.get('/shop/orderList', function (req, res) {
+    app.get('/wechat/orderList', checkLogin);
+    app.get('/wechat/orderList', function (req, res) {
         var s = req.session.shop;
-        res.render('Server/shopOrderList.html', {
+        res.render('wechat/shopOrderList.html', {
             title: '>门店订单',
             websiteTitle: s.name,
             user: req.session.admin,
@@ -16,8 +16,8 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/admin/orderList/search', checkLogin);
-    app.post('/admin/orderList/search', function (req, res) {
+    app.post('/wechat/orderList/search', checkLogin);
+    app.post('/wechat/orderList/search', function (req, res) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章

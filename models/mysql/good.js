@@ -34,6 +34,14 @@ const Good = db.defineModel('goods', {
     goodTypeName: {
         type: db.STRING(50),
         defaultValue: ''
+    },
+    orderTypeId: {
+        type: db.INTEGER,
+        defaultValue: 0
+    },
+    orderTypeName: {
+        type: db.STRING(50),
+        defaultValue: ''
     }
 });
 module.exports = Good;

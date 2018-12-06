@@ -26,6 +26,8 @@ module.exports = function (app) {
                 img: req.body.img,
                 goodTypeId: req.body.goodTypeId,
                 goodTypeName: req.body.goodTypeName,
+                orderTypeId: req.body.orderTypeId,
+                orderTypeName: req.body.orderTypeName,
                 createdBy: req.session.admin._id
             })
             .then(function (result) {
@@ -56,6 +58,8 @@ module.exports = function (app) {
                                         img: req.body.img,
                                         goodTypeId: req.body.goodTypeId,
                                         goodTypeName: req.body.goodTypeName,
+                                        orderTypeId: req.body.orderTypeId,
+                                        orderTypeName: req.body.orderTypeName,
                                         createdBy: req.session.admin._id
                                     }, {
                                         transaction: t1
@@ -141,6 +145,8 @@ module.exports = function (app) {
                     img: req.body.img,
                     goodTypeId: req.body.goodTypeId,
                     goodTypeName: req.body.goodTypeName,
+                    orderTypeId: req.body.orderTypeId,
+                    orderTypeName: req.body.orderTypeName,
                     deletedBy: req.session.admin._id,
                     updatedDate: new Date()
                 }, {

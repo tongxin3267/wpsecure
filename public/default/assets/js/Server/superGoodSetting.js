@@ -7,5 +7,9 @@ $(document).ready(function () {
         location.href = "/admin/goodList";
     });
 
+    $("#left_btnOrderType").on("click", function (e) {
+        location.href = "/admin/orderTypeList";
+    });
+
     $(".admin-nav .menu-top #header_btnGood").addClass("active");
 });

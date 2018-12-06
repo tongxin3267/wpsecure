@@ -35,14 +35,6 @@ const ShopGood = db.defineModel('shopGoods', {
         type: db.INTEGER,
         defaultValue: 0
     },
-    goodTypeId: {
-        type: db.INTEGER,
-        defaultValue: 0
-    },
-    goodTypeName: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
     isPublish: {
         // 是否上架
         type: db.BOOLEAN,
