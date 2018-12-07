@@ -24,7 +24,7 @@
 </div>
 <div class="toolbar">
     <div class="toolbar-list">
-        &nbsp;
+        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
     </div>
 </div>
 <div class="content mainModal">
@@ -33,6 +33,7 @@
             <tr>
                 <th style="width:150px;">管理员</th>
                 <th style="width:200px;">所属分店</th>
+                <th style="width:100px;">角色</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -59,9 +60,14 @@
                         <input type="text" maxlength="30" class="form-control" required name="name" id="name">
                     </div>
                     <div class="form-group">
-                        <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence"
-                            value="0">
+                        <label for="userPwd" class="control-label">密码:</label>
+                        <input type="password" maxlength="15" class="form-control" name="userPwd" id="userPwd">
+                    </div>
+                    <div class="form-group">
+                        <label for="role" class="control-label">角色:</label>
+                        <select name="role" id="role" class="form-control">
+                            <option value="0">核单员</option>
+                        </select>
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

@@ -35,17 +35,17 @@ $(document).ready(function () {
                 });
             });
 
-            $("#btnSave").on("click", function (e) {
+            $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
                     var postURI = "/admin/#name#/add",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            name: $.trim($('#myModal #name').val()),
+                            sequence: $.trim($('#myModal #sequence').val())
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/#name#/edit";
-                        postObj.id = $('#id').val();
+                        postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
                         if (data.error) {
@@ -136,9 +136,9 @@ $(document).ready(function () {
                                     message: '名称不能为空'
                                 },
                                 stringLength: {
-                                    min: 2,
+                                    min: 1,
                                     max: 30,
-                                    message: '名称在2-30个字符之间'
+                                    message: '名称在1-30个字符之间'
                                 }
                             }
                         }

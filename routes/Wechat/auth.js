@@ -1,9 +1,9 @@
 module.exports = {
-    checkLogin: function (req, res, next) {
+    adminCheckLogin: function (req, res, next) {
         //if (!req.session.admin || req.session.admin.name != "11") {
-        if (!req.session.wechat) {
+        if (!req.session.wechatAdmin) {
             if (req.method == "GET") {
-                res.redirect('/wechat/login');
+                res.redirect('/wechatAdmin/login');
                 return;
             } else {
                 res.jsonp({
@@ -14,18 +14,18 @@ module.exports = {
         }
         next();
     },
-    checkNotLogin: function (req, res, next) {
+    adminCheckNotLogin: function (req, res, next) {
         //if (req.session.admin && req.session.admin.name == "11") {
-        if (req.session.wechat) {
+        if (req.session.wechatAdmin) {
             res.redirect('back'); //返回之前的页面
             return;
         }
         next();
     },
-    checkSecure: function (passRoles) {
+    adminCheckSecure: function (passRoles) {
         return function (req, res, next) {
             if (passRoles.some(function (role) {
-                    return role == req.session.wechat.role;
+                    return role == req.session.wechatAdmin.role;
                 })) {
                 next();
                 return;

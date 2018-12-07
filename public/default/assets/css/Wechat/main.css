@@ -1,0 +1,111 @@
+body {
+    background-color: #fff;
+}
+
+footer,
+.container {
+    margin: 0 auto;
+    width: 100%;
+    background-color: #f8f8f8;
+}
+
+@media (min-width: 360px) {
+    .nav-bar-header {
+        height: 112.5px;
+    }
+}
+
+@media (min-width: 414px) {
+    .nav-bar-header {
+        height: 129.375px;
+    }
+}
+
+@media (min-width: 540px) {
+    .nav-bar-header {
+        height: 168.75px;
+    }
+}
+
+#confirmModal a:hover,
+#selUserModal a:hover {
+    text-decoration: none;
+}
+
+.weui-cell__ftl {
+    text-align: right;
+    color: #999;
+}
+
+.weui-cells__title .weui-cell__ftl {
+    padding-left: 13px;
+    position: relative;
+}
+
+.weui-cells__title .weui-cell__ftl:after {
+    content: " ";
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 0 0 2px 2px;
+    border-color: #c8c8cd;
+    border-style: solid;
+    -webkit-transform: matrix(.71, .71, -.71, .71, 0, 0);
+    transform: matrix(.71, .71, -.71, .71, 0, 0);
+    position: relative;
+    top: -2px;
+    position: absolute;
+    top: 50%;
+    margin-top: 4px;
+    left: 2px;
+}
+
+.test.pager {
+    text-align: center;
+}
+
+.test.weui-panel_access .weui-media-box_text.active {
+    display: block;
+}
+
+.test.weui-panel_access .weui-media-box_text {
+    display: none;
+}
+
+.weui-panel.childrenTests .weui-panel__bd .weui-media-box_text.active {
+    display: block;
+}
+
+.weui-panel.childrenTests .weui-panel__bd .weui-media-box_text {
+    display: none;
+}
+
+.clear {
+    clear: both;
+}
+
+.js_category.menu {
+    background-color: #f6f8fa;
+    height: 40px;
+}
+
+.js_category.menu img {
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.js_category.menu .weui-flex__item {
+    margin-left: 30px;
+    text-align: center;
+    line-height: 40px;
+}
+
+.orderType {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 40px;
+    background-color: #fff;
+}

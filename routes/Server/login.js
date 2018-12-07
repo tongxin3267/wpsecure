@@ -30,7 +30,8 @@ module.exports = function (app) {
             password = md5.update(req.body.password).digest('hex');
         //检查用户是否存在
         User.getFilter({
-                name: req.body.name
+                name: req.body.name,
+                role: 100
             })
             .then(function (user) {
                 if (!user) {

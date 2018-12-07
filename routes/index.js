@@ -1,5 +1,6 @@
 var client = require('./Client/index.js'),
     server = require('./Server/index.js'),
+    wechat = require('./Wechat/index.js'),
     // test = require('./Test/index.js'),
     generator = require('./Test/generator.js'),
     dbPressure = require('./Test/dbPressure.js'),
@@ -8,6 +9,7 @@ var client = require('./Client/index.js'),
 module.exports = function (app) {
     client(app);
     server(app);
+    wechat(app);
     // test(app);
     dbPressure(app);
     generator(app);

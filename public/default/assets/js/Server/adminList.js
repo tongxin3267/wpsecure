@@ -28,24 +28,26 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
-                $('#myModal #sequence').val(0);
+                $('#myModal #password').val("");
+                $('#myModal #role').val(0);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
                 });
             });
 
-            $("#btnSave").on("click", function (e) {
+            $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
                     var postURI = "/admin/admin/add",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            name: $.trim($('#myModal #name').val()),
+                            password: $.trim($('#myModal #password').val()),
+                            role: $("#myModal #role").val()
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/admin/edit";
-                        postObj.id = $('#id').val();
+                        postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
                         if (data.error) {
@@ -65,7 +67,8 @@ $(document).ready(function () {
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
-                $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #password').val("");
+                $('#myModal #role').val(entity.role);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -105,7 +108,7 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            (record.shopName || '') + '</td><td>' + that.getRole(record.role) + '</td><td><div class="btn-group">' + that.getButtons(record.role) + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
@@ -114,7 +117,20 @@ $(document).ready(function () {
                 setPaging("#mainModal", data, that.search.bind(that));
             });
         },
-        getButtons: function () {
+        getRole(role) {
+            switch (role) {
+                case 0:
+                    return "核单员";
+                case 100:
+                    return "系统管理员";
+                default:
+                    return "";
+            }
+        },
+        getButtons: function (role) {
+            if (role == 100) {
+                return "";
+            }
             var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
             return buttons;
         },
@@ -136,9 +152,9 @@ $(document).ready(function () {
                                     message: '名称不能为空'
                                 },
                                 stringLength: {
-                                    min: 2,
+                                    min: 1,
                                     max: 30,
-                                    message: '名称在2-30个字符之间'
+                                    message: '名称在1-30个字符之间'
                                 }
                             }
                         }
