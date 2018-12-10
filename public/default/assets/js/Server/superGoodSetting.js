@@ -11,5 +11,9 @@ $(document).ready(function () {
         location.href = "/admin/orderTypeList";
     });
 
+    $("#left_btnIcon").on("click", function (e) {
+        location.href = "/admin/iconList";
+    });
+
     $(".admin-nav .menu-top #header_btnGood").addClass("active");
 });

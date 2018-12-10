@@ -3,6 +3,9 @@ var model = require("../../model.js"),
     Good = model.good,
     GoodAttribute = model.goodAttribute,
     GoodAttrVal = model.goodAttrVal,
+    path = require('path'),
+    fs = require('fs'),
+    serverPath = path.join(__dirname, "../"),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -201,5 +204,27 @@ module.exports = function (app) {
                     pageSize: pageSize
                 });
             });
+    });
+
+    app.get('/admin/iconList', checkLogin);
+    app.get('/admin/iconList', function (req, res) {
+        res.render('Server/iconList.html', {
+            title: '>商品图标上传',
+            websiteTitle: model.db.config.websiteTitle,
+            user: req.session.admin
+        });
+    });
+
+    app.post('/admin/getAllIcons', checkLogin);
+    app.post('/admin/getAllIcons', function (req, res) {
+        var iconPath = path.join(serverPath, "../public/uploads/icons"),
+            files = fs.readdirSync(iconPath),
+            iconArray = [];
+        files.forEach(function (itm, index) {
+            if (itm != "1.txt") {
+                iconArray.push(itm);
+            }
+        });
+        res.jsonp(iconArray);
     });
 }

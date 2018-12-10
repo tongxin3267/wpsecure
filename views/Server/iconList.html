@@ -1,0 +1,27 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/superGoodSetting.html" %} {%
+endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-horizontal">
+            </div>
+        </form>
+    </div>
+</div>
+<div class="content mainModal">
+    <div>
+        <input name="upfile" id='upfile' style="display:inline-block;" accept="image/*" type='file' />
+    </div>
+    <div>
+        <button id="btnUpload" class="btn btn-default btn-sm">上传</button>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<script type="text/javascript" src="/default/assets/js/Server/iconList.js"></script>
+{% endblock %}

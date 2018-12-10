@@ -158,7 +158,7 @@ module.exports = function (app) {
             })
             .then(counts => {
                 var offset = ((page - 1) * pageSize);
-                strSql = "select A.name, A.goodPrice, A.goodTypeName, A._id as goodId,B._id, B.goodPrice as newPrice from goods A left join shopGoods B on A._id=B.goodId and B.shopId=:shopId and B.isDeleted=false where A.isDeleted=0 ";
+                strSql = "select A.name, A.img, A.goodPrice, A.goodTypeName, A._id as goodId,B._id, B.goodPrice as newPrice from goods A left join shopGoods B on A._id=B.goodId and B.shopId=:shopId and B.isDeleted=false where A.isDeleted=0 ";
                 strSql += (whereFilter + " LIMIT " + offset + ", " + pageSize);
                 var shopId = req.session.shop._id;
                 model.db.sequelize.query(strSql, {

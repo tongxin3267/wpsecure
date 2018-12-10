@@ -317,3 +317,8 @@ body {
 #confirmModal .modal-body {
     word-wrap: break-word;
 }
+
+.form-group.iconGroup .dropdown-menu {
+    width: auto;
+    min-width: 10px;
+}

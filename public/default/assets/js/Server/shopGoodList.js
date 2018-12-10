@@ -126,7 +126,7 @@ $(document).ready(function () {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
+                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td style="padding:4px;"><img src=' + "/uploads/icons/" + (record.img || "") + ' style="height:30px;" /></td><td>' +
                             record.goodPrice + '</td><td>' + (record.newPrice || '') + '</td><td>' + record.goodTypeName +
                             '</td><td>' + that.getStatus(record._id) + '</td><td><div class="btn-group">' + that.getButtons(record._id) + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);

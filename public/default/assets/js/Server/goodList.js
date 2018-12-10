@@ -2,7 +2,8 @@ $(document).ready(function () {
     var pageManager = {
         options: {
             $mainSelectBody: $('.content.mainModal table tbody'),
-            isCopy: false
+            isCopy: false,
+            curImg: null
         },
         init: function () {
             this.initStyle();
@@ -51,13 +52,14 @@ $(document).ready(function () {
             that.addValidation();
             var obj = e.currentTarget;
             var entity = $(obj).parent().data("obj");
+            that.options.curImg = entity.img;
             // $('#name').attr("disabled", "disabled");
             $('#myModal #myModalLabel').text("修改名称");
             $('#myModal #name').val(entity.name);
             $('#myModal #detail').val(entity.detail);
             $('#myModal #sequence').val(entity.sequence);
             $('#myModal #goodPrice').val(entity.goodPrice);
-            $('#myModal #img').val(entity.img);
+            $('#myModal #img').attr("src", "/uploads/icons/" + (entity.img || ""));
             $('#myModal #id').val(entity._id);
             $('#myModal').modal({
                 backdrop: 'static',
@@ -86,7 +88,8 @@ $(document).ready(function () {
                 $('#myModal #detail').val("");
                 $('#myModal #sequence').val(0);
                 $('#myModal #goodPrice').val(0);
-                $('#myModal #img').val("");
+                that.options.curImg = null;
+                $('#myModal #img').attr("src", "");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -104,7 +107,7 @@ $(document).ready(function () {
                             detail: $.trim($('#myModal #detail').val()),
                             sequence: $.trim($('#myModal #sequence').val()),
                             goodPrice: $.trim($('#myModal #goodPrice').val()),
-                            img: $.trim($('#myModal #img').val()),
+                            img: that.options.curImg,
                             goodTypeId: $('#myModal #goodType').val(),
                             goodTypeName: $('#myModal #goodType').find("option:selected").text(),
                             orderTypeId: $('#myModal #orderType').val(),
@@ -157,6 +160,12 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("复制商品");
                 that.options.isCopy = true;
             });
+
+            $(".iconGroup ul.dropdown-menu").on("click", "li", function (e) {
+                var entity = $(e.currentTarget).data("obj");
+                $(".iconGroup #img").attr("src", "/uploads/icons/" + entity);
+                that.options.curImg = entity;
+            });
         },
         initData: function () {
             this.search();
@@ -172,7 +181,7 @@ $(document).ready(function () {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
+                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td style="padding:4px;"><img src=' + "/uploads/icons/" + (record.img || "") + ' style="height:30px;" /></td><td>' +
                             record.sequence + '</td><td>' + record.goodTypeName + '</td><td>' +
                             record.orderTypeName + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
@@ -181,6 +190,20 @@ $(document).ready(function () {
                     that.options.$mainSelectBody.append(d);
                 }
                 setPaging("#mainModal", data, that.search.bind(that));
+                that.initIcons();
+            });
+        },
+        initIcons: function () {
+            selfAjax("post", "/admin/getAllIcons", {}, function (data) {
+                if (data && data.length > 0) {
+                    var d = $(document.createDocumentFragment());
+                    data.forEach(function (record) {
+                        var $li = $(' <li><img src="/uploads/icons/' + record + '" style="height:30px;"></li>');
+                        $li.data("obj", record);
+                        d.append($li);
+                    });
+                    $(".iconGroup ul.dropdown-menu").append(d);
+                }
             });
         },
         getButtons: function () {
