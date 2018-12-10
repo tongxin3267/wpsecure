@@ -168,6 +168,8 @@ module.exports = function (app) {
                                         orderId: orderId,
                                         shopGoodId: g._id,
                                         goodPrice: sysGood.goodPrice,
+                                        orderTypeId: sysGood.orderTypeId,
+                                        orderTypeName: sysGood.orderTypeName,
                                         buyCount: g.count
                                     });
                                 }

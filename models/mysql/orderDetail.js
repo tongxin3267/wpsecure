@@ -8,7 +8,7 @@ const OrderDetail = db.defineModel('orderDetails', {
     orderId: {
         type: db.STRING(32)
     },
-    orderTypeId: {
+    orderTypeId: { // 订单type
         type: db.INTEGER,
         defaultValue: 0
     },
