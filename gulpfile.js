@@ -7,6 +7,7 @@ var babel = require("gulp-babel");
 
 var uglify = require('gulp-uglify');
 var pump = require('pump');
+var replace = require('gulp-replace');
 var uglifyjs = require('uglify-es');
 var composer = require('gulp-uglify/composer');
 var minify = composer(uglifyjs, console);
@@ -93,6 +94,16 @@ gulp.task('compressJs', ['js'], function (cb) {
             gulp.src(['build/public/default/assets/js/*/*.js'], {
                 base: 'build'
             }),
+            replace(/\bpageManager\b/g, '_1'),
+            replace(/\bpageOptions\b/g, '_2'),
+            replace(/\bpageInit\b/g, '_3'),
+            replace(/\bpageInitStyle\b/g, '_4'),
+            replace(/\bpageInitEvents\b/g, '_5'),
+            replace(/\bpageInitData\b/g, '_6'),
+            replace(/\bpageSearch\b/g, '_7'),
+            replace(/\bpageGetButtons\b/g, '_8'),
+            replace(/\bpageDestroy\b/g, '_9'),
+            replace(/\bpageAddValidation\b/g, '_10'),
             minify({
                 // mangle: {
                 //     properties: {}

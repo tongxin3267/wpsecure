@@ -41,6 +41,7 @@
     "gulp-babel": "^7.0.0",
     "gulp-clean-css": "3.7.0",
     "gulp-htmlmin": "3.0.0",
+    "gulp-replace": "^1.0.0",
     "gulp-rev": "^8.0.0",
     "gulp-rev-append": "0.1.8",
     "gulp-rev-collector": "^1.2.2",

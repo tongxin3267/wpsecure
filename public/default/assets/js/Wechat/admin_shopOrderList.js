@@ -29,6 +29,22 @@ $(document).ready(function () {
             $("#btnExit").click(function (e) {
                 location.href = "/wechatAdmin/logout";
             });
+
+            $('.weui-cells.orders').on("click", ".weui-form-preview .weui-form-preview__ft .weui-form-preview__btn_primary", function (e) {
+                var $ob = $(e.currentTarget),
+                    id = $ob.parents(".weui-form-preview").data("obj");
+                selfAjax("post", "/wechatAdmin/finishOrder", {
+                    orderId: id,
+                    orderTypeId: that.options.orderType
+                }, function (data) {
+                    if (data.error) {
+                        showAlert("出错了！");
+                        return;
+                    }
+                    that.search();
+                });
+
+            });
         },
         initData: function () {
             var that = this;
@@ -44,13 +60,16 @@ $(document).ready(function () {
         },
         search: function () {
             var that = this;
+            that.options.$orders.empty();
             selfAjax("post", "/wechatAdmin/orderList/search", {
                 orderTypeId: that.options.orderType
             }, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        d.append(that.renderOrder(record));
+                        var $ord = $(that.renderOrder(record));
+                        d.append($ord);
+                        $ord.data("obj", record._id);
                     });
                     that.options.$orders.append(d);
                 }

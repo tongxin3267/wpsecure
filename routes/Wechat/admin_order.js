@@ -3,7 +3,9 @@ var model = require("../../model.js"),
     Order = model.order,
     User = model.user,
     Shop = model.shop,
+    OrderSeq = model.orderSeq,
     OrderType = model.orderType,
+    OrderDetail = model.orderDetail,
     crypto = require('crypto'),
     auth = require("./auth.js"),
     checkLogin = auth.adminCheckLogin;
@@ -122,19 +124,22 @@ module.exports = function (app) {
     app.post('/wechatAdmin/orderList/search', checkLogin);
     app.post('/wechatAdmin/orderList/search', function (req, res) {
         //查询并返回第 page 页的 20 篇文章
-        var filter = {
-            payStatus: 2,
-            shopId: req.session.shop._id
-        };
-        Order.getFiltersWithPage(1, filter)
-            .then(function (result) {
-                os = result.rows;
+        var strSql = "select O.* from orders O join orderSeqs S on O._id=S.orderId where S.orderTypeId=:orderTypeId \
+            and O.payStatus=2 and O.orderStatus=0 and O.shopId=:shopId order by O.updatedDate, O._id LIMIT 0, 20";
+        return model.db.sequelize.query(strSql, {
+                replacements: {
+                    orderTypeId: req.body.orderTypeId,
+                    shopId: req.session.shop._id
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(function (os) {
                 if (os.length > 0) {
                     var pArray = [];
                     os.forEach(o => {
                         var p = getSingleOrderDetails(o._id, req.body.orderTypeId)
                             .then(ds => {
-                                o.dataValues.details = ds;
+                                o.details = ds;
                             });
                         pArray.push(p);
                     });
@@ -142,10 +147,68 @@ module.exports = function (app) {
                     Promise.all(pArray)
                         .then(r => {
                             res.jsonp({
-                                records: result.rows
+                                records: os
                             });
                         });
+                } else {
+                    res.jsonp({
+                        records: []
+                    });
                 }
+            });
+    });
+
+    app.post('/wechatAdmin/finishOrder', checkLogin);
+    app.post('/wechatAdmin/finishOrder', function (req, res) {
+        // 更改订单状态同时移除队列
+        OrderSeq.destroy({
+                'where': {
+                    orderId: req.body.orderId,
+                    orderTypeId: req.body.orderTypeId
+                }
+            })
+            .then(r => {
+                // 更新订单状态
+                OrderDetail.update({
+                        // 已完成
+                        status: 1,
+                        updatedDate: new Date(),
+                        deletedBy: req.session.wechatAdmin._id
+                    }, {
+                        where: {
+                            orderId: req.body.orderId,
+                            orderTypeId: req.body.orderTypeId
+                        }
+                    })
+                    .then(o => {
+                        OrderDetail.getFilter({
+                                status: 0,
+                                orderId: req.body.orderId,
+                                orderTypeId: req.body.orderTypeId
+                            })
+                            .then(d => {
+                                if (d) {
+                                    //不需要关闭订单
+                                    res.jsonp({
+                                        sucess: true
+                                    });
+                                } else {
+                                    // 关闭订单
+                                    Order.update({
+                                            orderStatus: 10
+                                        }, {
+                                            where: {
+                                                _id: req.body.orderId,
+                                            }
+                                        })
+                                        .then(o => {
+                                            res.jsonp({
+                                                sucess: true
+                                            });
+                                        });
+                                }
+                            });
+                    });
             });
     });
 }

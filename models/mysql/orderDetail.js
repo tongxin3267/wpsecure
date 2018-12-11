@@ -35,7 +35,7 @@ const OrderDetail = db.defineModel('orderDetails', {
     status: {
         type: db.INTEGER,
         defaultValue: 0
-    } // 0 排队 1 已取
+    } // 0 排队 1 已取 2 待取 9 取消
 });
 module.exports = OrderDetail;
 
