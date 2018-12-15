@@ -28,7 +28,7 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
-                $('#myModal #password').val("");
+                $('#myModal #userPwd').val("");
                 $('#myModal #role').val(0);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -42,7 +42,7 @@ $(document).ready(function () {
                     var postURI = "/admin/admin/add",
                         postObj = {
                             name: $.trim($('#myModal #name').val()),
-                            password: $.trim($('#myModal #password').val()),
+                            password: $.trim($('#myModal #userPwd').val()),
                             role: $("#myModal #role").val()
                         };
                     if ($('#id').val()) {
@@ -67,7 +67,7 @@ $(document).ready(function () {
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
-                $('#myModal #password').val("");
+                $('#myModal #userPwd').val("");
                 $('#myModal #role').val(entity.role);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({

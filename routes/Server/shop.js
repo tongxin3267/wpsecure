@@ -19,6 +19,8 @@ module.exports = function (app) {
         Shop.create({
                 name: req.body.name,
                 address: req.body.address,
+                phone: req.body.phone,
+                openTime: req.body.openTime,
                 createdBy: req.session.admin._id
             })
             .then(function (result) {
@@ -33,6 +35,8 @@ module.exports = function (app) {
         Shop.update({
                 name: req.body.name,
                 address: req.body.address,
+                phone: req.body.phone,
+                openTime: req.body.openTime,
                 deletedBy: req.session.admin._id,
                 updatedDate: new Date()
             }, {

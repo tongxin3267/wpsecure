@@ -29,6 +29,8 @@ $(document).ready(function () {
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #address').val("");
+                $('#myModal #phone').val("");
+                $('#myModal #openTime').val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -40,12 +42,14 @@ $(document).ready(function () {
                 if (validator.isValid()) {
                     var postURI = "/admin/shop/add",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            address: $.trim($('#address').val())
+                            name: $.trim($('#myModal #name').val()),
+                            address: $.trim($('#myModal #address').val()),
+                            phone: $.trim($('#myModal #phone').val()),
+                            openTime: $.trim($('#myModal #openTime').val())
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/shop/edit";
-                        postObj.id = $('#id').val();
+                        postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
                         if (data.error) {
@@ -66,6 +70,8 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
                 $('#myModal #address').val(entity.address);
+                $('#myModal #phone').val(entity.phone);
+                $('#myModal #openTime').val(entity.openTime);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',

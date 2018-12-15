@@ -32,11 +32,11 @@ module.exports = function (app) {
                     left join (select distinct goodId from goodattributes where isDeleted=false)GA on A._id=GA.goodId \
                     where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            shopId: req.body.shopId
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        shopId: req.body.shopId
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(shopGoods => {
                         res.jsonp({
                             categories: categories,
@@ -56,36 +56,37 @@ module.exports = function (app) {
         // userId
         // assume there are enough counts
         var goods = JSON.parse(req.body.goods),
+            userId = req.body.userId,
             _id = req.body._id,
             goodIds = [];
         goods.forEach(g => {
-                if (goodIds.indexOf(g._id) == -1) {
-                    goodIds.push(g._id);
-                }
-            }),
+            if (goodIds.indexOf(g._id) == -1) {
+                goodIds.push(g._id);
+            }
+        }),
             orderId = (new Date().getTime()).toString() + random4(),
             shopId = req.body.shopId;
         // 获取所有商品价格
         var strSql = "select S._id, S.goodPrice, S.goodId, G.orderTypeId, G.orderTypeName from shopGoods S join goods G on S.goodId=G._id and G.isDeleted=false \
                      where  S.isDeleted=false and S.shopId=:shopId and S.goodId in (:goodIds)";
         model.db.sequelize.query(strSql, {
-                replacements: {
-                    shopId: req.body.shopId,
-                    goodIds: goodIds
-                },
-                type: model.db.sequelize.QueryTypes.SELECT
-            })
+            replacements: {
+                shopId: req.body.shopId,
+                goodIds: goodIds
+            },
+            type: model.db.sequelize.QueryTypes.SELECT
+        })
             .then(gs => {
                 //获取所有属性价格
                 strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
                     and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            shopId: req.body.shopId,
-                            goodIds: goodIds
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        shopId: req.body.shopId,
+                        goodIds: goodIds
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(avs => {
                         var total = 0,
                             bulkOrderDetals = [],
@@ -112,11 +113,12 @@ module.exports = function (app) {
                             var sysGood = gObj[g._id];
                             // 订单商品插入队列里
                             if (!bulkOrderSeqs.some(bs => {
-                                    return bs.orderTypeId == sysGood.orderTypeId;
-                                })) {
+                                return bs.orderTypeId == sysGood.orderTypeId;
+                            })) {
                                 bulkOrderSeqs.push({
                                     orderId: orderId,
-                                    orderTypeId: sysGood.orderTypeId
+                                    orderTypeId: sysGood.orderTypeId,
+                                    createdBy: userId||1
                                 });
                             }
 
@@ -152,6 +154,7 @@ module.exports = function (app) {
                                         orderTypeId: sysGood.orderTypeId,
                                         orderTypeName: sysGood.orderTypeName,
                                         buyCount: g.count,
+                                        createdBy: userId||1,
                                         attrDetail: (attrDetail && attrDetail.substr(1))
                                     });
 
@@ -170,35 +173,37 @@ module.exports = function (app) {
                                         goodPrice: sysGood.goodPrice,
                                         orderTypeId: sysGood.orderTypeId,
                                         orderTypeName: sysGood.orderTypeName,
-                                        buyCount: g.count
+                                        buyCount: g.count,
+                                        createdBy: userId||1
                                     });
                                 }
                             }
                         });
 
                         return model.db.sequelize.transaction(function (t1) {
-                                return Order.create({
-                                        userId: 1,
-                                        shopId: shopId,
-                                        totalPrice: total.toFixed(2),
-                                        _id: orderId
-                                    }, {
+                            return Order.create({
+                                userId: userId||1,
+                                shopId: shopId,
+                                totalPrice: total.toFixed(2),
+                                _id: orderId,
+                                createdBy: userId||1
+                            }, {
+                                    transaction: t1
+                                })
+                                .then(o => {
+                                    return OrderDetail.bulkCreate(bulkOrderDetals, {
                                         transaction: t1
                                     })
-                                    .then(o => {
-                                        return OrderDetail.bulkCreate(bulkOrderDetals, {
+                                        .then(ds => {
+                                            return OrderSeq.bulkCreate(bulkOrderSeqs, {
                                                 transaction: t1
                                             })
-                                            .then(ds => {
-                                                return OrderSeq.bulkCreate(bulkOrderSeqs, {
-                                                        transaction: t1
-                                                    })
-                                                    .then(oseq => {
-                                                        return o;
-                                                    });
-                                            });
-                                    });
-                            })
+                                                .then(oseq => {
+                                                    return o;
+                                                });
+                                        });
+                                });
+                        })
                             .then(r => {
                                 return getSingleOrderDetails(r._id)
                                     .then(ds => {
@@ -244,13 +249,13 @@ module.exports = function (app) {
             shopId = req.body.shopId;
 
         Order.getFilters({
-                userId: 1,
-                shopId: shopId,
-                payStatus: 2,
-                orderStatus: {
-                    $lt: 10
-                }
-            }, [
+            userId: userId || 1,
+            shopId: shopId,
+            payStatus: 2,
+            orderStatus: {
+                $lt: 10
+            }
+        }, [
                 ['createdDate', 'desc'],
                 ['_id', 'desc']
             ])
@@ -283,26 +288,83 @@ module.exports = function (app) {
             shopId = req.body.shopId;
 
         GoodAttribute.getFilters({
-                goodId: goodId
-            })
+            goodId: goodId
+        })
             .then(attrs => {
                 var strSql = "select A._id, A.goodId, A.goodAttrId,A.name,case when B.price then B.price else A.price end price \
                 from goodAttrVals A left join shopGoodAttrVals B on A._id=B.goodAttrValId and B.isDeleted=false \
                 and B.shopId=:shopId and B.goodId=:goodId \
                 where A.isDeleted = 0 and A.goodId=:goodId order by A.createdDate, A._id ";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            goodId: goodId,
-                            shopId: shopId
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        goodId: goodId,
+                        shopId: shopId
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(vals => {
                         res.jsonp({
                             vals: vals,
                             attrs: attrs
                         });
                     });
+            });
+    });
+
+    // 获取队列信息和排名
+    app.post('/wechat/getOrderSeqs', function (req, res) {
+        // goodId, goodCount
+        // userId
+        // assume there are enough counts
+        var orderId = req.body.orderId,
+            userId = req.body.userId || 1;
+        Order.getFilter({
+            userId: userId,
+            _id: orderId,
+            payStatus: 2
+        })
+            .then(o => {
+                var p = Promise.all([]);
+                if (o && o.orderStatus < 10) {
+                    // 未完成，需要排序信息
+                    var strSql = "select distinct T.sequence, T.createdDate, T.name, T._id as orderTypeId, S.updatedDate from orderDetails D join orderTypes T on T._id=D.orderTypeId  \
+                    left join orderSeqs S on D.orderTypeId=S.orderTypeId and D.orderId=S.orderId  \
+                    where D.isDeleted=0 and D.orderId=:orderId order by T.sequence, T.createdDate, T._id";
+                    p= model.db.sequelize.query(strSql, {
+                        replacements: {
+                            orderId: orderId
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                        .then(seqs => {
+                            var pSeqs = [];
+                            seqs.forEach(seq => {
+                                if (seq.updatedDate) {
+                                    var pChild = OrderSeq.count({
+                                        where: {
+                                            orderTypeId: seq.orderTypeId,
+                                            status: 1,
+                                            updatedDate: { $lt: seq.updatedDate }
+                                        }
+                                    })
+                                        .then(count => {
+                                            seq.count = count;
+                                        });
+                                    pSeqs.push(pChild);
+                                }
+                                else {
+                                    seq.count = 0;
+                                }
+                            });
+                            return Promise.all(pSeqs)
+                                .then(function () {
+                                    return seqs;
+                                });
+                        });
+                }
+                p.then(seqs => {
+                    res.jsonp(seqs);
+                });
             });
     });
 }
