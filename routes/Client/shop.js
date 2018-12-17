@@ -29,7 +29,7 @@ module.exports = function (app) {
                 var strSql = "select A._id, A.name,A.img, A.detail, case when B.goodPrice then B.goodPrice else A.goodPrice end goodPrice, A.img, A.goodTypeId, A.goodTypeName, GA.goodId as hasAttr from goods A \
                     join shopGoods B on A._id=B.goodId and B.shopId=:shopId \
                     join goodTypes T on A.goodTypeId=T._id\
-                    left join (select distinct goodId from goodattributes where isDeleted=false)GA on A._id=GA.goodId \
+                    left join (select distinct goodId from goodAttributes where isDeleted=false)GA on A._id=GA.goodId \
                     where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
                     replacements: {
