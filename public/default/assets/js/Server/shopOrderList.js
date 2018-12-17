@@ -23,7 +23,7 @@ $(document).ready(function () {
             $("#gridBody").on("click", "td .btnSet", function (e) {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
-                location.href = "/shop/{0}/good/{1}/attribute".format($("#shopId").val(), entity.goodId);
+                location.href = "/shop/orderDetail/{0}".format(entity._id);
             });
         },
         initData: function () {
