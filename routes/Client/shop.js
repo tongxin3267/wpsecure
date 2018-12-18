@@ -17,34 +17,6 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.post('/wechat/validateUser', function (req, res) {
-        // 过期用户，重新获取session等信息
-        WechatHelper.getSessionKey(req.body.code, "wxa155aceaa74876cb", "10266a3d9426016582b3ba34d937acc1", function (data) {
-            if (data.error) {
-                res.jsonp({
-                    error: data.error
-                });
-                return;
-            }
-            // data.session_key
-            var md5 = crypto.createHash('md5'),
-                skey = md5.update(session_key).digest('hex');
-            Ws_user.update({
-                    session_key: data.session_key,
-                    skey: skey
-                }, {
-                    where: {
-                        wxId: data.openId
-                    }
-                })
-                .then(user => {
-                    res.jsonp({
-                        skey: skey
-                    });
-                });
-        });
-    });
-
     app.post('/wechat/login', function (req, res) {
         // 过期用户，重新获取session等信息
         WechatHelper.getSessionKey(req.body.code, "wxa155aceaa74876cb", "10266a3d9426016582b3ba34d937acc1", function (data) {
@@ -56,19 +28,19 @@ module.exports = function (app) {
                 return;
             }
             var md5 = crypto.createHash('md5'),
-                skey = md5.update(session_key).digest('hex');
+                skey = md5.update(data.session_key).digest('hex');
             Ws_user.getFilter({
-                    wxId: data.openId
-                })
+                wxId: data.openid
+            })
                 .then(user => {
                     if (user) {
                         // 更新
                         Ws_user.update({
-                                session_key: data.session_key,
-                                skey: skey
-                            }, {
+                            sessionkey: data.session_key,
+                            skey: skey
+                        }, {
                                 where: {
-                                    wxId: data.openId
+                                    wxId: data.openid
                                 }
                             })
                             .then(user => {
@@ -79,16 +51,17 @@ module.exports = function (app) {
                     } else {
                         // 新建
                         Ws_user.create({
-                                wxId: data.openId,
-                                session_key: data.session_key,
-                                skey: skey,
-                                uname: req.body.nickName,
-                                uavatar: req.body.avatarUrl,
-                                ugender: req.body.gender
-                            })
+                            wxId: data.openid,
+                            sessionkey: data.session_key,
+                            skey: skey,
+                            uname: req.body.nickName,
+                            uavatar: req.body.avatarUrl,
+                            ugender: req.body.gender
+                        })
                             .then(user => {
                                 res.jsonp({
-                                    skey: skey
+                                    skey: skey,
+                                    userId: user._id
                                 });
                             });
                     }
@@ -114,11 +87,11 @@ module.exports = function (app) {
                     left join (select distinct goodId from goodAttributes where isDeleted=false)GA on A._id=GA.goodId \
                     where A.isDeleted=0 order by T.sequence, T._id, A.sequence, A._id";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            shopId: req.body.shopId
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        shopId: req.body.shopId
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(shopGoods => {
                         res.jsonp({
                             categories: categories,
@@ -142,33 +115,33 @@ module.exports = function (app) {
             _id = req.body._id,
             goodIds = [];
         goods.forEach(g => {
-                if (goodIds.indexOf(g._id) == -1) {
-                    goodIds.push(g._id);
-                }
-            }),
+            if (goodIds.indexOf(g._id) == -1) {
+                goodIds.push(g._id);
+            }
+        }),
             orderId = (new Date().getTime()).toString() + random4(),
             shopId = req.body.shopId;
         // 获取所有商品价格
         var strSql = "select S._id, S.goodPrice, S.goodId, G.orderTypeId, G.orderTypeName from shopGoods S join goods G on S.goodId=G._id and G.isDeleted=false \
                      where  S.isDeleted=false and S.shopId=:shopId and S.goodId in (:goodIds)";
         model.db.sequelize.query(strSql, {
-                replacements: {
-                    shopId: req.body.shopId,
-                    goodIds: goodIds
-                },
-                type: model.db.sequelize.QueryTypes.SELECT
-            })
+            replacements: {
+                shopId: req.body.shopId,
+                goodIds: goodIds
+            },
+            type: model.db.sequelize.QueryTypes.SELECT
+        })
             .then(gs => {
                 //获取所有属性价格
                 strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
                     and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            shopId: req.body.shopId,
-                            goodIds: goodIds
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        shopId: req.body.shopId,
+                        goodIds: goodIds
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(avs => {
                         var total = 0,
                             bulkOrderDetals = [],
@@ -195,11 +168,12 @@ module.exports = function (app) {
                             var sysGood = gObj[g._id];
                             // 订单商品插入队列里
                             if (!bulkOrderSeqs.some(bs => {
-                                    return bs.orderTypeId == sysGood.orderTypeId;
-                                })) {
+                                return bs.orderTypeId == sysGood.orderTypeId;
+                            })) {
                                 bulkOrderSeqs.push({
                                     orderId: orderId,
                                     orderTypeId: sysGood.orderTypeId,
+                                    status:1, // TBD real env need remove
                                     createdBy: userId || 1
                                 });
                             }
@@ -263,29 +237,30 @@ module.exports = function (app) {
                         });
 
                         return model.db.sequelize.transaction(function (t1) {
-                                return Order.create({
-                                        userId: userId || 1,
-                                        shopId: shopId,
-                                        totalPrice: total.toFixed(2),
-                                        _id: orderId,
-                                        createdBy: userId || 1
-                                    }, {
+                            return Order.create({
+                                userId: userId || 1,
+                                shopId: shopId,
+                                totalPrice: total.toFixed(2),
+                                _id: orderId,
+                                payStatus:2,// TBD need remove in real env
+                                createdBy: userId || 1
+                            }, {
+                                    transaction: t1
+                                })
+                                .then(o => {
+                                    return OrderDetail.bulkCreate(bulkOrderDetals, {
                                         transaction: t1
                                     })
-                                    .then(o => {
-                                        return OrderDetail.bulkCreate(bulkOrderDetals, {
+                                        .then(ds => {
+                                            return OrderSeq.bulkCreate(bulkOrderSeqs, {
                                                 transaction: t1
                                             })
-                                            .then(ds => {
-                                                return OrderSeq.bulkCreate(bulkOrderSeqs, {
-                                                        transaction: t1
-                                                    })
-                                                    .then(oseq => {
-                                                        return o;
-                                                    });
-                                            });
-                                    });
-                            })
+                                                .then(oseq => {
+                                                    return o;
+                                                });
+                                        });
+                                });
+                        })
                             .then(r => {
                                 return getSingleOrderDetails(r._id)
                                     .then(ds => {
@@ -331,13 +306,13 @@ module.exports = function (app) {
             shopId = req.body.shopId;
 
         Order.getFilters({
-                userId: userId || 1,
-                shopId: shopId,
-                payStatus: 2,
-                orderStatus: {
-                    $lt: 10
-                }
-            }, [
+            userId: userId || 1,
+            shopId: shopId,
+            payStatus: 2,
+            orderStatus: {
+                $lt: 10
+            }
+        }, [
                 ['createdDate', 'desc'],
                 ['_id', 'desc']
             ])
@@ -370,20 +345,20 @@ module.exports = function (app) {
             shopId = req.body.shopId;
 
         GoodAttribute.getFilters({
-                goodId: goodId
-            })
+            goodId: goodId
+        })
             .then(attrs => {
                 var strSql = "select A._id, A.goodId, A.goodAttrId,A.name,case when B.price then B.price else A.price end price \
                 from goodAttrVals A left join shopGoodAttrVals B on A._id=B.goodAttrValId and B.isDeleted=false \
                 and B.shopId=:shopId and B.goodId=:goodId \
                 where A.isDeleted = 0 and A.goodId=:goodId order by A.createdDate, A._id ";
                 model.db.sequelize.query(strSql, {
-                        replacements: {
-                            goodId: goodId,
-                            shopId: shopId
-                        },
-                        type: model.db.sequelize.QueryTypes.SELECT
-                    })
+                    replacements: {
+                        goodId: goodId,
+                        shopId: shopId
+                    },
+                    type: model.db.sequelize.QueryTypes.SELECT
+                })
                     .then(vals => {
                         res.jsonp({
                             vals: vals,
@@ -401,10 +376,10 @@ module.exports = function (app) {
         var orderId = req.body.orderId,
             userId = req.body.userId || 1;
         Order.getFilter({
-                userId: userId,
-                _id: orderId,
-                payStatus: 2
-            })
+            userId: userId,
+            _id: orderId,
+            payStatus: 2
+        })
             .then(o => {
                 var p = Promise.all([]);
                 if (o && o.orderStatus < 10) {
@@ -413,24 +388,24 @@ module.exports = function (app) {
                     left join orderSeqs S on D.orderTypeId=S.orderTypeId and D.orderId=S.orderId  \
                     where D.isDeleted=0 and D.orderId=:orderId order by T.sequence, T.createdDate, T._id";
                     p = model.db.sequelize.query(strSql, {
-                            replacements: {
-                                orderId: orderId
-                            },
-                            type: model.db.sequelize.QueryTypes.SELECT
-                        })
+                        replacements: {
+                            orderId: orderId
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
                         .then(seqs => {
                             var pSeqs = [];
                             seqs.forEach(seq => {
                                 if (seq.updatedDate) {
                                     var pChild = OrderSeq.count({
-                                            where: {
-                                                orderTypeId: seq.orderTypeId,
-                                                status: 1,
-                                                updatedDate: {
-                                                    $lt: seq.updatedDate
-                                                }
+                                        where: {
+                                            orderTypeId: seq.orderTypeId,
+                                            status: 1,
+                                            updatedDate: {
+                                                $lt: seq.updatedDate
                                             }
-                                        })
+                                        }
+                                    })
                                         .then(count => {
                                             seq.count = count;
                                         });
