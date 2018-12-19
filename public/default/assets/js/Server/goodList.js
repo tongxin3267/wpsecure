@@ -198,7 +198,7 @@ $(document).ready(function () {
                 if (data && data.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.forEach(function (record) {
-                        var $li = $(' <li><img src="/uploads/icons/' + record + '" style="height:30px;"></li>');
+                        var $li = $(' <li><img src="/uploads/icons/' + record + '" style="height:60px;"></li>');
                         $li.data("obj", record);
                         d.append($li);
                     });

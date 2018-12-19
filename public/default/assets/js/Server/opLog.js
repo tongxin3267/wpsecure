@@ -1,158 +1,152 @@
-var isNew = true;
-
-$(document).ready(function() {
-    $("#btnAdmin").addClass("active");
-
-    $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
-    $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
-
-    search();
-});
-
-//------------search funfunction
-var $mainSelectBody = $('.content.mainModal table tbody');
-var getButtons = function() {
-    var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
-    return buttons;
-};
-
-function search(p) {
-    var filter = {
-            name: $(".mainModal #InfoSearch #Name").val()
+$(document).ready(function () {
+    var pageManager = {
+        options: {
+            $mainSelectBody: $('.content.mainModal table tbody')
         },
-        pStr = p ? "p=" + p : "";
-    $mainSelectBody.empty();
-    selfAjax("post", "/admin/opLogList/search?" + pStr, filter, function(data) {
-        if (data && data.opLogs.length > 0) {
-            data.opLogs.forEach(function(opLog) {
-                var $tr = $('<tr id=' + opLog._id + '><td>' + opLog.name + '</td><td>' +
-                    opLog.sCount + '</td><td>' + opLog.schoolArea + '</td><td><div class="btn-group">' + getButtons() + '</div></td></tr>');
-                $tr.find(".btn-group").data("obj", opLog);
-                $mainSelectBody.append($tr);
+        init: function () {
+            this.initStyle();
+            this.initEvents();
+            this.initData();
+        },
+        initStyle: function () {
+            $("#left_btnOrderSep").addClass("active");
+
+            $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
+            $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
+        },
+        initEvents: function () {
+            var that = this;
+            $(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
+                that.search();
             });
-        }
-        $("#mainModal #total").val(data.total);
-        $("#mainModal #page").val(data.page);
-        setPaging("#mainModal", data);
-    });
-};
 
-$(".mainModal #InfoSearch #btnSearch").on("click", function(e) {
-    search();
-});
+            $("#btnAdd").on("click", function (e) {
+                isNew = true;
+                that.destroy();
+                that.addValidation();
+                // $('#name').removeAttr("disabled");
+                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #id').val("");
+                $('#myModal #name').val("");
+                $('#myModal #sequence').val(0);
+                $('#myModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
 
-$("#mainModal .paging .prepage").on("click", function(e) {
-    var page = parseInt($("#mainModal #page").val()) - 1;
-    search(page);
-});
-
-$("#mainModal .paging .nextpage").on("click", function(e) {
-    var page = parseInt($("#mainModal #page").val()) + 1;
-    search(page);
-});
-//------------end
-
-function destroy(){
-    var validator = $('#myModal').data('formValidation');
-    if(validator)
-    {
-        validator.destroy();
-    }
-};
-
-function addValidation(callback){
-    setTimeout(function() {
-    $('#myModal').formValidation({
-        // List of fields and their validation rules
-        fields: {
-            'name': {
-                trigger: "blur change",
-                validators: {
-                    notEmpty: {
-                        message: '校区不能为空'
-                    },
-                    stringLength: {
-                        min: 4,
-                        max: 30,
-                        message: '校区在4-30个字符之间'
+            $("#btnSave").on("click", function (e) {
+                var validator = $('#myModal').data('formValidation').validate();
+                if (validator.isValid()) {
+                    var postURI = "/admin/orderSep/add",
+                        postObj = {
+                            name: $.trim($('#name').val()),
+                            sequence: $.trim($('#sequence').val())
+                        };
+                    if ($('#id').val()) {
+                        postURI = "/admin/orderSep/edit";
+                        postObj.id = $('#id').val();
                     }
+                    selfAjax("post", postURI, postObj, function (data) {
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        location.reload();
+                    });
                 }
-            },
-            'address': {
-                trigger: "blur change",
-                validators: {
-                    stringLength: {
-                        max: 100,
-                        message: '地址不能超过100个字符'
-                    },
+            });
+
+            $("#gridBody").on("click", "td .btnEdit", function (e) {
+                that.destroy();
+                that.addValidation();
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                // $('#name').attr("disabled", "disabled");
+                $('#myModal #myModalLabel').text("修改名称");
+                $('#myModal #name').val(entity.name);
+                $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #id').val(entity._id);
+                $('#myModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            $("#gridBody").on("click", "td .btnDelete", function (e) {
+                showConfirm("确定要删除吗？");
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                $("#btnConfirmSave").off("click").on("click", function (e) {
+                    selfAjax("post", "/admin/orderSep/delete", {
+                        id: entity._id
+                    }, function (data) {
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        location.reload();
+                    });
+                });
+            });
+        },
+        initData: function () {
+            this.search();
+        },
+        search: function (p) {
+            var that = this,
+                filter = {
+                    name: $(".mainModal #InfoSearch #Name").val()
+                },
+                pStr = p ? "p=" + p : "";
+            this.options.$mainSelectBody.empty();
+            selfAjax("post", "/admin/orderSepList/search?" + pStr, filter, function (data) {
+                if (data && data.records.length > 0) {
+                    var d = $(document.createDocumentFragment());
+                    data.records.forEach(function (record) {
+                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
+                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                        $tr.find(".btn-group").data("obj", record);
+                        d.append($tr);
+                    });
+                    that.options.$mainSelectBody.append(d);
                 }
+                setPaging("#mainModal", data, that.search.bind(that));
+            });
+        },
+        getButtons: function () {
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+            return buttons;
+        },
+        destroy: function () {
+            var validator = $('#myModal').data('formValidation');
+            if (validator) {
+                validator.destroy();
             }
+        },
+        addValidation: function (callback) {
+            setTimeout(function () {
+                $('#myModal').formValidation({
+                    // List of fields and their validation rules
+                    fields: {
+                        'name': {
+                            trigger: "blur change",
+                            validators: {
+                                notEmpty: {
+                                    message: '名称不能为空'
+                                },
+                                stringLength: {
+                                    min: 2,
+                                    max: 30,
+                                    message: '名称在2-30个字符之间'
+                                }
+                            }
+                        }
+                    }
+                });
+            }, 0);
         }
-    });
-    }, 0);
-};
+    };
 
-$("#btnAdd").on("click", function(e) {
-    isNew = true;
-    destroy();
-    addValidation();
-    // $('#name').removeAttr("disabled");
-    $('#myModalLabel').text("新增校区");
-    $('#name').val("");
-    $('#address').val("");
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
-$("#btnSave").on("click", function(e) {
-    var validator = $('#myModal').data('formValidation').validate();
-    if(validator.isValid())
-    {
-        var postURI = "/admin/opLog/add",
-            postObj = {
-            name: $.trim($('#name').val()),
-            address: $.trim($('#address').val())
-        };
-        if (!isNew) {
-            postURI = "/admin/opLog/edit";
-            postObj.id = $('#id').val();
-        }
-        selfAjax("post", postURI, postObj, function(data) {
-            if (data.error) {
-                showAlert(data.error);
-                return;
-            }
-            location.reload();
-        });
-    }
-});
-
-$("#gridBody").on("click", "td .btnEdit", function(e) {
-    isNew = false;
-    destroy();
-    addValidation();
-    var obj = e.currentTarget;
-    var entity = $(obj).parent().data("obj");
-    // $('#name').attr("disabled", "disabled");
-    $('#myModalLabel').text("修改校区");
-    $('#name').val(entity.name);
-    $('#address').val(entity.address);
-    $('#id').val(entity._id);
-    $('#myModal').modal({ backdrop: 'static', keyboard: false });
-});
-
-$("#gridBody").on("click", "td .btnDelete", function(e) {
-    showConfirm("确定要删除吗？");
-    var obj = e.currentTarget;
-    var entity = $(obj).parent().data("obj");
-    $("#btnConfirmSave").off("click").on("click", function(e) {
-        selfAjax("post", "/admin/opLog/delete", {
-            id: entity._id
-        }, function(data) {
-            if (data.error) {
-                showAlert(data.error);
-                return;
-            }
-           location.reload();
-        });
-    });
+    pageManager.init();
 });

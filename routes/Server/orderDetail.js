@@ -6,29 +6,37 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.get('/admin/orderDetailList', checkLogin);
-    app.get('/admin/orderDetailList', function (req, res) {
+    app.get('/shop/orderDetail/:orderId', checkLogin);
+    app.get('/shop/orderDetail/:orderId', function (req, res) {
         var s = req.session.shop;
         res.render('Server/orderDetailList.html', {
             title: '>订单详情',
             websiteTitle: s.name,
-            user: req.session.admin
+            user: req.session.admin,
+            orderId: req.params.orderId
         });
     });
 
-    app.post('/admin/orderDetailList/search', checkLogin);
-    app.post('/admin/orderDetailList/search', function (req, res) {
-        strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
-                    and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
-        model.db.sequelize.query(strSql, {
-                replacements: {
-                    shopId: req.body.shopId,
-                    goodIds: goodIds
-                },
-                type: model.db.sequelize.QueryTypes.SELECT
+    app.post('/shop/orderDetail/orderAndDetails', checkLogin);
+    app.post('/shop/orderDetail/orderAndDetails', function (req, res) {
+        Order.getFilter({
+                _id: req.body.orderId
             })
-            .then(results => {
-                res.jsonp(results);
-            })
+            .then(order => {
+                strSql = "select G.name, D.attrDetail, D.buyCount, D.goodPrice from orderDetails D join shopGoods S on S._id=D.shopGoodId \
+                    join goods G on S.goodId=G._id where D.orderId=:orderId ";
+                model.db.sequelize.query(strSql, {
+                        replacements: {
+                            orderId: req.body.orderId
+                        },
+                        type: model.db.sequelize.QueryTypes.SELECT
+                    })
+                    .then(results => {
+                        res.jsonp({
+                            order: order,
+                            details: results
+                        });
+                    })
+            });
     });
 }

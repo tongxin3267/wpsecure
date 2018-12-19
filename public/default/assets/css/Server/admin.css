@@ -322,3 +322,12 @@ body {
     width: auto;
     min-width: 10px;
 }
+
+.iconGroup ul.dropdown-menu {
+    max-height: 300px;
+    overflow: scroll;
+}
+
+.iconGroup ul.dropdown-menu li {
+    padding: 5px 0;
+}
