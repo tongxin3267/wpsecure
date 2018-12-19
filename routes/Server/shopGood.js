@@ -3,6 +3,7 @@ var model = require("../../model.js"),
     ShopGood = model.shopGood,
     Good = model.good,
     Shop = model.shop,
+    Order = model.order,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
@@ -35,6 +36,38 @@ module.exports = function (app) {
             user: req.session.admin,
             goodId: req.params.gId
         });
+    });
+
+    app.get('/shop/manage', checkLogin);
+    app.get('/shop/manage', function (req, res) {
+        res.render('Server/shopManage.html', {
+            title: '>门店管理',
+            websiteTitle: req.session.shop.name,
+            user: req.session.admin
+        });
+    });
+
+    app.post('/shop/expier', checkLogin);
+    app.post('/shop/expier', function (req, res) {
+        Order.update({
+                orderStatus: 12
+            }, {
+                where: {
+                    shopId: req.session.shop._id,
+                    orderStatus: 0,
+                    payStatus: 2
+                }
+            })
+            .then(o => {
+                res.jsonp({
+                    sucess: true
+                });
+            })
+            .catch(e => {
+                res.jsonp({
+                    error: e.toString()
+                });
+            });
     });
 
     app.post('/shop/shopGood/on', checkLogin);

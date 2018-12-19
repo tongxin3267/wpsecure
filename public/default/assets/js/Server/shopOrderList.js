@@ -57,6 +57,8 @@ $(document).ready(function () {
                     return "已完成";
                 case 11:
                     return "已取消";
+                case 12:
+                    return "已过期";
                 case 13:
                     return "已退款";
                 default:

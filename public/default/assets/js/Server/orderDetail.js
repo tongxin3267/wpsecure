@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.initData();
         },
         initStyle: function () {
-            $("#left_btnOrderSep").addClass("active");
+            $("#left_btnOrder").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
