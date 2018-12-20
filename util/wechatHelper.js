@@ -130,14 +130,19 @@ var Wechat = {
                         }
                     }
                 };
-                request.post(util.format('https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s',
-                    result.token
-                ), {
-                    body: data
-                }, function (error, response, body) {
-                    debugger;
-                    // do nothing
-                })
+                request({
+                        url: util.format('https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s', result.token),
+                        method: "POST",
+                        json: true,
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                        body: data
+                    },
+                    function (error, response, body) {
+                        debugger;
+                        // do nothing
+                    })
             });
     }
 };
