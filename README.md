@@ -8,7 +8,7 @@ ADD COLUMN `uavatar` varchar(256) NOT NULL DEFAULT '' AFTER `ugender`,
 ADD COLUMN `skey` varchar(128) NOT NULL DEFAULT '' AFTER `uavatar`,
 ADD COLUMN `sessionkey` varchar(128) NOT NULL DEFAULT '' AFTER `skey`;
 
-CREATE TABLE `systemconfigures` (
+CREATE TABLE `systemConfigures` (
   `name` varchar(50) NOT NULL,
   `value` varchar(250) NOT NULL DEFAULT '',
   `_id` int(11) NOT NULL AUTO_INCREMENT,

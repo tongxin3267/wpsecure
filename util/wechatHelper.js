@@ -34,11 +34,13 @@ var Wechat = {
     },
     getWXToken: function () {
         var that = this;
+        debugger;
         return new Promise(function (resolve, reject) {
             request.get(util.format('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s',
                 that.option.appid,
                 that.option.appSecret
             ), function (error, response, body) {
+                debugger;
                 const data = JSON.parse(body);
                 if (data.errcode) {
                     reject(data.errmsg);
@@ -50,10 +52,12 @@ var Wechat = {
     },
     checkToken: function () {
         var that = this;
+        debugger;
         return SystemConfigure.getFilter({
                 name: "access_token"
             })
             .then(token => {
+                debugger;
                 if (token) {
                     if (token.value) {
                         // 2 小时有效，可以简单处理为1.5小时过期
@@ -71,6 +75,7 @@ var Wechat = {
                     return that.getWXToken()
                         .then(result => {
                             // 更新token信息
+                            debugger;
                             return SystemConfigure.update({
                                     value: JSON.stringify(result),
                                     updatedDate: new Date()
@@ -80,12 +85,14 @@ var Wechat = {
                                     }
                                 })
                                 .then(u => {
+                                    debugger;
                                     return {
                                         token: result.access_token
                                     };
                                 });
                         })
                         .catch(er => {
+                            debugger;
                             return {
                                 error: er
                             };
@@ -96,8 +103,10 @@ var Wechat = {
             });
     },
     sendPayMessage: function (order, formId, openid) {
+        debugger;
         this.checkToken()
             .then(result => {
+                debugger;
                 if (!result || result.error) {
                     return;
                 }
@@ -124,6 +133,7 @@ var Wechat = {
                 request.post(util.format('https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s',
                     result.token
                 ), data, function (error, response, body) {
+                    debugger;
                     // do nothing
                 })
             });
