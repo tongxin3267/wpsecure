@@ -133,7 +133,7 @@ var Wechat = {
                 request.post(util.format('https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=%s',
                     result.token
                 ), {
-                    form: data
+                    formData: data
                 }, function (error, response, body) {
                     debugger;
                     // do nothing
