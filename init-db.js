@@ -18,10 +18,15 @@ function step2() {
         password = md5.update("admin12345").digest('hex');
 
     return model.user.create({
-        name: "admin",
-        password: password,
-        role: 100
-    });
+            name: "admin",
+            password: password,
+            role: 100
+        })
+        .then(o => {
+            return model.systemConfigure.create({
+                name: 'access_token'
+            });
+        });
 };
 
 step1().then(function () {

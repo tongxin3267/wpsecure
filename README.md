@@ -7,3 +7,8 @@ ADD COLUMN `ugender` tinyint(1) NOT NULL DEFAULT '0' AFTER `uname`,
 ADD COLUMN `uavatar` varchar(256) NOT NULL DEFAULT '' AFTER `ugender`,
 ADD COLUMN `skey` varchar(128) NOT NULL DEFAULT '' AFTER `uavatar`,
 ADD COLUMN `sessionkey` varchar(128) NOT NULL DEFAULT '' AFTER `skey`;
+
+## steps
+1. 创建message template
+2. 创建支付认证等等信息
+3. 
