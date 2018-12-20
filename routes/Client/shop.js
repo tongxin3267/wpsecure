@@ -275,14 +275,14 @@ module.exports = function (app) {
                                     .then(user => {
                                         // formId
                                         // send template message
-                                        return WechatHelper.sendPayMessage(r, req.body.formId, user.wxId);
-                                        // return getSingleOrderDetails(r._id)
-                                        //     .then(ds => {
-                                        //         r.dataValues.details = ds;
-                                        //         res.jsonp({
-                                        //             order: r
-                                        //         });
-                                        //     });
+                                        WechatHelper.sendPayMessage(r, req.body.formId, user.wxId);
+                                        return getSingleOrderDetails(r._id)
+                                            .then(ds => {
+                                                r.dataValues.details = ds;
+                                                res.jsonp({
+                                                    order: r
+                                                });
+                                            });
                                     });
                             })
                             .catch(e => {

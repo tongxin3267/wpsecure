@@ -110,10 +110,10 @@ var Wechat = {
                 if (!result || result.error) {
                     return;
                 }
+                // remove page
                 var data = {
                     "touser": openid,
                     "template_id": "vVxVs6QulMcvFpDbeBb52iBvip0o0X22hwARunvfP0k",
-                    "page": "order/order",
                     "form_id": formId,
                     "data": {
                         "keyword1": {
