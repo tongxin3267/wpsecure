@@ -43,9 +43,10 @@ module.exports = function (app) {
                                     wxId: data.openid
                                 }
                             })
-                            .then(user => {
+                            .then(u => {
                                 res.jsonp({
-                                    skey: skey
+                                    skey: skey,
+                                    userId: user._id
                                 });
                             });
                     } else {

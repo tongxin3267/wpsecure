@@ -54,34 +54,42 @@ var Wechat = {
                 name: "access_token"
             })
             .then(token => {
-                if (token && token.value) {
-                    // 2 小时有效，可以简单处理为1.5小时过期
-                    var tokenJSON = JSON.parse(token.value);
-                    if (moment().isAfter(moment(token.updatedDate).add(1.5, "hours"))) {
-                        // 过期
-                        return that.getWXToken()
-                            .then(result => {
-                                // 更新token信息
-                                return SystemConfigure.update({
-                                        value: JSON.stringify(result),
-                                        updatedDate: new Date()
-                                    })
-                                    .then(u => {
-                                        return {
-                                            token: result.access_token
-                                        };
-                                    });
-                            })
-                            .catch(er => {
-                                return {
-                                    error: er
-                                };
-                            });
-                    } else {
-                        return {
-                            token: tokenJSON.access_token
-                        };
+                if (token) {
+                    if (token.value) {
+                        // 2 小时有效，可以简单处理为1.5小时过期
+                        var tokenJSON = JSON.parse(token.value);
+                        if (moment().isAfter(moment(token.updatedDate).add(1.5, "hours"))) {
+                            // need update
+                        } else {
+                            return {
+                                token: tokenJSON.access_token
+                            };
+                        }
                     }
+                    // no value need update and expire need update
+                    // 过期
+                    return that.getWXToken()
+                        .then(result => {
+                            // 更新token信息
+                            return SystemConfigure.update({
+                                    value: JSON.stringify(result),
+                                    updatedDate: new Date()
+                                }, {
+                                    where: {
+                                        name: "access_token"
+                                    }
+                                })
+                                .then(u => {
+                                    return {
+                                        token: result.access_token
+                                    };
+                                });
+                        })
+                        .catch(er => {
+                            return {
+                                error: er
+                            };
+                        });
                 } else {
                     return false;
                 }
@@ -90,7 +98,7 @@ var Wechat = {
     sendPayMessage: function (order, formId, openid) {
         this.checkToken()
             .then(result => {
-                if (result.error) {
+                if (!result || result.error) {
                     return;
                 }
                 var data = {

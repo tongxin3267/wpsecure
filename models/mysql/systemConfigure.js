@@ -10,7 +10,7 @@ const SystemConfigure = db.defineModel('systemConfigures', {
         type: db.STRING(50)
     },
     value: {
-        type: db.STRING(150),
+        type: db.STRING(250),
         defaultValue: ''
     }
 });
