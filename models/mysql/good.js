@@ -43,6 +43,12 @@ const Good = db.defineModel('goods', {
         type: db.STRING(50),
         defaultValue: ''
     }
+}, {
+    indexes: [{
+        fields: ['sequence']
+    }, {
+        fields: ['createdDate']
+    }]
 });
 module.exports = Good;
 

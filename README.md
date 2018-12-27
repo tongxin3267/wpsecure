@@ -23,7 +23,8 @@ CREATE TABLE `systemConfigures` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `systemConfigures` (`name`,`value`, `createdDate`,`updatedDate`) VALUES ('access_token','','2018-12-20 13:25:38','2018-12-20 13:25:38');
+
 ## steps
 1. 创建message template
 2. 创建支付认证等等信息
-3. 
+3. accesstoken 需要独立出来

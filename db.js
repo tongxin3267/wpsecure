@@ -28,7 +28,7 @@ var sequelize = new Sequelize(config.db, config.username, config.password, {
 
 const ID_TYPE = Sequelize.STRING(50);
 
-function defineModel(name, attributes) {
+function defineModel(name, attributes, options) {
     var attrs = {};
     for (let key in attributes) {
         let value = attributes[key];
@@ -82,21 +82,22 @@ function defineModel(name, attributes) {
         defaultValue: 0,
         allowNull: false
     };
-
-    return sequelize.define(name, attrs, {
-        tableName: name,
-        timestamps: false,
-        hooks: {
-            beforeValidate: function (obj) {
-                let now = Date.now();
-                // if (!obj.isNewRecord) {
-                obj.updatedDate = now;
-                obj.version++;
-                // }
-            }
-        },
-        charset: 'utf8mb4'
-    });
+    if (!options) {
+        options = {};
+    }
+    options.tableName = name;
+    options.timestamps = false;
+    options.hooks = {
+        beforeValidate: function (obj) {
+            let now = Date.now();
+            // if (!obj.isNewRecord) {
+            obj.updatedDate = now;
+            obj.version++;
+            // }
+        }
+    };
+    options.charset = 'utf8mb4';
+    return sequelize.define(name, attrs, options);
 }
 
 const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW', 'DATEONLY'];

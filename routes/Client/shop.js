@@ -139,6 +139,7 @@ module.exports = function (app) {
                 type: model.db.sequelize.QueryTypes.SELECT
             })
             .then(gs => {
+                var IP = req.ip.replace(/::ffff:/, '');
                 //获取所有属性价格
                 strSql = "select case when A.price then A.price else AV.price end price, AV.goodId, AV.name, AV.goodAttrId, AV._id from goodAttrVals AV left join shopGoodAttrVals A on A.isDeleted=false \
                     and A.goodAttrValId=AV._id and A.shopId=:shopId where AV.goodId in (:goodIds)";
@@ -181,7 +182,7 @@ module.exports = function (app) {
                                     orderId: orderId,
                                     orderTypeId: sysGood.orderTypeId,
                                     status: 1, // TBD real env need remove
-                                    createdBy: userId || 1
+                                    createdBy: userId
                                 });
                             }
 
@@ -217,7 +218,7 @@ module.exports = function (app) {
                                         orderTypeId: sysGood.orderTypeId,
                                         orderTypeName: sysGood.orderTypeName,
                                         buyCount: g.count,
-                                        createdBy: userId || 1,
+                                        createdBy: userId,
                                         attrDetail: (attrDetail && attrDetail.substr(1))
                                     });
 
@@ -237,7 +238,7 @@ module.exports = function (app) {
                                         orderTypeId: sysGood.orderTypeId,
                                         orderTypeName: sysGood.orderTypeName,
                                         buyCount: g.count,
-                                        createdBy: userId || 1
+                                        createdBy: userId
                                     });
                                 }
                             }
@@ -245,12 +246,12 @@ module.exports = function (app) {
 
                         return model.db.sequelize.transaction(function (t1) {
                                 return Order.create({
-                                        userId: userId || 1,
+                                        userId: userId,
                                         shopId: shopId,
                                         totalPrice: total.toFixed(2),
                                         _id: orderId,
                                         payStatus: 2, // TBD need remove in real env
-                                        createdBy: userId || 1
+                                        createdBy: userId
                                     }, {
                                         transaction: t1
                                     })
@@ -273,15 +274,9 @@ module.exports = function (app) {
                                         _id: userId
                                     })
                                     .then(user => {
-                                        // formId
-                                        // send template message
-                                        WechatHelper.sendPayMessage(r, req.body.formId, user.wxId);
-                                        return getSingleOrderDetails(r._id)
-                                            .then(ds => {
-                                                r.dataValues.details = ds;
-                                                res.jsonp({
-                                                    order: r
-                                                });
+                                        return WechatHelper.getPrepayid(orderId, user.wxId, IP, (total * 100).toFixed(0))
+                                            .then(result => {
+                                                res.jsonp(result);
                                             });
                                     });
                             })
@@ -302,9 +297,9 @@ module.exports = function (app) {
     });
 
     function getSingleOrderDetails(orderId) {
-        var strSql = "select B.*, G.name from shopGoods A join orderDetails B on A._id=B.shopGoodId  \
+        var strSql = "select B.orderTypeId,B.goodPrice, B.buyCount, B.attrDetail, G.name from shopGoods A join orderDetails B on A._id=B.shopGoodId  \
             join goods G on A.goodId=G._id \
-            where G.isDeleted=0 and B.orderId=:orderId order by B.createdDate, B._id";
+            where G.isDeleted=0 and B.orderId=:orderId ";
         return model.db.sequelize.query(strSql, {
             replacements: {
                 orderId: orderId
@@ -319,9 +314,14 @@ module.exports = function (app) {
         // assume there are enough counts
         var userId = req.body.userId,
             shopId = req.body.shopId;
-
+        if (!userId) {
+            res.jsonp({
+                error: "用户信息出错！"
+            });
+            return;
+        }
         Order.getFilters({
-                userId: userId || 1,
+                userId: userId,
                 shopId: shopId,
                 payStatus: 2,
                 orderStatus: {
@@ -389,7 +389,7 @@ module.exports = function (app) {
         // userId
         // assume there are enough counts
         var orderId = req.body.orderId,
-            userId = req.body.userId || 1;
+            userId = req.body.userId;
         Order.getFilter({
                 userId: userId,
                 _id: orderId,
@@ -399,9 +399,9 @@ module.exports = function (app) {
                 var p = Promise.all([]);
                 if (o && o.orderStatus < 10) {
                     // 未完成，需要排序信息
-                    var strSql = "select distinct T.sequence, T.createdDate, T.name, T._id as orderTypeId, S.updatedDate from orderDetails D join orderTypes T on T._id=D.orderTypeId  \
-                    left join orderSeqs S on D.orderTypeId=S.orderTypeId and D.orderId=S.orderId  \
-                    where D.isDeleted=0 and D.orderId=:orderId order by T.sequence, T.createdDate, T._id";
+                    var strSql = "select T.sequence, T.createdDate, T.name, T._id as orderTypeId, S.updatedDate from orderTypes T  \
+                    join orderSeqs S on T._id=S.orderTypeId  \
+                    where S.orderId=:orderId order by T.sequence, T.createdDate, T._id";
                     p = model.db.sequelize.query(strSql, {
                             replacements: {
                                 orderId: orderId
@@ -436,8 +436,39 @@ module.exports = function (app) {
                         });
                 }
                 p.then(seqs => {
-                    res.jsonp(seqs);
+                    o.dataValues.seqs = seqs;
+                    var strSql = "select D.orderTypeId,D.goodPrice, D.buyCount, D.attrDetail, A.name from orderDetails D  \
+                    join shopGoods G on G._id=D.shopGoodId join goods A on G.goodId=A._id \
+                    where D.orderId=:orderId ";
+                    model.db.sequelize.query(strSql, {
+                            replacements: {
+                                orderId: orderId
+                            },
+                            type: model.db.sequelize.QueryTypes.SELECT
+                        })
+                        .then(details => {
+                            o.dataValues.details = details;
+                            res.jsonp(o);
+                        });
                 });
             });
+    });
+
+    app.post('/wechat/wxpay', function (req, res) {
+        // return Ws_user.getFilter({
+        //         _id: userId
+        //     })
+        //     .then(user => {
+        //         // formId
+        //         // send template message
+        //         WechatHelper.sendPayMessage(r, req.body.formId, user.wxId);
+        //         return getSingleOrderDetails(r._id)
+        //             .then(ds => {
+        //                 r.dataValues.details = ds;
+        //                 res.jsonp({
+        //                     order: r
+        //                 });
+        //             });
+        //     });
     });
 }
