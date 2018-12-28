@@ -59,7 +59,7 @@ var Wechat = {
         var that = this;
         debugger;
         return SystemConfigure.getFilter({
-                name: "access_token"
+                name: "access_token_wechat"
             })
             .then(token => {
                 debugger;
@@ -80,7 +80,7 @@ var Wechat = {
 
                     var opLogs = new OpLogs({
                         userId: "",
-                        description: "token server 出错了",
+                        description: "weixin token server 出错了",
                         deletedBy: ""
                     });
                     opLogs.save();
@@ -94,7 +94,7 @@ var Wechat = {
                                     updatedDate: new Date()
                                 }, {
                                     where: {
-                                        name: "access_token"
+                                        name: "access_token_wechat"
                                     }
                                 })
                                 .then(u => {
@@ -259,6 +259,29 @@ var Wechat = {
                             return {
                                 error: result.xml.err_code ? result.xml.err_code[0] : result.xml.return_msg[0]
                             };
+                        }
+                    });
+            });
+    },
+    getUserInfo: function (openId) {
+        return this.checkToken()
+            .then(result => {
+                if (!result || result.error) {
+                    return {
+                        error: result.error || "token出错"
+                    };
+                }
+
+                var url = util.format('https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN', openId);
+                return this.selfRequest({
+                        url: url,
+                        method: "GET"
+                    })
+                    .then(data => {
+                        if (data.subscribe) {
+                            return true;
+                        } else {
+                            return false;
                         }
                     });
             });

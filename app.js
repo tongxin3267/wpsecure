@@ -2,7 +2,8 @@ var path = require('path'),
     express = require('express'),
     nunjucks = require('nunjucks'),
     favicon = require('serve-favicon'),
-    logger = require('morgan'),
+    morgan = require('morgan'),
+    rfs = require('rotating-file-stream'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
@@ -13,15 +14,23 @@ var path = require('path'),
     MongoStore = require('connect-mongo')(session),
     uri = `mongodb://${settings.host}:${settings.port}/${settings.db}`,
 
+    logDirectory = path.join(__dirname, 'log'),
     fs = require('fs'),
-    accessLog = fs.createWriteStream('access.log', {
-        flags: 'a'
-    }),
-    errorLog = fs.createWriteStream('error.log', {
-        flags: 'a'
-    }),
 
     app = express();
+
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+var accessLogStream = rfs('access.log', {
+        size: '500M',
+        interval: '1d', // rotate daily
+        path: logDirectory
+    }),
+    errorLog = fs.createWriteStream(path.join(logDirectory, 'error.log'), {
+        flags: 'a'
+    });
+app.use(morgan('combined', {
+    stream: accessLogStream
+}));
 
 app.set('port', process.env.PORT || 2369);
 nunjucks.configure('views', {
@@ -30,10 +39,10 @@ nunjucks.configure('views', {
 });
 
 app.use(favicon(path.join(__dirname, 'public', '/default/assets/images/favicon.ico')));
-app.use(logger('dev'));
-app.use(logger('combined', {
-    stream: accessLog
-}));
+// app.use(logger('dev'));
+// app.use(logger('combined', {
+//     stream: accessLog
+// }));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
@@ -59,7 +68,7 @@ routes(app);
 
 //error log in the file
 app.use(function (err, req, res, next) {
-    console.log(err);
+    // console.log(err);
     var meta = '[' + new Date() + '] ' + req.url + '\n';
     errorLog.write(meta + err.stack + '\n');
     next();
@@ -71,9 +80,9 @@ app.listen(app.get('port'), function () {
 
 process.on('uncaughtException', function (err) {
     //打印出错误
-    console.log(err);
+    // console.log(err);
     //打印出错误的调用栈方便调试
-    console.log(err.stack);
+    // console.log(err.stack);
 
     var meta = '[' + new Date() + '] ' + err.message + '\n';
     errorLog.write(meta + err.stack + '\n');

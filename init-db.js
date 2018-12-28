@@ -23,9 +23,11 @@ function step2() {
             role: 100
         })
         .then(o => {
-            return model.systemConfigure.create({
+            return model.systemConfigure.bulkCreate([{
                 name: 'access_token'
-            });
+            }, {
+                name: "access_token_wechat"
+            }]);
         });
 };
 
