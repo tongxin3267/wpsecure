@@ -7,6 +7,8 @@ var https = require('https'),
     moment = require("moment"),
     model = require("../model.js"),
     SystemConfigure = model.systemConfigure,
+
+    OpLogs = require("../models/mongodb/opLogs.js"),
     request = require('request');
 
 var Wechat = {
@@ -74,6 +76,14 @@ var Wechat = {
                         }
                     }
                     // no value need update and expire need update
+                    // send log
+
+                    var opLogs = new OpLogs({
+                        userId: "",
+                        description: "token server 出错了",
+                        deletedBy: ""
+                    });
+                    opLogs.save();
                     // 过期
                     return that.getWXToken()
                         .then(result => {

@@ -10,6 +10,9 @@ var path = require('path'),
     routes = require('./routes/index.js'),
     settings = require('./settings'),
 
+    MongoStore = require('connect-mongo')(session),
+    uri = `mongodb://${settings.host}:${settings.port}/${settings.db}`,
+
     fs = require('fs'),
     accessLog = fs.createWriteStream('access.log', {
         flags: 'a'
@@ -44,7 +47,10 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 1
     }, //1 days
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new MongoStore({
+        url: uri
+    })
 }));
 //app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));

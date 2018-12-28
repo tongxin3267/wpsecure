@@ -88,12 +88,19 @@ function defineModel(name, attributes, options) {
     options.tableName = name;
     options.timestamps = false;
     options.hooks = {
-        beforeValidate: function (obj) {
-            let now = Date.now();
-            // if (!obj.isNewRecord) {
-            obj.updatedDate = now;
-            obj.version++;
-            // }
+        beforeCreate: function (obj, options) {
+            console.log('will create entity...' + obj);
+        },
+        beforeUpdate: function (obj, options) {
+            console.log('will update entity...');
+            obj.updatedDate = Date.now();
+        },
+        beforeBulkCreate: function (objs, options) {
+            console.log('will create entity...');
+        },
+        beforeBulkUpdate: function (options) {
+            console.log('will update entity...');
+            options.attributes.updatedDate = Date.now();
         }
     };
     options.charset = 'utf8mb4';
