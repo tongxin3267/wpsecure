@@ -6,19 +6,21 @@ var crypto = require('crypto'),
 module.exports = function (app) {
     app.get('/admin', auth.checkLogin)
     app.get('/admin', function (req, res) {
-        res.render('Server/adminList.html', {
+        auth.serverOption({
             title: '>管理员设置',
-            user: req.session.admin,
-            websiteTitle: model.db.config.websiteTitle
+            user: req.session.admin
+        }).then(option => {
+            res.render('Server/adminList.html', option);
         });
     });
 
     app.get('/admin/login', auth.checkNotLogin);
     app.get('/admin/login', function (req, res) {
-        res.render('Server/login.html', {
+        auth.serverOption({
             title: '登录',
-            user: req.session.admin,
-            websiteTitle: model.db.config.websiteTitle
+            user: req.session.admin
+        }).then(option => {
+            res.render('Server/login.html', option);
         });
     });
 

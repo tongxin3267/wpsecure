@@ -1,38 +1,44 @@
-// 模板，可以用于自动生成entity
+// 网站配置信息，可以放微信信息等
 
 const db = require('../../db'),
     config = require('../../settings');
 
 // 章节默认为4级，每级4位 最多16位
-const KeyGenerate = db.defineModel('keyGenerates', {});
-module.exports = KeyGenerate;
+const SiteInfo = db.defineModel('siteInfos', {
+    name: {
+        type: db.STRING(50)
+    },
+    description: {
+        type: db.STRING(100),
+        defaultValue: ""
+    }
+});
+module.exports = SiteInfo;
 
 //读取用户信息
-KeyGenerate.getFilter = function (filter) {
+SiteInfo.getFilter = function (filter) {
     filter.isDeleted = false;
-    return KeyGenerate.findOne({
+    return SiteInfo.findOne({
         'where': filter
     });
 };
 
-KeyGenerate.getFilters = function (filter) {
+SiteInfo.getFilters = function (filter) {
     filter.isDeleted = false;
-    return KeyGenerate.findAll({
+    return SiteInfo.findAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
     });
 };
 
-KeyGenerate.getFiltersWithPage = function (page, filter) {
+SiteInfo.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return KeyGenerate.findAndCountAll({
+    return SiteInfo.findAndCountAll({
         'where': filter,
         order: [
-            ['sequence'],
             ['createdDate'],
             ['_id']
         ],

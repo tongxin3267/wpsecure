@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    $("#left_btnSite").on("click", function (e) {
+        location.href = "/admin/siteInfo";
+    });
+
     $("#left_btnAdmin").on("click", function (e) {
         location.href = "/admin/adminList";
     });

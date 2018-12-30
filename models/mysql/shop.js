@@ -1,4 +1,4 @@
-// 模板，可以用于自动生成entity
+// shop 这里是单个机器的配置
 
 const db = require('../../db'),
     config = require('../../settings');
@@ -9,25 +9,40 @@ const Shop = db.defineModel('shops', {
         // 分店名称
         type: db.STRING(50)
     },
-    sequence: {
-        // 分店顺序
-        type: db.INTEGER,
-        defaultValue: 0
-    },
     address: {
         // 分店地址
         type: db.STRING(200),
         defaultValue: ''
     },
-    phone:{
+    phone: {
         // 电话
         type: db.STRING(20),
         defaultValue: ''
     },
-    openTime:{
+    openTime: {
         // 营业时间
         type: db.STRING(50),
         defaultValue: ''
+    },
+    bgImg: {
+        // 背景图片
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    bgVideo: {
+        // 待机时广告
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    vpathCount: {
+        // 竖向轨道数
+        type: db.INTEGER,
+        defaultValue: 0
+    },
+    hpathCount: {
+        // 横向轨道数
+        type: db.INTEGER,
+        defaultValue: 0
     }
 });
 module.exports = Shop;
@@ -45,9 +60,7 @@ Shop.getFilters = function (filter) {
     return Shop.findAll({
         'where': filter,
         order: [
-            ['sequence'],
-            ['createdDate'],
-            ['_id']
+            ['createdDate']
         ]
     });
 };
@@ -57,9 +70,7 @@ Shop.getFiltersWithPage = function (page, filter) {
     return Shop.findAndCountAll({
         'where': filter,
         order: [
-            ['sequence'],
-            ['createdDate'],
-            ['_id']
+            ['createdDate']
         ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize

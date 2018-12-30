@@ -1,4 +1,4 @@
-// 模板，可以用于自动生成entity
+// 每台机器上的产品
 
 const db = require('../../db'),
     config = require('../../settings');

@@ -1,29 +1,29 @@
 $(document).ready(function () {
     var pageManager = {
-        options: {
+        pageOptions: {
             $mainSelectBody: $('.content.mainModal table tbody')
         },
-        init: function () {
-            this.initStyle();
-            this.initEvents();
-            this.initData();
+        pageInit: function () {
+            this.pageInitStyle();
+            this.pageInitEvents();
+            this.pageInitData();
         },
-        initStyle: function () {
-            $("#left_btnKeyGenerate").addClass("active");
+        pageInitStyle: function () {
+            $("#left_btnShopPath").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
         },
-        initEvents: function () {
+        pageInitEvents: function () {
             var that = this;
             $(".mainModal #InfoSearch #btnSearch").on("click", function (e) {
-                that.search();
+                that.pageSearch();
             });
 
             $("#btnAdd").on("click", function (e) {
                 isNew = true;
-                that.destroy();
-                that.addValidation();
+                that.pageDestroy();
+                that.pageAddValidation();
                 // $('#name').removeAttr("disabled");
                 $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
@@ -35,17 +35,17 @@ $(document).ready(function () {
                 });
             });
 
-            $("#btnSave").on("click", function (e) {
+            $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/keyGenerate/add",
+                    var postURI = "/admin/shopPath/add",
                         postObj = {
-                            name: $.trim($('#name').val()),
-                            sequence: $.trim($('#sequence').val())
+                            name: $.trim($('#myModal #name').val()),
+                            sequence: $.trim($('#myModal #sequence').val())
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/keyGenerate/edit";
-                        postObj.id = $('#id').val();
+                        postURI = "/admin/shopPath/edit";
+                        postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
                         if (data.error) {
@@ -58,8 +58,8 @@ $(document).ready(function () {
             });
 
             $("#gridBody").on("click", "td .btnEdit", function (e) {
-                that.destroy();
-                that.addValidation();
+                that.pageDestroy();
+                that.pageAddValidation();
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
@@ -78,7 +78,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/keyGenerate/delete", {
+                    selfAjax("post", "/admin/shopPath/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -90,41 +90,41 @@ $(document).ready(function () {
                 });
             });
         },
-        initData: function () {
-            this.search();
+        pageInitData: function () {
+            this.pageSearch();
         },
-        search: function (p) {
+        pageSearch: function (p) {
             var that = this,
                 filter = {
                     name: $(".mainModal #InfoSearch #Name").val()
                 },
                 pStr = p ? "p=" + p : "";
-            this.options.$mainSelectBody.empty();
-            selfAjax("post", "/admin/keyGenerateList/search?" + pStr, filter, function (data) {
+            this.pageOptions.$mainSelectBody.empty();
+            selfAjax("post", "/admin/shopPathList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.shopName || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
-                    that.options.$mainSelectBody.append(d);
+                    that.pageOptions.$mainSelectBody.append(d);
                 }
-                setPaging("#mainModal", data, that.search.bind(that));
+                setPaging("#mainModal", data, that.pageSearch.bind(that));
             });
         },
-        getButtons: function () {
+        pageGetButtons: function () {
             var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
             return buttons;
         },
-        destroy: function () {
+        pageDestroy: function () {
             var validator = $('#myModal').data('formValidation');
             if (validator) {
                 validator.destroy();
             }
         },
-        addValidation: function (callback) {
+        pageAddValidation: function (callback) {
             setTimeout(function () {
                 $('#myModal').formValidation({
                     // List of fields and their validation rules
@@ -136,9 +136,9 @@ $(document).ready(function () {
                                     message: '名称不能为空'
                                 },
                                 stringLength: {
-                                    min: 2,
+                                    min: 1,
                                     max: 30,
-                                    message: '名称在2-30个字符之间'
+                                    message: '名称在1-30个字符之间'
                                 }
                             }
                         }
@@ -148,5 +148,5 @@ $(document).ready(function () {
         }
     };
 
-    pageManager.init();
+    pageManager.pageInit();
 });

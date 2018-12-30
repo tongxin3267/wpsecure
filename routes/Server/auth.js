@@ -1,3 +1,6 @@
+var model = require("../../model.js"),
+    SiteInfo = model.siteInfo;
+
 module.exports = {
     checkLogin: function (req, res, next) {
         //if (!req.session.admin || req.session.admin.name != "11") {
@@ -39,5 +42,12 @@ module.exports = {
                 }
             }
         };
+    },
+    serverOption: function (option) {
+        return SiteInfo.getFilter({})
+            .then(info => {
+                option.websiteTitle = info.name;
+                return option;
+            });
     }
 };

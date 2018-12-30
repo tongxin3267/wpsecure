@@ -1,11 +1,11 @@
 {
-  "name": "wplearn",
+  "name": "wposal",
   "version": "1.0.0",
   "private": true,
-  "description": "wplearn website",
+  "description": "wposal website",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pucumt/WPLearn.git"
+    "url": "https://github.com/pucumt/wposal.git"
   },
   "license": "GPL",
   "scripts": {

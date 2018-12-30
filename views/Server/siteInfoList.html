@@ -1,0 +1,34 @@
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock
+%} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnSave" class="btn btn-default btn-sm">保存</button>
+    </div>
+</div>
+<div class="content mainModal">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="name" class="control-label">名称:</label>
+                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="description" class="control-label">描述:</label>
+                <input type="text" maxlength="100" class="form-control" name="description" id="description">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<script type="text/javascript" src="/default/assets/js/Server/siteInfoList.js"></script>
+{% endblock %}

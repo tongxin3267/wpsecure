@@ -24,10 +24,16 @@ function step2() {
         })
         .then(o => {
             return model.systemConfigure.bulkCreate([{
-                name: 'access_token'
-            }, {
-                name: "access_token_wechat"
-            }]);
+                    name: 'access_token'
+                }, {
+                    name: "access_token_wechat"
+                }])
+                .then(() => {
+                    return model.siteInfo.create({
+                        name: "测试",
+                        description: "这是测试信息"
+                    });
+                });
         });
 };
 
