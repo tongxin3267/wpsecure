@@ -29,6 +29,8 @@ $(document).ready(function () {
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #address').val("");
+                $('#myModal #hpathCount').val("");
+                $('#myModal #vpathCount').val("");
                 $('#myModal #phone').val("");
                 $('#myModal #openTime').val("");
                 $('#myModal').modal({
@@ -44,6 +46,8 @@ $(document).ready(function () {
                         postObj = {
                             name: $.trim($('#myModal #name').val()),
                             address: $.trim($('#myModal #address').val()),
+                            hpathCount: $.trim($('#myModal #hpathCount').val()),
+                            vpathCount: $.trim($('#myModal #vpathCount').val()),
                             phone: $.trim($('#myModal #phone').val()),
                             openTime: $.trim($('#myModal #openTime').val())
                         };
@@ -70,6 +74,8 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
                 $('#myModal #address').val(entity.address);
+                $('#myModal #hpathCount').val(entity.hpathCount);
+                $('#myModal #vpathCount').val(entity.vpathCount);
                 $('#myModal #phone').val(entity.phone);
                 $('#myModal #openTime').val(entity.openTime);
                 $('#myModal #id').val(entity._id);
@@ -104,31 +110,20 @@ $(document).ready(function () {
             $("#gridBody").on("click", "td .btnReset", function (e) {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
-                // $('#name').attr("disabled", "disabled");
-                $('#pathModal #pathModalLabel').text("修改轨道");
-                $('#pathModal #hpathCount').val(entity.hpathCount);
-                $('#pathModal #vpathCount').val(entity.vpathCount);
-                $('#pathModal #id').val(entity._id);
-                $('#pathModal').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            });
-
-            $("#pathModal #btnSave").on("click", function (e) {
-                var postObj = {
-                        hpathCount: $.trim($('#pathModal #hpathCount').val()),
-                        vpathCount: $.trim($('#pathModal #vpathCount').val()),
-                        id: $('#pathModal #id').val()
-                    },
-                    postURI = "/admin/shop/path";
-
-                selfAjax("post", postURI, postObj, function (data) {
-                    if (data.error) {
-                        showAlert(data.error);
-                        return;
+                showConfirm("将要删除原始轨道重新生成，确定继续吗？");
+                $("#confirmModal #btnConfirmSave").off("click").click(function (e) {
+                    var postObj = {
+                        hpathCount: entity.hpathCount,
+                        vpathCount: entity.vpathCount,
+                        id: entity_id
                     }
-                    location.reload();
+                    selfAjax("post", "/admin/shop/resetPath", postObj, function (data) {
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        showAlert("轨道已经重新生成!");
+                    });
                 });
             });
         },
@@ -157,7 +152,7 @@ $(document).ready(function () {
             });
         },
         getButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnReset">轨道</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnReset">重置轨道</a>';
             return buttons;
         },
         destroy: function () {

@@ -21,6 +21,8 @@ module.exports = function (app) {
         Shop.create({
                 name: req.body.name,
                 address: req.body.address,
+                hpathCount: req.body.hpathCount,
+                vpathCount: req.body.vpathCount,
                 phone: req.body.phone,
                 openTime: req.body.openTime,
                 createdBy: req.session.admin._id
@@ -37,6 +39,8 @@ module.exports = function (app) {
         Shop.update({
                 name: req.body.name,
                 address: req.body.address,
+                hpathCount: req.body.hpathCount,
+                vpathCount: req.body.vpathCount,
                 phone: req.body.phone,
                 openTime: req.body.openTime,
                 deletedBy: req.session.admin._id,
@@ -106,16 +110,15 @@ module.exports = function (app) {
     });
 
     // 设置轨道
-    app.post('/admin/shop/edit', checkLogin);
-    app.post('/admin/shop/edit', function (req, res) {
-        Shop.update({
-                hpathCount: req.body.hpathCount,
-                vpathCount: req.body.vpathCount,
+    app.post('/admin/shop/resetPath', checkLogin);
+    app.post('/admin/shop/resetPath', function (req, res) {
+        ShopPath.update({
+                isDeleted: true,
                 deletedBy: req.session.admin._id,
-                updatedDate: new Date()
+                deletedDate: new Date()
             }, {
                 where: {
-                    _id: req.body.id
+                    shopId: req.body.id
                 }
             })
             .then(function () {
