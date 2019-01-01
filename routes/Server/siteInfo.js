@@ -22,9 +22,7 @@ module.exports = function (app) {
                 description: req.body.description,
                 deletedBy: req.session.admin._id
             }, {
-                where: {
-                    _id: req.body.id
-                }
+                where: {}
             })
             .then(function () {
                 res.jsonp({

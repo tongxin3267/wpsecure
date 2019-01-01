@@ -10,7 +10,7 @@ module.exports = function (app) {
             title: '>管理员设置',
             user: req.session.admin
         }).then(option => {
-            res.render('Server/adminList.html', option);
+            res.render('Server/siteInfoList.html', option);
         });
     });
 

@@ -1,16 +1,18 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Shop = model.shop,
+    ShopPath = model.shopPath,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/admin/shopList', checkLogin);
     app.get('/admin/shopList', function (req, res) {
-        res.render('Server/shopList.html', {
-            title: '>门店列表',
-            websiteTitle: model.db.config.websiteTitle,
+        auth.serverOption({
+            title: '>机器列表',
             user: req.session.admin
+        }).then(option => {
+            res.render('Server/shopList.html', option);
         });
     });
 
@@ -63,15 +65,25 @@ module.exports = function (app) {
                 }
             })
             .then(function (result) {
-                res.jsonp({
-                    sucess: true
-                });
+                ShopPath.update({
+                        isDeleted: true,
+                        deletedBy: req.session.admin._id,
+                        deletedDate: new Date()
+                    }, {
+                        where: {
+                            shopId: req.body.id
+                        }
+                    })
+                    .then(() => {
+                        res.jsonp({
+                            sucess: true
+                        });
+                    })
             });
     });
 
     app.post('/admin/shopList/search', checkLogin);
     app.post('/admin/shopList/search', function (req, res) {
-
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
@@ -93,5 +105,26 @@ module.exports = function (app) {
             });
     });
 
+    // 设置轨道
+    app.post('/admin/shop/edit', checkLogin);
+    app.post('/admin/shop/edit', function (req, res) {
+        Shop.update({
+                hpathCount: req.body.hpathCount,
+                vpathCount: req.body.vpathCount,
+                deletedBy: req.session.admin._id,
+                updatedDate: new Date()
+            }, {
+                where: {
+                    _id: req.body.id
+                }
+            })
+            .then(function () {
+                // update path also
+
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
 
 }

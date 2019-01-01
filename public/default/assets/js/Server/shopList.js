@@ -25,7 +25,7 @@ $(document).ready(function () {
                 that.destroy();
                 that.addValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增门店");
+                $('#myModal #myModalLabel').text("新增机器");
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #address').val("");
@@ -37,7 +37,7 @@ $(document).ready(function () {
                 });
             });
 
-            $("#btnSave").on("click", function (e) {
+            $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
                     var postURI = "/admin/shop/add",
@@ -100,6 +100,37 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 location.href = "/shop/shopId/{0}".format($(obj).attr("id"));
             });
+
+            $("#gridBody").on("click", "td .btnReset", function (e) {
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                // $('#name').attr("disabled", "disabled");
+                $('#pathModal #pathModalLabel').text("修改轨道");
+                $('#pathModal #hpathCount').val(entity.hpathCount);
+                $('#pathModal #vpathCount').val(entity.vpathCount);
+                $('#pathModal #id').val(entity._id);
+                $('#pathModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+            $("#pathModal #btnSave").on("click", function (e) {
+                var postObj = {
+                        hpathCount: $.trim($('#pathModal #hpathCount').val()),
+                        vpathCount: $.trim($('#pathModal #vpathCount').val()),
+                        id: $('#pathModal #id').val()
+                    },
+                    postURI = "/admin/shop/path";
+
+                selfAjax("post", postURI, postObj, function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    location.reload();
+                });
+            });
         },
         initData: function () {
             this.search();
@@ -116,7 +147,7 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr ><td id=' + record._id + ' class="link">' + record.name + '</td><td>' +
-                            (record.address || '') + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
+                            (record.address || '') + '</td><td>' + record.hpathCount + '</td><td>' + record.vpathCount + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });
@@ -126,7 +157,7 @@ $(document).ready(function () {
             });
         },
         getButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnReset">轨道</a>';
             return buttons;
         },
         destroy: function () {
