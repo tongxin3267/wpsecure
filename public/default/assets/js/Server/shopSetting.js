@@ -4,7 +4,7 @@ $(document).ready(function () {
     });
 
     $("#left_btnPath").on("click", function (e) {
-        location.href = "/shop/pathList";
+        location.href = "/shop/shopPathList";
     });
 
     $("#left_btnOrder").on("click", function (e) {

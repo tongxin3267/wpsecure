@@ -115,7 +115,7 @@ $(document).ready(function () {
                     var postObj = {
                         hpathCount: entity.hpathCount,
                         vpathCount: entity.vpathCount,
-                        id: entity_id
+                        id: entity._id
                     }
                     selfAjax("post", "/admin/shop/resetPath", postObj, function (data) {
                         if (data.error) {

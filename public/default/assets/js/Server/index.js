@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     $("#header_shop_btnShop").on("click", function (e) {
-        location.href = "/shop/{0}/goodList".format($("#shopId").val());
+        location.href = "/shop/goodList";
     });
 });
 

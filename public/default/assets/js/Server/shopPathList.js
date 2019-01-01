@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.pageInitData();
         },
         pageInitStyle: function () {
-            $("#left_btnShopPath").addClass("active");
+            $("#left_btnPath").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -25,9 +25,8 @@ $(document).ready(function () {
                 that.pageDestroy();
                 that.pageAddValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #myModalLabel').text("新增轨道");
                 $('#myModal #id').val("");
-                $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -38,13 +37,12 @@ $(document).ready(function () {
             $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/shopPath/add",
+                    var postURI = "/shop/shopPath/add",
                         postObj = {
-                            name: $.trim($('#myModal #name').val()),
                             sequence: $.trim($('#myModal #sequence').val())
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/shopPath/edit";
+                        postURI = "/shop/shopPath/edit";
                         postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -64,7 +62,6 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
-                $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
@@ -78,7 +75,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/shopPath/delete", {
+                    selfAjax("post", "/shop/shopPath/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -100,12 +97,13 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.pageOptions.$mainSelectBody.empty();
-            selfAjax("post", "/admin/shopPathList/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/shop/shopPathList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                        var $tr = $('<tr id=' + record._id + '><td>' + record.sequence + '</td><td>' +
+                            (record.goodName ||"") + '</td><td>'+record.goodCount+'</td><td><div class="btn-group">' + 
+                            that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

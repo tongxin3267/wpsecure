@@ -10,12 +10,19 @@ const ShopPath = db.defineModel('shopPaths', {
         defaultValue: 0
     },
     goodCount: {
+        // 机器管理员修改
         type: db.INTEGER,
         defaultValue: 0,
         comment: "商品数量"
     },
     goodId: {
         // 可以为空，就是不添加商品
+        // 机器管理员修改
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    goodName: {
+        // 商品名称
         type: db.STRING(50),
         defaultValue: ''
     },

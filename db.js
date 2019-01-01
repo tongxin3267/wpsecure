@@ -18,7 +18,7 @@ var sequelize = new Sequelize(config.db, config.username, config.password, {
         charset: 'utf8mb4'
     },
     pool: {
-        max: 10,
+        max: 20,
         min: 0,
         idle: 30000,
         acquire: 30000
