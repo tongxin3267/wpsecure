@@ -28,18 +28,8 @@ window.showConfirm = function (msg, title, hidecallback) {
 };
 
 $(document).ready(function () {
-    $("#btnExam").on("click", function (e) {
-        location.href = "/enrollExam";
-    });
-    $("#btnClass").on("click", function (e) {
-        location.href = "/enrollClass";
-    });
-    $("#btnPersonal").on("click", function (e) {
-        location.href = "/personalCenter";
-    });
-
-    $("#btnOpenId").on("click", function (e) {
-        location.href = "/openIdGeter";
+    $("#btnAdmin").on("click", function (e) {
+        location.href = "/Client/manage";
     });
 
     $('#confirmModal #btnConfirmSave').on("click", function (e) {
@@ -55,10 +45,14 @@ $(document).ready(function () {
 
 window.selfAjax = function (method, url, filter, callback) {
     loading();
-    return $[method](
-        url,
-        filter
-    ).then(function (data) {
+    return $.ajax({
+        type: method,
+        url: url,
+        headers: {
+            'awstoken': "test"
+        },
+        data: filter
+    }).then(function (data) {
         callback(data);
         hideLoading();
         return data;

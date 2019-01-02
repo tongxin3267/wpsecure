@@ -9,6 +9,11 @@ const Shop = db.defineModel('shops', {
         // 分店名称
         type: db.STRING(50)
     },
+    password: {
+        // 密码，机器需要自动登录
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     address: {
         // 分店地址
         type: db.STRING(200),

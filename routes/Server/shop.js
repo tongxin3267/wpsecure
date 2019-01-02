@@ -19,14 +19,15 @@ module.exports = function (app) {
     app.post('/admin/shop/add', checkLogin);
     app.post('/admin/shop/add', function (req, res) {
         Shop.create({
-            name: req.body.name,
-            address: req.body.address,
-            hpathCount: req.body.hpathCount,
-            vpathCount: req.body.vpathCount,
-            phone: req.body.phone,
-            openTime: req.body.openTime,
-            createdBy: req.session.admin._id
-        })
+                name: req.body.name,
+                password: Math.random().toString(12).substr(2, 10),
+                address: req.body.address,
+                hpathCount: req.body.hpathCount,
+                vpathCount: req.body.vpathCount,
+                phone: req.body.phone,
+                openTime: req.body.openTime,
+                createdBy: req.session.admin._id
+            })
             .then(function (result) {
                 if (result) {
                     res.jsonp(result);
@@ -37,15 +38,15 @@ module.exports = function (app) {
     app.post('/admin/shop/edit', checkLogin);
     app.post('/admin/shop/edit', function (req, res) {
         Shop.update({
-            name: req.body.name,
-            address: req.body.address,
-            hpathCount: req.body.hpathCount,
-            vpathCount: req.body.vpathCount,
-            phone: req.body.phone,
-            openTime: req.body.openTime,
-            deletedBy: req.session.admin._id,
-            updatedDate: new Date()
-        }, {
+                name: req.body.name,
+                address: req.body.address,
+                hpathCount: req.body.hpathCount,
+                vpathCount: req.body.vpathCount,
+                phone: req.body.phone,
+                openTime: req.body.openTime,
+                deletedBy: req.session.admin._id,
+                updatedDate: new Date()
+            }, {
                 where: {
                     _id: req.body.id
                 }
@@ -60,20 +61,20 @@ module.exports = function (app) {
     app.post('/admin/shop/delete', checkLogin);
     app.post('/admin/shop/delete', function (req, res) {
         Shop.update({
-            isDeleted: true,
-            deletedBy: req.session.admin._id,
-            deletedDate: new Date()
-        }, {
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
                 where: {
                     _id: req.body.id
                 }
             })
             .then(function (result) {
                 ShopPath.update({
-                    isDeleted: true,
-                    deletedBy: req.session.admin._id,
-                    deletedDate: new Date()
-                }, {
+                        isDeleted: true,
+                        deletedBy: req.session.admin._id,
+                        deletedDate: new Date()
+                    }, {
                         where: {
                             shopId: req.body.id
                         }
@@ -113,10 +114,10 @@ module.exports = function (app) {
     app.post('/admin/shop/resetPath', checkLogin);
     app.post('/admin/shop/resetPath', function (req, res) {
         ShopPath.update({
-            isDeleted: true,
-            deletedBy: req.session.admin._id,
-            deletedDate: new Date()
-        }, {
+                isDeleted: true,
+                deletedBy: req.session.admin._id,
+                deletedDate: new Date()
+            }, {
                 where: {
                     shopId: req.body.id
                 }
@@ -129,8 +130,8 @@ module.exports = function (app) {
 
                 for (var i = 0; i < total; i++) {
                     shopPaths.push({
-                        sequence:i+1,
-                        shopId:req.body.id
+                        sequence: i + 1,
+                        shopId: req.body.id
                     });
                 }
                 // update path also
@@ -142,5 +143,4 @@ module.exports = function (app) {
                     });
             });
     });
-
 }
