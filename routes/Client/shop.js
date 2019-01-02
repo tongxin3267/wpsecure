@@ -17,5 +17,28 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    
+    app.get('/Client/manage', auth.checkLogin);
+    app.get('/Client/manage', function (req, res) {
+        res.render('Client/manage.html', {
+            title: '管理中心',
+            user: req.session.manager,
+            shopId: req.session.user._id,
+            awstoken: token
+        });
+    });
+
+    app.get('/Client/manage/login', auth.checkLogin);
+    app.get('/Client/manage/login', function (req, res) {
+        res.render('Client/manageLogin.html', {
+            title: '管理中心',
+            user: req.session.user,
+            shopId: req.session.user._id,
+            awstoken: token
+        });
+    });
+
+    app.post('/Client/manage/login', auth.checkLogin);
+    app.post('/Client/manage/login', function (req, res) {
+       
+    });
 }

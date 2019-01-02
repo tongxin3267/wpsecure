@@ -2,7 +2,7 @@ var option = {
     cookieSecret: 'wposal',
     db: 'wposal',
     host: '127.0.0.1',
-    port: '10105',
+    port: '27017',
     username: 'root',
     password: 'root',
     pageSize: 14,
