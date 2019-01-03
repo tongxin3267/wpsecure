@@ -29,7 +29,7 @@ const User = db.defineModel('users', {
     role: {
         type: db.INTEGER,
         defaultValue: 0
-    } //100 superAdmin, 5 normalAdmin, 0 核单员
+    } //100 superAdmin, 5 normalAdmin, 0 机器操作员
 });
 module.exports = User;
 

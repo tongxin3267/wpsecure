@@ -5,7 +5,7 @@ var crypto = require('crypto'),
 module.exports = {
     checkSession: function (req, res, next) {
         if (!req.session.user) {
-            this.gotoError();
+            this.gotoError(req, res);
             return;
         }
         next();
@@ -22,22 +22,37 @@ module.exports = {
         }
     },
     checkLogin: function (req, res, next) {
-        if (!req.body.shopId || !req.body.awstoken) {
-            this.gotoError();
+        var that = this;
+        if (!req.cookies['shopId'] || !req.cookies['awstoken']) {
+            this.gotoError(req, res);
             return;
         }
-        Shop.getFilter({ _id: req.body.shopId })
+        Shop.getFilter({
+                _id: req.cookies['shopId']
+            })
             .then(shop => {
                 if (shop) {
                     var md5 = crypto.createHash('md5'),
                         token = md5.update(shop.password).digest('hex');
-                    if (token == req.body.awstoken) {
+                    if (token == req.cookies['awstoken']) {
                         next();
-                    }
-                    else {
-                        this.gotoError();
+                    } else {
+                        that.gotoError(req, res);
                     }
                 }
             });
-    }
+    },
+    checkManager: function (req, res, next) {
+        if (!req.session.manager) {
+            if (req.method == "GET") {
+                res.redirect("/Client/manage/login");
+            } else {
+                res.jsonp({
+                    error: "not login"
+                });
+            }
+            return;
+        }
+        next();
+    },
 };

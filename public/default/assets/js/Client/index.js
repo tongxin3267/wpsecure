@@ -29,7 +29,7 @@ window.showConfirm = function (msg, title, hidecallback) {
 
 $(document).ready(function () {
     $("#btnAdmin").on("click", function (e) {
-        location.href = "/Client/manage";
+        location.href = "/Client/manage/login";
     });
 
     $('#confirmModal #btnConfirmSave').on("click", function (e) {
@@ -48,9 +48,6 @@ window.selfAjax = function (method, url, filter, callback) {
     return $.ajax({
         type: method,
         url: url,
-        headers: {
-            'awstoken': "test"
-        },
         data: filter
     }).then(function (data) {
         callback(data);

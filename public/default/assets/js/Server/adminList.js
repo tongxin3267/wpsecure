@@ -120,7 +120,9 @@ $(document).ready(function () {
         getRole(role) {
             switch (role) {
                 case 0:
-                    return "核单员";
+                    return "机器操作员";
+                case 5:
+                    return "管理员";
                 case 100:
                     return "系统管理员";
                 default:
