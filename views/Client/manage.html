@@ -1,6 +1,21 @@
 {% extends "Client/partial/main-header.html" %} {% block main %}
-<div class="login content_body">
-
+<div class="content_body">
+    <div>
+        <div class="">
+            <button id="btnRestart" class="btn btn-default btn-sm">重启</button>
+            <button id="btnClose" class="btn btn-default btn-sm">关机</button>
+            <button id="btnLock" class="btn btn-default btn-sm">锁定</button>
+            <button id="btnExit" class="btn btn-default btn-sm">退出</button>
+        </div>
+    </div>
+    <div class="toolbar">
+        <div class="toolbar-list">
+            <button id="btnFull" class="btn btn-default btn-sm">全部填满</button>
+            <button id="btnEmpty" class="btn btn-default btn-sm">全部清空</button>
+            <button id="btnRefresh" class="btn btn-default btn-sm">刷新</button>
+            <button id="btnSave" class="btn btn-default btn-sm">保存</button>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
 <script type="text/javascript" src="/default/assets/js/Client/manage.js"></script>
