@@ -21,26 +21,31 @@ module.exports = {
             });
         }
     },
-    checkLogin: function (req, res, next) {
-        var that = this;
-        if (!req.cookies['shopId'] || !req.cookies['awstoken']) {
-            this.gotoError(req, res);
-            return;
-        }
-        Shop.getFilter({
+    checkLogin: function (needShop) {
+        return function (req, res, next) {
+            var that = this;
+            if (!req.cookies['shopId'] || !req.cookies['awstoken']) {
+                this.gotoError(req, res);
+                return;
+            }
+            Shop.getFilter({
                 _id: req.cookies['shopId']
             })
-            .then(shop => {
-                if (shop) {
-                    var md5 = crypto.createHash('md5'),
-                        token = md5.update(shop.password).digest('hex');
-                    if (token == req.cookies['awstoken']) {
-                        next();
-                    } else {
-                        that.gotoError(req, res);
+                .then(shop => {
+                    if (shop) {
+                        var md5 = crypto.createHash('md5'),
+                            token = md5.update(shop.password).digest('hex');
+                        if (token == req.cookies['awstoken']) {
+                            if (needShop) {
+                                req.session.user = shop;
+                            }
+                            next();
+                        } else {
+                            that.gotoError(req, res);
+                        }
                     }
-                }
-            });
+                });
+        };
     },
     checkManager: function (req, res, next) {
         if (!req.session.manager) {

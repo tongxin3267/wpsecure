@@ -1,5 +1,5 @@
 {% extends "Client/partial/main-header.html" %} {% block main %}
-<div class="content_body">
+<div class="content_body manage">
     <div>
         <div class="">
             <button id="btnRestart" class="btn btn-default btn-sm">重启</button>
@@ -14,6 +14,31 @@
             <button id="btnEmpty" class="btn btn-default btn-sm">全部清空</button>
             <button id="btnRefresh" class="btn btn-default btn-sm">刷新</button>
             <button id="btnSave" class="btn btn-default btn-sm">保存</button>
+        </div>
+    </div>
+    <div class="paths">
+
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade bs-example-modal-dialog" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="goodList">
+                
+                    </div>
+                    <input type="hidden" class="form-control" name="id" id="id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
         </div>
     </div>
 </div>

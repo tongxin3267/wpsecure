@@ -26,3 +26,28 @@ footer,
         height: 168.75px;
     }
 }
+
+.manage .paths table{
+    width:100%;
+    text-align: center;
+}
+
+.manage .paths table td,
+#myModal .goodList table td{
+    padding: 20px;
+}
+
+.manage .paths table td #count{
+    width:50px;
+}
+
+.manage .paths table img,
+#myModal .goodList table img{
+  min-height: 200px;
+  min-width:100px;
+  border:#ddd solid 1px;
+}
+
+#myModal .goodList{
+    overflow-x:scroll
+}

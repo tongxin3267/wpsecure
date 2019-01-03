@@ -19,6 +19,9 @@ const OrderDetail = db.defineModel('orderDetails', {
     shopGoodId: {
         type: db.INTEGER
     },
+    goodId: {
+        type: db.INTEGER
+    },
     goodPrice: {
         type: db.DECIMAL(10, 2),
         defaultValue: 0
