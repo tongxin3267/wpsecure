@@ -27,27 +27,36 @@ footer,
     }
 }
 
-.manage .paths table{
-    width:100%;
+.manage .paths table {
+    width: 100%;
     text-align: center;
 }
 
 .manage .paths table td,
-#myModal .goodList table td{
+#myModal .goodList table td {
     padding: 20px;
 }
 
-.manage .paths table td #count{
-    width:50px;
+.manage .paths table td #count {
+    width: 50px;
 }
 
 .manage .paths table img,
-#myModal .goodList table img{
-  min-height: 200px;
-  min-width:100px;
-  border:#ddd solid 1px;
+#myModal .goodList table img {
+    min-height: 200px;
+    min-width: 100px;
+    max-width: 200px;
+    border: #ddd solid 1px;
 }
 
-#myModal .goodList{
-    overflow-x:scroll
+#myModal .goodList {
+    overflow-x: scroll
+}
+
+.index #video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }

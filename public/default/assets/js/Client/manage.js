@@ -2,7 +2,8 @@ $(document).ready(function () {
     var pageManager = {
         option: {
             container: $(".paths"),
-            goods: null
+            goods: null,
+            curPath: ""
         },
         init: function () {
             this.initData();
@@ -15,9 +16,10 @@ $(document).ready(function () {
                 location.href = "/student/login";
             });
 
-            $(".paths").on("click","img", function(e){
+            $(".paths").on("click", "img", function (e) {
                 // get current seq
-                // $('#myModal #id').val(entity._id);
+                var entity = $(e.currentTarget).parent().data("obj");
+                that.option.curPath = entity;
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -25,10 +27,25 @@ $(document).ready(function () {
             });
 
             // close model
-            $("#myModal .goodList").on("click","img", function(e){
+            $("#myModal .goodList").on("click", "img", function (e) {
                 // get current seq
-                // $('#myModal #id').val(entity._id);
+                var entity = $(e.currentTarget).parent().data("obj");
+                $("#" + that.option.curPath._id + " img").attr("src", "../uploads/icons/" + entity.img);
+                $("#" + that.option.curPath._id + " .shopName").text(entity.name);
+                that.option.curPath.goodName = entity.name;
+                that.option.curPath.img = entity.img;
+                that.option.curPath.goodId = entity._id;
                 $('#myModal').modal('hide');
+            });
+
+            $("#btnSave").click(function (e) {
+                // save all data to db
+                var paths = JSON.stringify(that.getAllData());
+                selfAjax("post", "/Client/manage/updatepaths", {
+                    paths: paths
+                }, function (result) {
+
+                });
             });
         },
         initData: function () {
@@ -50,11 +67,10 @@ $(document).ready(function () {
                                 var img = result.paths[i].img || '',
                                     name = result.paths[i].goodName || '沒有商品',
                                     count = result.paths[i].goodCount || 0;
-                                $td = $("<td><img src={0} /><div>{1}</div><div>商品数量: <input type='number' min=0 id='count' value={2} /></div></td>".format(img, name, count));
+                                $td = $("<td id=" + result.paths[i]._id + "><img src={0} /><div class='shopName'>{1}</div><div>商品数量: <input type='number' min=0 id='count' value={2} /></div></td>".format("../uploads/icons/" + img, name, count));
                                 $td.data("obj", result.paths[i]);
                                 $tr.append($td);
-                            }
-                            else {
+                            } else {
                                 $td = $("<td></td>");
                                 $tr.append($td);
                             }
@@ -71,14 +87,27 @@ $(document).ready(function () {
                     result.goods.forEach(function (good) {
                         var img = good.img || '',
                             name = good.name;
-                        $td = $("<td><img src={0} /><div>{1}</div></td>".format(img, name));
-                        $td.data("obj", result.paths[i]);
+                        $td = $("<td><img src={0} /><div>{1}</div></td>".format("../uploads/icons/" + img, name));
+                        $td.data("obj", good);
                         $tr.append($td);
                     });
                     $table.append($tr);
                     $("#myModal .goodList").append($table);
                 }
             });
+        },
+        getAllData: function () {
+            var paths = [];
+            $(".paths table td").each(function (i) {
+                var path = $(this).data("obj");
+                paths.push({
+                    goodId: path.goodId,
+                    goodName: path.goodName,
+                    goodCount: $(".paths #" + path._id + " #count").val(),
+                    _id: path._id
+                });
+            });
+            return paths;
         }
     };
 

@@ -1,89 +1,46 @@
-var hideConfirmForm;
-window.showAlert = function (msg, title, callback) {
-    $('#confirmModal').show();
-    $('#confirmModal #confirmModalLabel').text(title || "提示");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("确定");
-    $('#confirmModal #btnConfirmSave').hide();
-
-    hideConfirmForm = function () {
-        callback && callback();
-        $('#confirmModal').hide();
-    };
-};
-
-window.showConfirm = function (msg, title, hidecallback) {
-    $('#confirmModal').show();
-    $('#confirmModal #confirmModalLabel').text(title || "确认");
-    $('#confirmModal .modal-body').text(msg);
-
-    $('#confirmModal .modal-footer .btn-default').text("取消");
-    $('#confirmModal #btnConfirmSave').show();
-
-    hideConfirmForm = function () {
-        hidecallback && hidecallback();
-        $('#confirmModal').hide();
-    };
-};
-
 $(document).ready(function () {
-    $("#btnAdmin").on("click", function (e) {
-        location.href = "/Client/manage/login";
-    });
+    var pageManager = {
+        option: {
+            video: document.getElementById("video"),
+            lastTime: new Date().getTime(),
+            timeOut: 10 * 1000
+        },
+        init: function () {
+            this.initData();
+            this.initEvents();
+            this.timer();
+        },
+        initData: function () {
 
-    $('#confirmModal #btnConfirmSave').on("click", function (e) {
+        },
+        initEvents: function () {
+            var that = this;
 
-    });
+            /* 鼠标移动事件 */
+            $(document).mousemove(function () {
+                that.option.lastTime = new Date().getTime(); //更新操作时间
+                console.log("change last time!");
+            });
 
-    $('#confirmModal .modal-footer .btn-default').on("click", function (e) {
-        hideConfirmForm();
-    });
+            this.option.video.onclick = function (e) {
+                that.option.video.pause();
+                $(".video").hide();
+                that.timer();
+                console.log("begin timer!");
+            }
+        },
+        timer: function () {
+            var currentTime = new Date().getTime(); //更新当前时间
+            if (currentTime - this.option.lastTime > this.option.timeOut) { //判断是否超时
+                window.clearTimeout(this.option.inter);
+                // 待机，播放广告
+                this.option.video.play();
+                $(".video").show();
+            } else {
+                this.option.inter = setTimeout(this.timer.bind(this), 2000);
+            }
+        }
+    };
 
+    pageManager.init();
 });
-
-
-window.selfAjax = function (method, url, filter, callback) {
-    loading();
-    return $.ajax({
-        type: method,
-        url: url,
-        data: filter
-    }).then(function (data) {
-        callback(data);
-        hideLoading();
-        return data;
-    });
-};
-
-window.loading = function () {
-    $("#loadingIndicator").modal({
-        backdrop: 'static',
-        keyboard: false
-    });
-};
-
-window.hideLoading = function () {
-    $("#loadingIndicator").modal('hide');
-};
-//Html编码获取Html转义实体  
-// function htmlEncode(value) {
-//     return encodeURI(value);
-//     // return $('<div/>').text(value).html();
-// };
-//Html解码获取Html实体  
-// function htmlDecode(value) {
-//     return decodeURI(value);
-//     // return $('<div/>').html(value).text();
-// };
-
-String.prototype.format = function () {
-    var result = this;
-    if (arguments.length == 0)
-        return null;
-    for (var i = 0; i < arguments.length; i++) {
-        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
-        result = result.replace(re, arguments[i]);
-    }
-    return result;
-};
