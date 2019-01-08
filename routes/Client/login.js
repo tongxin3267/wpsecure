@@ -32,7 +32,8 @@ module.exports = function (app) {
             .then(shop => {
                 if (shop.password == req.body.password) {
                     req.session.user = shop;
-                    var newpassword = Math.random().toString(12).substr(2, 10);
+                    // TBD after published
+                    var newpassword = shop.password; // Math.random().toString(12).substr(2, 10);
 
                     // update password
                     Shop.update({

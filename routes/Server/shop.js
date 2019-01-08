@@ -20,7 +20,7 @@ module.exports = function (app) {
     app.post('/admin/shop/add', function (req, res) {
         Shop.create({
                 name: req.body.name,
-                password: Math.random().toString(12).substr(2, 10),
+                password: "123456", //Math.random().toString(12).substr(2, 10),
                 address: req.body.address,
                 hpathCount: req.body.hpathCount,
                 vpathCount: req.body.vpathCount,
