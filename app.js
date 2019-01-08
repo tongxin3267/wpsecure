@@ -32,7 +32,7 @@ app.use(morgan('combined', {
     stream: accessLogStream
 }));
 
-app.set('port', process.env.PORT || 2369);
+app.set('port', process.env.PORT || 2300);
 nunjucks.configure('views', {
     autoescape: true,
     express: app
