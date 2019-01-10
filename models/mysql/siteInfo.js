@@ -11,6 +11,18 @@ const SiteInfo = db.defineModel('siteInfos', {
     description: {
         type: db.STRING(100),
         defaultValue: ""
+    },
+    bgImg: {
+        type: db.STRING(50),
+        defaultValue: ""
+    },
+    advImg: {
+        type: db.STRING(50),
+        defaultValue: ""
+    },
+    advideo: {
+        type: db.STRING(50),
+        defaultValue: ""
     }
 });
 module.exports = SiteInfo;

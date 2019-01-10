@@ -25,6 +25,62 @@ $(document).ready(function () {
                     location.reload();
                 });
             });
+
+            $(".mainModal #btnBgImageUpload").on("click", function (e) {
+                var file = document.getElementById('bgImage').files;
+                if (file.length == 1) {
+                    var formData = new FormData();
+                    formData.append("bgImage", file[0]);
+                    formData.append("name", "bgImage");
+                    $.ajax({
+                        type: "POST",
+                        data: formData,
+                        url: "/admin/bgImageUp",
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            showAlert("上传成功！");
+                        }
+                    });
+                }
+            });
+
+            $(".mainModal #btnAdvImageUpload").on("click", function (e) {
+                var file = document.getElementById('advImage').files;
+                if (file.length == 1) {
+                    var formData = new FormData();
+                    formData.append("bgImage", file[0]);
+                    formData.append("name", "advImage");
+                    $.ajax({
+                        type: "POST",
+                        data: formData,
+                        url: "/admin/bgImageUp",
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            showAlert("上传成功！");
+                        }
+                    });
+                }
+            });
+
+            $(".mainModal #btnAdvVideoUpload").on("click", function (e) {
+                var file = document.getElementById('advVideo').files;
+                if (file.length == 1) {
+                    var formData = new FormData();
+                    formData.append("bgVideo", file[0]);
+                    $.ajax({
+                        type: "POST",
+                        data: formData,
+                        url: "/admin/advVideoUp",
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            showAlert("上传成功！");
+                        }
+                    });
+                }
+            });
         },
         pageInitData: function () {
             this.pageSearch();

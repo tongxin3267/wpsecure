@@ -29,11 +29,43 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div>
-                <input name="upfile" id='upfile' style="display:inline-block;" accept="image/jpeg, image/png" type='file' />
+            <div class="form-group">
+                <label for="description" class="control-label">背景图:</label>
+                <div>
+                    <img src="bg.jpg" width="50px" />
+                </div>
+                <div>
+                    <input name="bgImage" id='bgImage' style="display:inline-block;" accept="image/jpeg" type='file' />
+                    <button id="btnBgImageUpload" class="btn btn-default btn-sm">上传</button>
+                </div>
             </div>
-            <div>
-                <button id="btnUpload" class="btn btn-default btn-sm">上传</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="description" class="control-label">广告图:</label>
+                <div>
+                    <img src="bg.jpg" width="200px" />
+                </div>
+                <div>
+                    <input name="advImage" id='advImage' style="display:inline-block;" accept="image/jpeg" type='file' />
+                    <button id="btnAdvImageUpload" class="btn btn-default btn-sm">上传</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="description" class="control-label">广告片:</label>
+                <div>
+                    <img src="bg.jpg" width="200px" />
+                </div>
+                <div>
+                    <input name="advVideo" id='advVideo' style="display:inline-block;" accept="video/mp4" type='file' />
+                    <button id="btnAdvVideoUpload" class="btn btn-default btn-sm">上传</button>
+                </div>
             </div>
         </div>
     </div>
