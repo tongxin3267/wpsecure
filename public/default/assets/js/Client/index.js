@@ -8,7 +8,7 @@ $(document).ready(function () {
         init: function () {
             this.initData();
             this.initEvents();
-            this.timer();
+            // this.timer();
         },
         initData: function () {
 
@@ -25,7 +25,7 @@ $(document).ready(function () {
             this.option.video.onclick = function (e) {
                 that.option.video.pause();
                 $(".video").hide();
-                that.timer();
+                // that.timer();
                 console.log("begin timer!");
             }
         },
