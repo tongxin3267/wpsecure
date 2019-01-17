@@ -12,7 +12,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/Client', auth.checkSession);
+    app.get('/Client', auth.checkSession().bind(auth));
     app.get('/Client', function (req, res) {
         var md5 = crypto.createHash('md5'),
             token = md5.update(req.session.user.password).digest('hex');

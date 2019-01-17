@@ -3,18 +3,21 @@ var crypto = require('crypto'),
     Shop = model.shop;
 
 module.exports = {
-    checkSession: function (req, res, next) {
-        if (!req.session.user) {
-            this.gotoError(req, res);
-            return;
+    checkSession: function () {
+        return function (req, res, next) {
+            if (!req.session.user) {
+                this.gotoError(req, res);
+                return;
+            }
+            next();
         }
-        next();
     },
     gotoError: function (req, res) {
         if (req.method == "GET") {
-            res.render("404.html", {
-                websiteTitle: "404"
-            });
+            res.redirect("/Client/login");
+            // res.render("404.html", {
+            //     websiteTitle: "404"
+            // });
         } else {
             res.jsonp({
                 error: "not login"
@@ -29,8 +32,8 @@ module.exports = {
                 return;
             }
             Shop.getFilter({
-                _id: req.cookies['shopId']
-            })
+                    _id: req.cookies['shopId']
+                })
                 .then(shop => {
                     if (shop) {
                         var md5 = crypto.createHash('md5'),
