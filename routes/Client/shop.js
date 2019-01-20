@@ -19,8 +19,8 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.get('/Client/manage', auth.checkLogin().bind(auth));
-    app.get('/Client/manage', auth.checkManager.bind(auth));
+    app.get('/Client/manage', auth.checkLogin(auth));
+    app.get('/Client/manage', auth.checkManager);
     app.get('/Client/manage', function (req, res) {
         res.render('Client/manage.html', {
             title: '管理中心',
@@ -28,7 +28,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/Client/manage/login', auth.checkLogin().bind(auth));
+    app.get('/Client/manage/login', auth.checkLogin(auth));
     app.get('/Client/manage/login', function (req, res) {
         res.render('Client/manageLogin.html', {
             title: '管理中心',
@@ -36,7 +36,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/Client/manage/login', auth.checkLogin().bind(auth));
+    app.post('/Client/manage/login', auth.checkLogin(auth));
     app.post('/Client/manage/login', function (req, res) {
         // 日志
         User.getFilter({
@@ -54,8 +54,14 @@ module.exports = function (app) {
             });
     });
 
-    app.post('/Client/manage/paths', auth.checkLogin(true).bind(auth));
-    app.post('/Client/manage/paths', auth.checkManager.bind(auth));
+    app.get('/Client/manage/logout', auth.checkLogin(auth));
+    app.get('/Client/manage/logout', function (req, res) {
+        req.session.manager = null;
+        return res.redirect('/Client');
+    });
+
+    app.post('/Client/manage/paths', auth.checkLogin(auth, true));
+    app.post('/Client/manage/paths', auth.checkManager);
     app.post('/Client/manage/paths', function (req, res) {
         var shopId = req.cookies['shopId'];
         var strSql = "select P.goodId, P.goodName, P.goodCount, A.img, P._id from shopPaths P left join goods A on A._id=P.goodId and A.isDeleted=0 where P.isDeleted=0 and P.shopId=:shopId ";
@@ -89,8 +95,8 @@ module.exports = function (app) {
             })
     });
 
-    app.post('/Client/manage/updatepaths', auth.checkLogin(true).bind(auth));
-    app.post('/Client/manage/updatepaths', auth.checkManager.bind(auth));
+    app.post('/Client/manage/updatepaths', auth.checkLogin(auth, true));
+    app.post('/Client/manage/updatepaths', auth.checkManager);
     app.post('/Client/manage/updatepaths', function (req, res) {
         // update paths
         var paths = JSON.parse(req.body.paths),

@@ -3,7 +3,7 @@ $(document).ready(function () {
         option: {
             video: document.getElementById("video"),
             lastTime: new Date().getTime(),
-            timeOut: 10 * 1000
+            timeOut: 5 * 1000
         },
         init: function () {
             this.initData();
@@ -18,16 +18,20 @@ $(document).ready(function () {
 
             /* 鼠标移动事件 */
             $(document).mousemove(function () {
-                that.option.lastTime = new Date().getTime(); //更新操作时间
+                that.pauseVideo();
                 console.log("change last time!");
             });
 
-            this.option.video.onclick = function (e) {
-                that.option.video.pause();
-                $(".video").hide();
-                // that.timer();
-                console.log("begin timer!");
-            }
+            // this.option.video.onclick = function (e) {
+            //     that.pauseVideo();
+            //     console.log("begin timer!");
+            // }
+        },
+        pauseVideo: function () {
+            this.option.video.pause();
+            $(".video").hide();
+            this.option.lastTime = new Date().getTime(); //更新操作时间
+            this.timer();
         },
         timer: function () {
             var currentTime = new Date().getTime(); //更新当前时间

@@ -13,7 +13,25 @@ $(document).ready(function () {
             var that = this;
             $("#btnExit").on("click", function (e) {
                 // 退出
-                location.href = "/student/login";
+                location.href = "/Client/manage/logout";
+            });
+
+            $("#btnRefresh").on("click", function (e) {
+                location.href = location.href;
+            });
+
+            $("#btnEmpty").on("click", function (e) {
+                $(".paths table td").each(function (i) {
+                    var path = $(this).data("obj");
+                    $(".paths #" + path._id + " .count").val(0);
+                });
+            });
+
+            $("#btnFull").on("click", function (e) {
+                $(".paths table td").each(function (i) {
+                    var path = $(this).data("obj");
+                    $(".paths #" + path._id + " .count").val(10);
+                });
             });
 
             $(".paths").on("click", "img", function (e) {
@@ -67,7 +85,7 @@ $(document).ready(function () {
                                 var img = result.paths[i].img || '',
                                     name = result.paths[i].goodName || '沒有商品',
                                     count = result.paths[i].goodCount || 0;
-                                $td = $("<td id=" + result.paths[i]._id + "><img src={0} /><div class='shopName'>{1}</div><div>商品数量: <input type='number' min=0 id='count' value={2} /></div></td>".format("../uploads/icons/" + img, name, count));
+                                $td = $("<td id=" + result.paths[i]._id + "><img src={0} /><div class='shopName'>{1}</div><div>商品数量: <input type='number' min=0 class='count' value={2} /></div></td>".format("../uploads/icons/" + img, name, count));
                                 $td.data("obj", result.paths[i]);
                                 $tr.append($td);
                             } else {
@@ -103,7 +121,7 @@ $(document).ready(function () {
                 paths.push({
                     goodId: path.goodId,
                     goodName: path.goodName,
-                    goodCount: $(".paths #" + path._id + " #count").val(),
+                    goodCount: $(".paths #" + path._id + " .count").val(),
                     _id: path._id
                 });
             });
