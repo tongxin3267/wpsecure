@@ -19,6 +19,22 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
+    app.get('/Client/focus', auth.checkLogin(auth));
+    app.get('/Client/focus', function (req, res) {
+        res.render('Client/focus.html', {
+            title: '关注中心',
+            user: req.session.user // 机器信息
+        });
+    });
+
+    app.get('/Client/buy', auth.checkLogin(auth));
+    app.get('/Client/buy', function (req, res) {
+        res.render('Client/buy.html', {
+            title: '出货中心',
+            user: req.session.user // 机器信息
+        });
+    });
+
     app.get('/Client/manage', auth.checkLogin(auth));
     app.get('/Client/manage', auth.checkManager);
     app.get('/Client/manage', function (req, res) {

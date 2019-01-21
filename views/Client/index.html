@@ -1,22 +1,6 @@
 {% extends "Client/partial/main.html" %} {% block main %}
 <style type="text/css">
-    body {
-        background-color: #f8f8f8;
-        background-image: url(../../../../uploads/images/bg.jpg);
-    }
 
-    .container {
-        background-image: url(../../../../uploads/images/front.jpg);
-        background-repeat: no-repeat;
-        background-position: center;
-        height: 100vh;
-        background-size: auto 100%;
-    }
-
-    footer,
-    .container {
-        background-color: transparent;
-    }
 </style>
 <div class="container index">
     <!-- <input type="hidden" id="awstoken" value={{awstoken}} >
@@ -27,6 +11,12 @@
     <marquee scrollamount="1" style="height: 30px; background-color: #ffd600;" id="">
         嘿！我是小蓝盒子，点我可以有你想不到的惊喜
     </marquee>
+    <div class="button">
+        <button type="button" class="btn btn-warning toBuy">Let's GO</button>
+    </div>
+    <div class="img">
+        <img class="cartoon" src="">
+    </div>
     <div class="video" style="display:none;">
         <video id="video" style="object-fit: fill;" loop="true" src="../uploads/videos/adv.mp4"></video>
     </div>
