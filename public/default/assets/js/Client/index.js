@@ -3,12 +3,12 @@ $(document).ready(function () {
         option: {
             video: document.getElementById("video"),
             lastTime: new Date().getTime(),
-            timeOut: 5 * 1000
+            timeOut: 20 * 1000
         },
         init: function () {
             this.initData();
             this.initEvents();
-            // this.timer();
+            this.timer();
         },
         initData: function () {
 
@@ -30,7 +30,7 @@ $(document).ready(function () {
             this.option.video.pause();
             $(".video").hide();
             this.option.lastTime = new Date().getTime(); //更新操作时间
-            // this.timer();
+            this.timer();
         },
         timer: function () {
             var currentTime = new Date().getTime(); //更新当前时间
