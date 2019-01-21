@@ -3,11 +3,13 @@ $(document).ready(function () {
         option: {
             container: $(".paths"),
             goods: null,
-            curPath: ""
+            curPath: "",
+            curInput: null
         },
         init: function () {
             this.initData();
             this.initEvents();
+            this.initKeyBoardEvents();
         },
         initEvents: function () {
             var that = this;
@@ -44,6 +46,28 @@ $(document).ready(function () {
                 });
             });
 
+            $(".paths").on("click", "td .count", function (e) {
+                that.option.curInput = $(e.currentTarget);
+                $(".mykb-box").show();
+                e.stopPropagation();
+                var position = that.option.curInput.position();
+                var x = position.left-150,
+                y = position.top+60,
+                totalWidth = $(window).width(),
+                totalHeight = $(window).height();
+                if(x+360>totalWidth)
+                {
+                    x = totalWidth-360;
+                }
+                if(y+270>totalHeight)
+                {
+                    y = position.top-270;
+                }
+                $(".mykb-box").css({'left':(x>0?x:0),'top':y});
+            });
+            $(".manage").click(function(e){
+                $(".mykb-box").hide();
+            });
             // close model
             $("#myModal .goodList").on("click", "img", function (e) {
                 // get current seq
@@ -85,7 +109,13 @@ $(document).ready(function () {
                                 var img = result.paths[i].img || '',
                                     name = result.paths[i].goodName || '沒有商品',
                                     count = result.paths[i].goodCount || 0;
-                                $td = $("<td id=" + result.paths[i]._id + "><img src={0} /><div class='shopName'>{1}</div><div>商品数量: <input type='number' min=0 class='count' value={2} /></div></td>".format("../uploads/icons/" + img, name, count));
+                                $td = $("<td id=" + result.paths[i]._id + "><img src={0} /><div class='shopName'>{1}</div><div>商品数量: <input type='number' min=0 max=99 class='form-control input-lg count' /></div></td>".format("../uploads/icons/" + img, name));
+                                var $count = $td.find(".count");
+                                for(var m=0;m<=10;m++)
+                                {
+                                    $count.append('<option value='+m+'>'+m+'</option>');
+                                }
+                                $count.val(count);
                                 $td.data("obj", result.paths[i]);
                                 $tr.append($td);
                             } else {
@@ -126,6 +156,36 @@ $(document).ready(function () {
                 });
             });
             return paths;
+        },
+        initKeyBoardEvents: function(){
+            var that = this;
+            $(".mykb-box .num").click(function(e){
+                if($(e.currentTarget).text()==".")
+                {
+                    return;
+                }
+                var old = parseInt(that.option.curInput.val()||0);
+                that.option.curInput.val(old*10+parseInt($(e.currentTarget).text()));
+            });
+
+            $(".mykb-box .exit").click(function(e){
+                $(".mykb-box").hide();
+            });
+            $(".mykb-box .sure").click(function(e){
+                $(".mykb-box").hide();
+            });
+
+            $(".mykb-box .clearall").click(function(e){
+                that.option.curInput.val(0);
+            });
+            $(".mykb-box .del").click(function(e){
+                var old = parseInt(that.option.curInput.val()||0);
+                if(old == 0)
+                {
+                    return;
+                }
+                that.option.curInput.val(Math.floor(old/10));
+            });
         }
     };
 
