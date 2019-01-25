@@ -15,5 +15,9 @@ $(document).ready(function () {
         location.href = "/shop/manage";
     });
 
+    $("#left_btnGoodLog").on("click", function (e) {
+        location.href = "/shop/goodLog";
+    });
+
     $(".admin-nav .menu-top #header_shop_btnShop").addClass("active");
 });

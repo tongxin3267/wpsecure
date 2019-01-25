@@ -48,6 +48,11 @@ const Shop = db.defineModel('shops', {
         // 横向轨道数
         type: db.INTEGER,
         defaultValue: 0
+    },
+    isLocked: {
+        // 是否锁定机器，锁定后不可购买
+        type: db.BOOLEAN,
+        defaultValue: 0
     }
 });
 module.exports = Shop;

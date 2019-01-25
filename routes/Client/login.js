@@ -15,8 +15,8 @@ module.exports = function (app) {
     app.get('/Client', auth.checkSession(auth), function (req, res) {
         var md5 = crypto.createHash('md5'),
             token = md5.update(req.session.user.password).digest('hex');
-        res.cookie('shopId', req.session.user._id);
-        res.cookie('awstoken', token);
+        // res.cookie('shopId', req.session.user._id);
+        // res.cookie('awstoken', token);
         res.render('Client/index.html', {
             title: '个人中心',
             user: req.session.user

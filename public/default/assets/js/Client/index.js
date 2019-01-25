@@ -22,9 +22,11 @@ $(document).ready(function () {
                 console.log("change last time!");
             });
 
+            // if (!lock) {
             $(".toBuy").click(function (e) {
                 location.href = "/client/focus";
             });
+            // }
         },
         pauseVideo: function () {
             this.option.video.pause();

@@ -19,10 +19,12 @@ $(document).ready(function () {
             });
 
             $("#btnRefresh").on("click", function (e) {
+                // 刷新
                 location.href = location.href;
             });
 
             $("#btnEmpty").on("click", function (e) {
+                // 清空
                 $(".paths table td").each(function (i) {
                     var path = $(this).data("obj");
                     $(".paths #" + path._id + " .count").val(0);
@@ -30,9 +32,32 @@ $(document).ready(function () {
             });
 
             $("#btnFull").on("click", function (e) {
+                // 填满
                 $(".paths table td").each(function (i) {
                     var path = $(this).data("obj");
                     $(".paths #" + path._id + " .count").val(10);
+                });
+            });
+
+            $("#btnLock").on("click", function (e) {
+                // 锁定
+                selfAjax("post", "/Client/manage/lockShop", {
+                    paths: paths
+                }, function (result) {
+                    location.href = "/Client/manage/logout";
+                });
+            });
+
+            $("#btnUnLock").on("click", function (e) {
+                // 解锁定
+                selfAjax("post", "/Client/manage/unlockShop", {
+                    paths: paths
+                }, function (result) {
+                    if (result.error) {
+                        showAlert(result.error);
+                        return;
+                    }
+                    showAlert("解锁成功！");
                 });
             });
 
@@ -82,6 +107,7 @@ $(document).ready(function () {
             });
 
             $("#btnSave").click(function (e) {
+                // 保存
                 // save all data to db
                 var paths = JSON.stringify(that.getAllData());
                 selfAjax("post", "/Client/manage/updatepaths", {
@@ -149,6 +175,7 @@ $(document).ready(function () {
             $(".paths table td").each(function (i) {
                 var path = $(this).data("obj");
                 paths.push({
+                    sequence: path.sequence,
                     goodId: path.goodId,
                     goodName: path.goodName,
                     goodCount: $(".paths #" + path._id + " .count").val(),

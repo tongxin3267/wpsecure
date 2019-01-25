@@ -3,6 +3,7 @@ var model = require("../../model.js"),
     Shop = model.shop,
     ShopGood = model.shopGood,
     ShopPath = model.shopPath,
+    PathModifyLog = model.pathModifyLog,
     GoodType = model.goodType,
     Order = model.order,
     OrderSeq = model.orderSeq,
@@ -80,7 +81,7 @@ module.exports = function (app) {
     app.post('/Client/manage/paths', auth.checkManager);
     app.post('/Client/manage/paths', function (req, res) {
         var shopId = req.cookies['shopId'];
-        var strSql = "select P.goodId, P.goodName, P.goodCount, A.img, P._id from shopPaths P left join goods A on A._id=P.goodId and A.isDeleted=0 where P.isDeleted=0 and P.shopId=:shopId ";
+        var strSql = "select P.sequence, P.goodId, P.goodName, P.goodCount, A.img, P._id from shopPaths P left join goods A on A._id=P.goodId and A.isDeleted=0 where P.isDeleted=0 and P.shopId=:shopId order by P._id";
         // var shopId = req.session.shop._id;
         model.db.sequelize.query(strSql, {
                 replacements: {
@@ -118,12 +119,35 @@ module.exports = function (app) {
         var paths = JSON.parse(req.body.paths),
             pArray = [];
         paths.forEach(path => {
-            var p = ShopPath.update(path, {
-                where: {
+            var p = ShopPath.getFilter({
                     _id: path._id
-                }
-            });
-            pArray.push(p);
+                })
+                .then(orgPath => {
+                    if (orgPath.goodId != path.goodId || orgPath.goodCount != path.goodCount) {
+                        return model.db.sequelize.transaction(function (t1) {
+                            return PathModifyLog.create({
+                                    sequence: path.sequence,
+                                    pathId: path._id,
+                                    preGoodId: orgPath.goodId,
+                                    preGoodName: orgPath.goodName,
+                                    preGoodCount: orgPath.goodCount,
+                                    goodCount: path.goodCount,
+                                    goodId: path.goodId,
+                                    goodName: path.goodName
+                                }, {
+                                    transaction: t1
+                                })
+                                .then(() => {
+                                    return ShopPath.update(path, {
+                                        where: {
+                                            _id: path._id
+                                        },
+                                        transaction: t1
+                                    });
+                                });
+                        });
+                    }
+                });
         });
 
         Promise.all(pArray)
@@ -133,5 +157,44 @@ module.exports = function (app) {
                 });
             });
 
+    });
+
+    // /Client/manage/lockShop
+    app.post('/Client/manage/lockShop', auth.checkLogin(auth, true));
+    app.post('/Client/manage/lockShop', auth.checkManager);
+    app.post('/Client/manage/lockShop', function (req, res) {
+        // update paths
+        var shopId = req.cookies['shopId'];
+        Shop.update({
+                isLocked: 1
+            }, {
+                where: {
+                    _id: shopId
+                }
+            })
+            .then(shop => {
+                res.jsonp({
+                    sucess: true
+                });
+            });
+    });
+
+    app.post('/Client/manage/unlockShop', auth.checkLogin(auth, true));
+    app.post('/Client/manage/unlockShop', auth.checkManager);
+    app.post('/Client/manage/unlockShop', function (req, res) {
+        // update paths
+        var shopId = req.cookies['shopId'];
+        Shop.update({
+                isLocked: 0
+            }, {
+                where: {
+                    _id: shopId
+                }
+            })
+            .then(shop => {
+                res.jsonp({
+                    sucess: true
+                });
+            });
     });
 }
