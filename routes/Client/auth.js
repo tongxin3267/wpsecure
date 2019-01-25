@@ -11,6 +11,15 @@ var crypto = require('crypto'),
                 next();
             }
         },
+        checkSessionCookie: function (auth) {
+            return function (req, res, next) {
+                if ((!req.session.user) && (!req.cookies['shopId'])) {
+                    auth.gotoError(req, res);
+                    return;
+                }
+                next();
+            }
+        },
         gotoError: function (req, res) {
             if (req.method == "GET") {
                 res.redirect("/Client/login");
