@@ -36,7 +36,19 @@ $(document).ready(function () {
         initEvents: function () {
             var that = this;
             $(".buy .img .cartoon").click(function (e) {
-                that.snap1();
+                selfAjax("post", "http://localhost:2369/localService/dropGood", {data:5}, function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    that.snap1();
+                    setTimeout(function(){
+                        that.snap1();
+                    }, 200);
+                    setTimeout(function(){
+                        that.snap1();
+                    }, 400);
+                });
             });
         },
         timer: function () {
