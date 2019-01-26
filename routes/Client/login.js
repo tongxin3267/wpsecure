@@ -13,18 +13,24 @@ module.exports = function (app) {
     });
 
     app.get('/Client', auth.checkSessionCookie(auth), function (req, res) {
-        var isLock = false;
+        var shopId;
         if (req.session.user) {
             var md5 = crypto.createHash('md5'),
                 token = md5.update(req.session.user.password).digest('hex');
             res.cookie('shopId', req.session.user._id);
             res.cookie('awstoken', token);
+            shopId = req.session.user._id;
         }
-
-        res.render('Client/index.html', {
-            title: '个人中心',
-            user: req.session.user,
-            isLock: isLock
+        else{
+             shopId = req.cookies['shopId'];
+        }
+        Shop.getFilter({_id:shopId})
+        .then(shop=>{
+            res.render('Client/index.html', {
+                title: '个人中心',
+                user: req.session.user,
+                isLock: shop.isLocked
+            });
         });
     });
 

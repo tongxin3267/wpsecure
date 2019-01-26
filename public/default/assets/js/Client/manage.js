@@ -41,18 +41,14 @@ $(document).ready(function () {
 
             $("#btnLock").on("click", function (e) {
                 // 锁定
-                selfAjax("post", "/Client/manage/lockShop", {
-                    paths: paths
-                }, function (result) {
+                selfAjax("post", "/Client/manage/lockShop", null, function (result) {
                     location.href = "/Client/manage/logout";
                 });
             });
 
             $("#btnUnLock").on("click", function (e) {
                 // 解锁定
-                selfAjax("post", "/Client/manage/unlockShop", {
-                    paths: paths
-                }, function (result) {
+                selfAjax("post", "/Client/manage/unlockShop", null, function (result) {
                     if (result.error) {
                         showAlert(result.error);
                         return;
