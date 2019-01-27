@@ -98,7 +98,7 @@ $(document).ready(function () {
                 $("#" + that.option.curPath._id + " .shopName").text(entity.name);
                 that.option.curPath.goodName = entity.name;
                 that.option.curPath.img = entity.img;
-                that.option.curPath.goodId = entity._id;
+                that.option.curPath.goodId = entity.goodId;
                 $('#myModal').modal('hide');
             });
 

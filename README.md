@@ -13,7 +13,7 @@ ADD COLUMN `bgImg` VARCHAR(50) NOT NULL DEFAULT '' AFTER `version`,
 ADD COLUMN `advImg` VARCHAR(50) NOT NULL DEFAULT '' AFTER `bgImg`,
 ADD COLUMN `advideo` VARCHAR(50) NOT NULL DEFAULT '' AFTER `advImg`;
 
-CREATE TABLE `pathmodifylogs` (
+CREATE TABLE `pathModifyLogs` (
   `pathId` varchar(50) NOT NULL,
   `preGoodId` varchar(50) NOT NULL DEFAULT '',
   `preGoodName` varchar(50) NOT NULL DEFAULT '',
@@ -32,10 +32,10 @@ CREATE TABLE `pathmodifylogs` (
   PRIMARY KEY (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-ALTER TABLE `wposal`.`shops` 
+ALTER TABLE `shops` 
 ADD COLUMN `isLocked` TINYINT(1) NOT NULL DEFAULT 0 AFTER `version`;
 
-ALTER TABLE `wposal`.`pathmodifylogs` 
+ALTER TABLE `pathModifyLogs` 
 ADD COLUMN `sequence` INT(11) NOT NULL DEFAULT 0 AFTER `version`;
 
 CREATE TABLE `orderDetailSnaps` (

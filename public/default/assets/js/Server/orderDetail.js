@@ -2,7 +2,7 @@ $(document).ready(function () {
     var pageManager = {
         options: {
             $mainSelectBody: $('.content.mainModal table tbody'),
-            $slidContainer: $("#myModal .images")
+            $slidContainer: $("#myModal .orderDetail.images ul")
         },
         init: function () {
             this.initStyle();
@@ -38,12 +38,21 @@ $(document).ready(function () {
                         data.forEach(function (img) {
                             that.options.$slidContainer.append('<li><img src="/client/images/' + img.img + '" alt=""></li>');
                         });
+                        $('#myModal #myModalLabel').text("snap");
                         $('#myModal').modal({
                             backdrop: 'static',
                             keyboard: false
                         });
+                        drawsnap();
                     }
                 });
+            });
+
+            $('#myModal').on('hidden.bs.modal', function (e) {
+                if(timeId)
+                {
+                    clearTimeout(timeId);
+                }
             });
         },
         initData: function () {
@@ -81,6 +90,22 @@ $(document).ready(function () {
             return buttons;
         }
     };
+
+    var wrap=$("#myModal .orderDetail.images ul")[0],
+    timeId =null;
+    function drawsnap(){
+        var newLeft;
+        if(wrap.style.left === "-1136px"){
+            newLeft = 0;
+        }else{
+            newLeft = parseInt(wrap.style.left||0)-568;
+        }
+        wrap.style.left = newLeft + "px";
+
+        timeId = setTimeout(function(){
+            drawsnap();
+        },1000);
+    }
 
     pageManager.init();
 });

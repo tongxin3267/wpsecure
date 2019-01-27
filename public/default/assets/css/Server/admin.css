@@ -3,7 +3,13 @@
     -moz-border-radius: 0 !important;
     border-radius: 0 !important;
 }
-
+ul {
+    word-break: break-all;
+    padding:0;
+}
+li {
+	list-style: none;
+}
 @media (min-width: 1024px) {
     .modal-max {
         width: 1000px;
@@ -340,6 +346,22 @@ body {
     margin: 0;
 }
 
+#myModal .orderDetail.images {
+    position: relative;
+    width:568px;
+    height: 426px;
+    overflow: hidden;
+}
+#myModal .orderDetail.images ul{
+    position: absolute;
+    width:1704px;
+    height: 426px;
+    overflow: hidden;
+}
 #myModal .orderDetail.images li {
-    width: 100%;
+    width: 568px;
+    float: left;
+}
+#myModal .orderDetail.images li img {
+    width: 568px;
 }
