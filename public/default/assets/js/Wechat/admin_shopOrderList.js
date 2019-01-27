@@ -79,12 +79,7 @@ $(document).ready(function () {
             var strDetail = "";
             if (record.details) {
                 record.details.forEach(function (detail) {
-                    var strCount = detail.attrDetail;
-                    if (strCount) {
-                        strCount += "<br/>X" + detail.buyCount;
-                    } else {
-                        strCount = "X" + detail.buyCount;
-                    }
+                    var strCount = "X" + detail.buyCount;
                     strDetail += '<div class="weui-form-preview__item">\
                                     <label class="weui-form-preview__label">' + detail.name + '</label>\
                                     <span class="weui-form-preview__value">' + strCount + '</span>\

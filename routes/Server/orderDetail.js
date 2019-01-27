@@ -23,8 +23,8 @@ module.exports = function (app) {
                 _id: req.body.orderId
             })
             .then(order => {
-                strSql = "select G.name, D.attrDetail, D.buyCount, D.goodPrice from orderDetails D join shopGoods S on S._id=D.shopGoodId \
-                    join goods G on S.goodId=G._id where D.orderId=:orderId ";
+                strSql = "select D._id, G.name,  D.buyCount, D.goodPrice from orderDetails D  \
+                    join goods G on D.goodId=G._id where D.orderId=:orderId ";
                 model.db.sequelize.query(strSql, {
                         replacements: {
                             orderId: req.body.orderId

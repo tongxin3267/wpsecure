@@ -53,7 +53,7 @@ app.use(session({
     secret: settings.cookieSecret,
     key: settings.db, //cookie name
     cookie: {
-        maxAge: 1000 * 60 * 1 * 1 * 1
+        maxAge: 1000 * 60 * 60 * 60 * 1
     }, //1 days
     resave: false,
     saveUninitialized: true,

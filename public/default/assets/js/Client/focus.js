@@ -15,7 +15,15 @@ $(document).ready(function () {
         initEvents: function () {
             var that = this;
             $(".focus .img .cartoon").click(function (e) {
-                location.href = "/Client/buy";
+                // generate order without order Details
+                selfAjax("post", "/Client/order", null, function (result) {
+                    if (result.error) {
+                        showAlert(result.error);
+                        return;
+                    }
+
+                    location.href = "/Client/buy?orderId=" + result.orderId;
+                });
             });
             /* 鼠标移动事件 */
             // $(document).mousemove(function () {

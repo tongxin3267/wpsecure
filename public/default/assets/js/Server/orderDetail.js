@@ -1,7 +1,8 @@
 $(document).ready(function () {
     var pageManager = {
         options: {
-            $mainSelectBody: $('.content.mainModal table tbody')
+            $mainSelectBody: $('.content.mainModal table tbody'),
+            $slidContainer: $("#myModal .images")
         },
         init: function () {
             this.initStyle();
@@ -19,6 +20,30 @@ $(document).ready(function () {
             $(".mainModal .toolbar #btnPrint").on("click", function (e) {
                 // to print
 
+            });
+
+            $("#gridBody").on("click", "td .btnPic", function (e) {
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                that.options.$slidContainer.empty();
+                selfAjax("post", "/admin/orderDetailSnapList/getsnaps", {
+                    detailId: entity._id
+                }, function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    // show snaps
+                    if (data.length > 0) {
+                        data.forEach(function (img) {
+                            that.options.$slidContainer.append('<li><img src="/client/images/' + img.img + '" alt=""></li>');
+                        });
+                        $('#myModal').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                    }
+                });
             });
         },
         initData: function () {
@@ -41,11 +66,8 @@ $(document).ready(function () {
                         var d = $(document.createDocumentFragment());
                         data.details.forEach(function (record) {
                             var name = record.name;
-                            if (record.attrDetail) {
-                                name += "<br/>" + record.attrDetail
-                            }
                             var $tr = $('<tr id=' + record._id + '><td>' + name + '</td><td>' +
-                                record.buyCount + '</td><td>' + record.goodPrice + '</td><td></td></tr>');
+                                record.buyCount + '</td><td>' + record.goodPrice + '</td><td><div class="btn-group">' + that.getButtons() + '</div></td></tr>');
                             $tr.find(".btn-group").data("obj", record);
                             d.append($tr);
                         });
@@ -55,7 +77,7 @@ $(document).ready(function () {
             });
         },
         getButtons: function () {
-            var buttons = '';
+            var buttons = '<a class="btn btn-default btnPic">快照</a>';
             return buttons;
         }
     };

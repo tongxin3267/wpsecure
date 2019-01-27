@@ -4,6 +4,7 @@ var path = require('path'),
     model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     auth = require("./auth"),
+    OrderDetailSnap = model.orderDetailSnap,
     archiver = require('archiver'),
     crypto = require('crypto'),
     util = require('util'),
@@ -25,8 +26,14 @@ var path = require('path'),
 module.exports = function (app) {
     // app.post('/client/imageUp', checkLogin);
     app.post('/client/imageUp', upload.single('upfile'), function (req, res, next) {
-        res.json({
-            sucess: true
-        });
+        OrderDetailSnap.create({
+                orderDetailId: req.body.detailId,
+                img: req.file.filename
+            })
+            .then(() => {
+                res.json({
+                    sucess: true
+                });
+            });
     });
 }

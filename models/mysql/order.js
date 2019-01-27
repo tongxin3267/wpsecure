@@ -57,7 +57,7 @@ Order.getFiltersWithPage = function (page, filter, orders) {
     return Order.findAndCountAll({
         'where': filter,
         order: (orders || [
-            ['createdDate'],
+            ['createdDate', 'desc'],
             ['_id']
         ]),
         offset: config.pageSize * (page - 1),

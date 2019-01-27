@@ -16,20 +16,8 @@ const OrderDetail = db.defineModel('orderDetails', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    shopGoodId: {
-        type: db.INTEGER
-    },
     goodId: {
         type: db.INTEGER
-    },
-    goodPrice: {
-        type: db.DECIMAL(10, 2),
-        defaultValue: 0
-    },
-    attrDetail: {
-        // 规格参数
-        type: db.STRING(100),
-        defaultValue: ""
     },
     buyCount: {
         type: db.INTEGER,

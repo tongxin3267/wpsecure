@@ -109,7 +109,7 @@ module.exports = function (app) {
     });
 
     function getSingleOrderDetails(orderId, orderTypeId) {
-        var strSql = "select B.orderId, B.goodPrice, B.attrDetail, B.buyCount, G.name from shopGoods A join orderDetails B on A._id=B.shopGoodId  \
+        var strSql = "select B.orderId, B.goodPrice, B.buyCount, G.name from shopGoods A join orderDetails B on A._id=B.shopGoodId  \
             join goods G on A.goodId=G._id \
             where G.isDeleted=0 and B.orderId=:orderId and B.orderTypeId=:orderTypeId and B.status=0 order by B.createdDate, B._id";
         return model.db.sequelize.query(strSql, {

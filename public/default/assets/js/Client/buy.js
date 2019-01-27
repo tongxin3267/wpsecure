@@ -35,20 +35,43 @@ $(document).ready(function () {
         },
         initEvents: function () {
             var that = this;
+            // 扫码并支付
             $(".buy .img .cartoon").click(function (e) {
-                selfAjax("post", "http://localhost:2369/localService/dropGood", {data:5}, function (data) {
-                    if (data.error) {
-                        showAlert(data.error);
+                // add good to order
+                // drop good
+                selfAjax("post", "/Client/AddGoodtoOrder", {
+                    pathId: 1,
+                    "orderId": $("#orderId").val()
+                }, function (result) {
+                    if (result.error) {
+                        showAlert(result.error);
                         return;
                     }
-                    that.snap1();
-                    setTimeout(function(){
-                        that.snap1();
-                    }, 200);
-                    setTimeout(function(){
-                        that.snap1();
-                    }, 400);
+
+                    that.dropGood(59, result.detailId);
                 });
+            });
+        },
+        dropGood: function (data, detailId) {
+            var that = this;
+            return new Promise(function (resolve, reject) {
+                // selfAjax("post", "http://localhost:2369/localService/dropGood", {
+                //     data: data
+                // }, function (data) {
+                //     if (data.error) {
+                //         showAlert(data.error);
+                //         reject(data.error);
+                //         return;
+                //     }
+                that.snap1(detailId);
+                setTimeout(function () {
+                    that.snap1(detailId);
+                }, 200);
+                setTimeout(function () {
+                    that.snap1(detailId, true);
+                    resolve();
+                }, 400);
+                // });
             });
         },
         timer: function () {
@@ -73,13 +96,14 @@ $(document).ready(function () {
                 // log to server?
             };
         },
-        snap1: function () {
+        snap1: function (detailId, last) {
             this.option.ctx1.drawImage(this.option.aVideo, 0, 0, 640, 480);
             var base64Codes = this.option.aCanvas1.toDataURL("image/jpg");
             // var base64Codes = imgData.split(",")[1];
             var bl = this.convertBase64UrlToBlob(base64Codes);
             var formData = new FormData();
-            formData.append("upfile", bl, Date.parse(new Date()) + ".jpg");
+            formData.append("upfile", bl, (new Date()).getTime() + ".jpg");
+            formData.append("detailId", detailId);
             $.ajax({
                 type: "POST",
                 data: formData,
@@ -87,7 +111,9 @@ $(document).ready(function () {
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                    location.href = "/Client";
+                    if (last) {
+                        location.href = "/Client";
+                    }
                 }
             });
         },

@@ -339,3 +339,7 @@ body {
 .mainModal.flatedit .row {
     margin: 0;
 }
+
+#myModal .orderDetail.images li {
+    width: 100%;
+}

@@ -30,8 +30,10 @@ module.exports = function (app) {
 
     app.get('/Client/buy', auth.checkLogin(auth));
     app.get('/Client/buy', function (req, res) {
+        var orderId = req.query.orderId;
         res.render('Client/buy.html', {
             title: '出货中心',
+            orderId: orderId,
             user: req.session.user // 机器信息
         });
     });
@@ -195,6 +197,55 @@ module.exports = function (app) {
                 res.jsonp({
                     sucess: true
                 });
+            });
+    });
+
+    function random4() {
+        var r = '000' + Math.random() * 1000;
+        return r.slice(-3);
+    };
+    // 支付订单
+    app.post('/Client/order', auth.checkLogin(auth));
+    app.post('/Client/order', function (req, res) {
+        var shopId = req.cookies['shopId'],
+            orderId = (new Date().getTime()).toString() + random4();
+        return Order.create({
+                userId: 0,
+                shopId: shopId,
+                totalPrice: 0.01,
+                _id: orderId,
+                payStatus: 2, // TBD need remove in real env
+                createdBy: "0"
+            })
+            .then(() => {
+                res.jsonp({
+                    orderId: orderId
+                });
+            });
+    });
+
+    // 订单上添加商品
+    app.post('/Client/AddGoodtoOrder', auth.checkLogin(auth));
+    app.post('/Client/AddGoodtoOrder', function (req, res) {
+        var shopId = req.cookies['shopId'],
+            orderId = req.body.orderId,
+            pathId = req.body.pathId;
+
+        ShopPath.getFilter({
+                shopId: shopId,
+                sequence: pathId
+            })
+            .then(path => {
+                OrderDetail.create({
+                        orderId: orderId,
+                        goodId: path.goodId,
+                        status: 1
+                    })
+                    .then(detail => {
+                        res.jsonp({
+                            detailId: detail._id
+                        });
+                    });
             });
     });
 }
