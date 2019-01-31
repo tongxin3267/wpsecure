@@ -6,14 +6,14 @@ const db = require('../../db'),
 // 章节默认为4级，每级4位 最多16位
 const PathModifyLog = db.defineModel('pathModifyLogs', {
     pathId: {
-        type: db.STRING(50)
+        type: db.INTEGER
     },
     sequence: {
         type: db.INTEGER,
         defaultValue: 0
     },
     preGoodId: {
-        type: db.STRING(50),
+        type: db.INTEGER,
         defaultValue: ""
     }, // 描述信息，用于seo
     preGoodName: {
@@ -36,7 +36,7 @@ const PathModifyLog = db.defineModel('pathModifyLogs', {
     goodId: {
         // 可以为空，就是不添加商品
         // 机器管理员修改
-        type: db.STRING(50),
+        type: db.INTEGER,
         defaultValue: ''
     },
     goodName: {

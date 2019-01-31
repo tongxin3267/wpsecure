@@ -18,8 +18,8 @@ const ShopPath = db.defineModel('shopPaths', {
     goodId: {
         // 可以为空，就是不添加商品
         // 机器管理员修改
-        type: db.STRING(50),
-        defaultValue: ''
+        type: db.INTEGER,
+        defaultValue: 0
     },
     goodName: {
         // 商品名称
@@ -27,8 +27,8 @@ const ShopPath = db.defineModel('shopPaths', {
         defaultValue: ''
     },
     shopId: {
-        type: db.STRING(50),
-        defaultValue: ''
+        type: db.INTEGER,
+        defaultValue: 0
     }
 });
 module.exports = ShopPath;

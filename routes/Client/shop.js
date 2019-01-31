@@ -204,6 +204,24 @@ module.exports = function (app) {
         var r = '000' + Math.random() * 1000;
         return r.slice(-3);
     };
+
+    // goods to show 
+    app.post('/Client/goods', auth.checkLogin(auth));
+    app.post('/Client/goods', function (req, res) {
+        var shopId = req.cookies['shopId'];
+        var strSql = "select Distinct goodId, goodName from shopPaths where isDeleted=0 and shopId=:shopId and goodCount>0";
+        // var shopId = req.session.shop._id;
+        model.db.sequelize.query(strSql, {
+                replacements: {
+                    shopId: shopId
+                },
+                type: model.db.sequelize.QueryTypes.SELECT
+            })
+            .then(goods => {
+                res.jsonp(goods);
+            });
+    });
+
     // 支付订单
     app.post('/Client/order', auth.checkLogin(auth));
     app.post('/Client/order', function (req, res) {
@@ -236,10 +254,21 @@ module.exports = function (app) {
                 sequence: pathId
             })
             .then(path => {
-                OrderDetail.create({
-                        orderId: orderId,
-                        goodId: path.goodId,
-                        status: 1
+                path.goodCount -= 1;
+                // 出货后数量减一
+                return model.db.sequelize.transaction(function (t1) {
+                        return path.save({
+                                transaction: t1
+                            })
+                            .then(() => {
+                                // 货物详情加入订单
+                                return OrderDetail.create({
+                                    orderId: orderId,
+                                    goodId: path.goodId,
+                                    pathId: path._id,
+                                    status: 1
+                                });
+                            });
                     })
                     .then(detail => {
                         res.jsonp({

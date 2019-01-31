@@ -19,6 +19,9 @@ const OrderDetail = db.defineModel('orderDetails', {
     goodId: {
         type: db.INTEGER
     },
+    pathId: {
+        type: db.INTEGER
+    },
     buyCount: {
         type: db.INTEGER,
         defaultValue: 1

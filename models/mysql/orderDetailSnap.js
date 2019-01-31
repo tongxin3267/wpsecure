@@ -6,7 +6,7 @@ const db = require('../../db'),
 // 章节默认为4级，每级4位 最多16位
 const OrderDetailSnap = db.defineModel('orderDetailSnaps', {
     orderDetailId: {
-        type: db.STRING(50)
+        type: db.INTEGER
     },
     img: {
         type: db.STRING(50),

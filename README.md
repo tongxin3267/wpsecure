@@ -51,3 +51,13 @@ CREATE TABLE `orderDetailSnaps` (
   `version` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+pathId to order detail
+
+snap detailId
+
+modify log
+
+shoppath
+
+

@@ -11,7 +11,14 @@ $(document).ready(function () {
             this.timer();
         },
         initData: function () {
+            // get existing goods and goods count
+            selfAjax("post", "/Client/goods", null, function (result) {
+                if (result.error) {
+                    showAlert(result.error);
+                    return;
+                }
 
+            });
         },
         initEvents: function () {
             var that = this;
@@ -22,10 +29,10 @@ $(document).ready(function () {
                 console.log("change last time!");
             });
 
-            if ($("#isLock").val()=="false") {
-            $(".toBuy").click(function (e) {
-                location.href = "/client/focus";
-            });
+            if ($("#isLock").val() == "false") {
+                $(".toBuy").click(function (e) {
+                    location.href = "/client/focus";
+                });
             }
         },
         pauseVideo: function () {
