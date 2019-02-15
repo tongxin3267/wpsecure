@@ -39,6 +39,16 @@ $(document).ready(function () {
                 });
             });
 
+            $("#btnPay").click(function (e) {
+                selfAjax("post", "/admin/shop/getQRCode", null, function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    $(".showQR").append('<img style="width:100px;height:100px;" src="' + data.qrCode.data + '" />');
+                });
+            });
+
             $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
