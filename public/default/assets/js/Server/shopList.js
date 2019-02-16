@@ -45,7 +45,7 @@ $(document).ready(function () {
                         showAlert(data.error);
                         return;
                     }
-                    $(".showQR").append('<img style="width:100px;height:100px;" src="' + data.qrCode.data + '" />');
+                    $(".showQR").append('<img style="width:100px;height:100px;" src="data:image/jpeg;base64,' + data.qrCode.data + '" />');
                 });
             });
 

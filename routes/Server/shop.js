@@ -150,20 +150,22 @@ module.exports = function (app) {
     app.post('/admin/shop/getQRCode', checkLogin);
     app.post('/admin/shop/getQRCode', function (req, res) {
         const alipaySdk = new AlipaySdk({
-            appId: '2016092400584469',
-            privateKey: 'MIIEpAIBAAKCAQEA1NUBo5ks4qzK/w1gOGytwP8a+LKydLq0N5DM31eTuQ8H0U2UlOp+MKwoVZ3SbplEpbQa3nro+9o6IQEjNN2erEqP27r1D+ymL8nT1/gz23RhTiHWhYG3XhdUE5+04nJ+2nOrOOdGmmYdR8XvEdGkPkmZUbtk+W4ZhGT/po/8/P8jGQ+pkbQy0siyDIYU6H8HsmYJTv9iPzIZfKseveCVVlv9zk3vb6ulouT3hGBS0V1xGNNoXD1lbOThvv4diQYQiy+Hs5UUi18GuXTXD4sQVngTFq4wVFPNQkbEjMeDch/9F4jk986XZ4Xu5LJBUGi/EIjIoQN6uIFgoKeUVqWXwwIDAQABAoIBAQCpzXPsUWYlR1UB3msZOWP7Kc0cBH4qcVcdSfKaciXSrLJBBBN6KAgbzw6zGCJuyOujBKm3PPqrDTX5ZQ3wvKw+q5JQ7b1dQiJo2C6jDUxaV2TW0Fp108M3V4dlzLKlRFH++e/ui16iCrxrqfiOD+NpKpEfS1JJStUi8u2gtxpRwcuqzIjk8MRlh7lxyrM0xm+r/WRDwNPe5lVf1bEBZ5Bh1vqxin6+gTivqkhI+0S4Eb+EhLwwwHmsGQbSrLeletTe9VXfpl8RbdgKC9h50s0gX0vFo8p3seL6GLOGVBFuSIb8J79VNnQrxLuthKphamA9ks4euba5G8iDEnGqdFGpAoGBAPntTk9v0NP+3+LY51rVSm6iLeVd4SxRExqXf14LgqLr1opjUizHxZL5KvwJtNqGMEqbMkxTkPsGaTZqoLMLI4Wv0lE2hz9gmVgpX74+a/wGc4tpheEsciRbx5/5t12e4xt915dynR6M/8X7MUzgAG15ErCDvREe/q5YswFqfagHAoGBANoA8rXw3FkLSH98iAdcn6DcVeM4X+6nnKvRcIJAgudFTLo6HC+AAr+HTrDBGgs6PRbK7VAo5+aOev01LeXwnKFDI86ztl72bczhNemingjG0EENFoa1fQNf6Rwq9JMI6dkGJrt3XiqRyywjLDRi1PlAnCcZPJL6IbZa9QkR1gtlAoGADQnXSwefUl/6mCAOuctkza7CTDQAmkpEf9+lcmeRUiSRlbimwdVONmOvXWS4PapAfLPqBNdbOe1UsdUQOyb6nG/WvgvlNGY6ucG2z/r7sTM49e30YRHrhoAPQwZJDaZLXNTM2YbOMZjTgyWepc8N1qg5VGIbC/ic+sV/2TQQCCMCgYEAhgqfMY9vbLCrWvfPC/e/jsDrblJzaeJVSq/0ZaIU2u6ZRsgEHJCxH+KqV7Pjt5OPjDwpvmfobrKcnKPeHMvdAqqtkaKeN7V9vcObypPaZ7sWwWiyuRFOVIzcYB1pVB7e6joGBq5WkAYkznax72P1X2yClufFfvmdUOqMT49P9KECgYAGM07iqHK8AbIjhrMSXP5z0ytIC31jzEaQYRL0PxpgM8O3KylyK9vxPkHELKdaUiTeGWT/mYzQmpg9ZfinPBBkYgGivZzewwl0FgYLIhVuG+DeiUUOIrp4jManmkKv+rr46Umnt+Dlt/09s0L2oJ9xkp5ONCCrJK37eQghSgwCCg==',
-            alipayPublicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlX82Rj5oQUSjeGbrKnmyf3bz6x2e6C8iqw8jqPSRZ7wm9di6EQPLxzbp0XDlDLXU7ONFSJcAfhh/ol+esPbC1ezvRW8qvHHqOXWJrPx6qmE3m2lIAIX1TkIHxOuf8ioEJ5qQpSGFk1yAProFGp8nnW96ZxWYZjX/lbJcTe8FQHRx/qb1QSb/3D/MgQ5OTCWlyN66FBAyPpJcZ9z+3F/oodf+wI/AjJjx8FLB0EZ4GS+3EFWpDHPYWtfXzOTb5twKX5YFPtLP15mLnFGGdCOrvmM/ri0f6qNDgwG/fm3c9pHkqWW0GVfkWJcboJO/DxEYjxw5aB4j1GuqDiIpzLa8RwIDAQAB',
-            gateway: "https://openapi.alipaydev.com/gateway.do"
+            appId: '2019021563247513',
+            privateKey: 'MIIEpgIBAAKCAQEAsrY5wNvZaSeK1lNxWwt15xJpaB/XHcYOuacxlJGi/OQkddy2uwWn86SmtK2MuvlwmBF11RfxDSu9T4bFISdrcfwA+0FJLyeXrw84AeZr3sFQE+GQEV+VL6osba5TvfS28MrLLsv0291kkcZJo7Rf4tRxKUNlfTmDniHJrzZyeC2mD5I4zF+IFX0xi3hFRIBdWI9pdCYZcOHDDE+AyoYGiArlj89T/6DgsslW95pkzNcThocGHN4Oqj0bJdcJgT/ZaqjNjw4eLpGAdYuE9huHWFKyPi0NVaDoi0tnFnnxA2OomgTfCC9yVdFBnEg8hSvozeotv6EOc9arLVbosNT6rQIDAQABAoIBAQCisP3Wss4zyom8H+6cIczN9Zb78bCWLE4PeUPLquGkM9V1bt7zV2zUg1o4NZ5eQOLdrVeGDOunP+Bx25DuY8KO3AnQslh7kyGlfsdQA4LEIVxTHQ9YoZlg8RzNJNybm4JHp3ZdPdPFrMD3bHpxi62XBCuYkwB7hbZqaPwAhCKlf/Nw8cAU2fHcuQyO1bvKUzm/wmx4wrkJ2vJJY4grcQR01ne/Q7lSBcfvuBoTEWs7KKLC/Gm3ayl+4ArAT2LkGunjHnUFL3O8qVXOqS7KxoIj2m7pfxeKKkiywf2pqQY0UYYzIKO95T+6VB/8XEWa3NE4y2a65DITMCSi8swONQsJAoGBAN2+++TNUIQMYrWurOxbhPtllQDKZmLUvccE2ulsNwyOwUY2ARkQ1/nNTEZs212plnP/g9Qdck3SHpop7K3TF6td1MtF9o59oLgbKiGLMcCd56SfgJlf+Nk46D0sG3Aju/6/UH27tjfvpT3dRpvCAx3WUqDPlxGI57mTfPzSKo5/AoGBAM5RcLXQ92MpG/RS7+B3S89NHFth1E03Q1UuxwddGhrtlAXpXLWTF+nij+BkzNoHqbTEx0IDCeJJbwBnPMEVZTZ6KEEw1GFFu9CDpTzIeT/ZMrypG+PikCFj7xYPGrei2twLtgHBseuYaxR8pKVJ4ZuDHDd65SjrKgVRJlQMCnjTAoGBAL2i6isXRydWrEgyFSKhdg3FJvOhJISa6Z29UjXT3RQ5NaME5lV4aSvx3axQxh3IvamAOE57zFgvPQqclhNl9tUQDr60m5HqcDtix9od/zN6FzNbURBZ2ihzGXHPObviY5EOLhkJImGd6dQJW6wy9JVcyBdM0SYmzf2P25Efb1OjAoGBAK2YutRQ0ob95QaL7kgZOJFhmXWOeBrMX/xBkrewb7GuqzjaJOamsJ1bw6GUTwU5I2L1m48AjYV4MkzNkMIJ5ZKT8GEB3AFIsoH88sCVEehWMamqRMxXKtzdgCM4bEuNXMd/lxIdTz4jjh27zrFA2/KEu+42mrD2RfIZWL2pL/p/AoGBAKGdUZPwBAayW0DP8ImO67Pv+Fd1D9Jj5fgaZNOqLAbBfksD4EMB1jD7yBA6tJwyHqkjC/G30vilF0Rer/t3RVQVDk2HFOejSIURNZKC1pFxlT00FTLm9hSIc+UefWgI3WxUDkvTMTQYotFbzswesKxN5ZnqE5Dr14gTZ8lPTG1d',
+            alipayPublicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs96m0LfhrkT2Pn68NTSLM3K3xqBzNoenF61/cl0wfq4P3sa9pEzEJdJN40K7geQBeKtlQcRlbX/Gsh1LvukFmtLh7CsQHCeLyMdpUQimN2SMsHGpXKZ+vMXp2qvXhlULih3m6v12WNdlo+x1KJd4rdEzFr7hmXrHuTuCYrGXJrRIyTVfA5vgX2GsrLtPen9VQ4QveBRalBjFfqTtuCYJ428WF4FQAvQS1/DPeOG3RoZgaovdMBUWGKC/nBBfSpgD4K/aQKLba7QCm8VsiUouVDMxY7JHdTtEyOkB4F5waOPO1nDmHgoNFdlXLIVt0DTHYI+1vXolIME/K5IhGLAAWQIDAQAB',
+            gateway: "https://openapi.alipay.com/gateway.do",
+            app_auth_token:"201902BBffc0fbde4b54400eaabe92869bb4fX88"
         });
 
         alipaySdk.exec("alipay.trade.precreate", {
                 bizContent: {
-                    out_trade_no: '11124',
+                    out_trade_no: '100',
                     total_amount: '0.01',
                     subject: '商品',
+                    
                 }
             }, {
-                validateSign: true
+                validateSign: false
             })
             .then(result => {
                 // console.log(result);
@@ -187,4 +189,9 @@ module.exports = function (app) {
     //     res.sendFile(__dirname + '/index.html')
     //     code.pipe(res);
     // });
+
+    app.get('/admin/authRedirect', function (req, res) {
+        // req.url
+"/admin/authRedirect?app_id=2019021563247513&app_auth_code=P66448f0fa78143e39de5026f17ca388"
+    });
 }
