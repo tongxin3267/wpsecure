@@ -40,12 +40,13 @@ $(document).ready(function () {
             });
 
             $("#btnPay").click(function (e) {
+                //$(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode" />');
                 selfAjax("post", "/admin/shop/getQRCode", null, function (data) {
                     if (data.error) {
                         showAlert(data.error);
                         return;
                     }
-                    $(".showQR").append('<img style="width:100px;height:100px;" src="data:image/jpeg;base64,' + data.qrCode.data + '" />');
+                    $(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode?q=' + data.qrCode + '" />');
                 });
             });
 
