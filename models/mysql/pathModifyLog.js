@@ -37,7 +37,7 @@ const PathModifyLog = db.defineModel('pathModifyLogs', {
         // 可以为空，就是不添加商品
         // 机器管理员修改
         type: db.INTEGER,
-        defaultValue: ''
+        defaultValue: 0
     },
     goodName: {
         // 商品名称
