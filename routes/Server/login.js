@@ -16,6 +16,7 @@ module.exports = function (app) {
 
     app.get('/admin/login', auth.checkNotLogin);
     app.get('/admin/login', function (req, res) {
+        // req.subdomains[0] 用来确定客户的名字
         auth.serverOption({
             title: '登录',
             user: req.session.admin
