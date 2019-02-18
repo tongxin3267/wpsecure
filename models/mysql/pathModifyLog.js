@@ -14,7 +14,7 @@ const PathModifyLog = db.defineModel('pathModifyLogs', {
     },
     preGoodId: {
         type: db.INTEGER,
-        defaultValue: ""
+        defaultValue: 0
     }, // 描述信息，用于seo
     preGoodName: {
         // 商品名称
