@@ -14,7 +14,7 @@ var https = require('https'),
 var Wechat = {
     option: {
         appid: "wxd4cd3a00e87c0492",
-        appSecret: "h25b22d9fc83482e79bd67849cb7e273f1",
+        appSecret: "25b22d9fc83482e79bd67849cb7e273f",
         mch_id: "",
         Mch_key: "",
         notify_url: "http://localhost/wechat/wxpay",
@@ -314,7 +314,7 @@ var Wechat = {
     },
     getWXComponentToken: function () {
         var that = this;
-        debugger;
+        // debugger;
         return SystemConfigure.getFilter({
                 name: "component_verify_ticket"
             })
@@ -329,7 +329,7 @@ var Wechat = {
                             "component_verify_ticket": ticket.value
                         },
                     }, (err, res, data) => {
-                        debugger;
+                        // debugger;
                         // const data = JSON.parse(body);
                         if (data.errcode) {
                             reject(data.errmsg);
@@ -343,12 +343,12 @@ var Wechat = {
     },
     checkComponetToken: function () {
         var that = this;
-        debugger;
+        // debugger;
         return SystemConfigure.getFilter({
                 name: "component_access_token"
             })
             .then(token => {
-                debugger;
+                // debugger;
                 if (token) {
                     if (token.value) {
                         // 2 小时有效，可以简单处理为1.5小时过期
@@ -367,7 +367,7 @@ var Wechat = {
                     return that.getWXComponentToken()
                         .then(result => {
                             // 更新token信息
-                            debugger;
+                            // debugger;
                             return SystemConfigure.update({
                                     value: result,
                                     updatedDate: new Date()
@@ -377,7 +377,7 @@ var Wechat = {
                                     }
                                 })
                                 .then(u => {
-                                    debugger;
+                                    // debugger;
                                     return {
                                         token: result
                                     };
@@ -396,8 +396,8 @@ var Wechat = {
     },
     getpreauthcode: function (toAppId) {
         var that = this;
-        debugger;
-        return checkComponetToken()
+        // debugger;
+        return this.checkComponetToken()
             .then(token => {
                 return new Promise(function (resolve, reject) {
                     request({
@@ -407,17 +407,126 @@ var Wechat = {
                             "component_appid": that.option.appid
                         }
                     }, (err, res, data) => {
-                        debugger;
+                        // debugger;
                         // const data = JSON.parse(body);
                         if (data.errcode) {
                             reject(data.errmsg);
                         } else {
-                            var url = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=1&no_scan=1&component_appid=" + this.option.appid + "&pre_auth_code=" + data.pre_auth_code + "&redirect_uri=xxxx&biz_appid=" + toAppId + "#wechat_redirect";
+                            var url = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=1&no_scan=1&component_appid=" + that.option.appid + "&pre_auth_code=" + data.pre_auth_code + "&redirect_uri=http://e-finer.com/admin/saveAuth&biz_appid=" + toAppId + "#wechat_redirect";
                             resolve(url);
                         }
                     });
                 });
             });
     },
+    firstrefreshtoken: function (auth_code) {
+        var that = this;
+        debugger;
+        return this.checkComponetToken()
+            .then(token => {
+                return new Promise(function (resolve, reject) {
+                    request({
+                        url: 'https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=' + token.token,
+                        method: 'POST',
+                        json: {
+                            "component_appid": that.option.appid,
+                            "authorization_code": auth_code
+                        },
+                    }, (err, res, data) => {
+                        debugger;
+                        // const data = JSON.parse(body);
+                        if (data.errcode) {
+                            reject(data.errmsg);
+                        } else {
+                            resolve(data.authorization_info);
+                        }
+                    });
+                });
+            });
+    },
+    refreshtoken: function (toAppId) {
+        var that = this;
+        // debugger;
+        return this.checkComponetToken()
+            .then(token => {
+                return SystemConfigure.getFilter({
+                        name: "authorizer_refresh_token",
+                        appId: toAppId
+                    })
+                    .then(refreshtoken => {
+                        return new Promise(function (resolve, reject) {
+                                request({
+                                    url: 'https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=' + token.token,
+                                    method: 'POST',
+                                    json: {
+                                        "component_appid": that.option.appid,
+                                        "authorizer_appid": toAppId,
+                                        "authorizer_refresh_token": refreshtoken.value
+                                    },
+                                }, (err, res, data) => {
+                                    // debugger;
+                                    // const data = JSON.parse(body);
+                                    if (data.errcode) {
+                                        reject(data.errmsg);
+                                    } else {
+                                        resolve(data.authorizer_access_token);
+                                    }
+                                });
+                            })
+                            .then(authorizer_access_token => {
+                                return SystemConfigure.update({
+                                    value: authorizer_access_token,
+                                    updatedDate: new Date()
+                                }, {
+                                    where: {
+                                        appId: toAppId,
+                                        name: "authorizer_access_token"
+                                    }
+                                });
+                            });
+                    });
+            });
+    },
+    saverefreshtoken: function (authorization_info) {
+        return SystemConfigure.getFilter({
+                appId: authorization_info.authorizer_appid,
+                name: "authorizer_refresh_token"
+            })
+            .then(sysconfig => {
+                if (sysconfig) {
+                    return SystemConfigure.update({
+                            value: authorization_info.authorizer_access_token,
+                            updatedDate: new Date()
+                        }, {
+                            where: {
+                                name: "authorizer_access_token",
+                                appId: authorization_info.authorizer_appid
+                            }
+                        })
+                        .then(() => {
+                            return SystemConfigure.update({
+                                value: authorization_info.authorizer_refresh_token,
+                                updatedDate: new Date()
+                            }, {
+                                where: {
+                                    appId: authorization_info.authorizer_appid,
+                                    name: "authorizer_refresh_token"
+                                }
+                            });
+                        });
+                } else {
+                    return SystemConfigure.bulkCreate([{
+                        value: authorization_info.authorizer_access_token,
+                        name: "authorizer_access_token",
+                        appId: authorization_info.authorizer_appid
+                    }, {
+                        value: authorization_info.authorizer_refresh_token,
+                        name: "authorizer_refresh_token",
+                        appId: authorization_info.authorizer_appid
+                    }]);
+                }
+            })
+
+    }
 };
 module.exports = Wechat;

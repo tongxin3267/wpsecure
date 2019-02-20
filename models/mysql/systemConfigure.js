@@ -2,7 +2,7 @@
 // access_token 单个商户对应的token
 // access_token_wechat
 // component_verify_ticket 第三方应用的总ticket
-// 
+// authorizer_refresh_token authorizer_access_token
 
 const db = require('../../db'),
     config = require('../../settings');
@@ -12,6 +12,10 @@ const SystemConfigure = db.defineModel('systemConfigures', {
     name: {
         // access_token
         type: db.STRING(50)
+    },
+    appId: {
+        type: db.STRING(50),
+        defaultValue: ''
     },
     value: {
         type: db.STRING(250),

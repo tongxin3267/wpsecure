@@ -7,11 +7,11 @@ var model = require("../../model.js"),
 
 module.exports = function (app) {
     app.post('/admin/getTicket', function (req, res) {
-        debugger;
+        // debugger;
         var arr = [];
         req.on("data", function (data) {
             arr.push(data);
-            debugger;
+            // debugger;
         });
         req.on("end", function () {
             var data = Buffer.concat(arr).toString();
@@ -36,12 +36,30 @@ module.exports = function (app) {
     });
 
     app.get('/admin/getAuth', function (req, res) {
-        debugger;
-        res.end();
+        // debugger;
+        WechatHelper.getpreauthcode("wxbdff782c98c3eb1f")
+            .then(url => {
+                // done token
+                // res.end(url);
+                res.end("<a href='" + url + "'>link</a>")
+            });
+    });
 
-        // WechatHelper.checkComponetToken(gh_d247bac65c42)
-        //     .then(() => {
-        //         // done token
-        //     });
+    app.get('/admin/saveAuth', function (req, res) {
+        // debugger;
+        var auth_code = req.query.auth_code;
+        WechatHelper.firstrefreshtoken(auth_code)
+            .then(authorization_info => {
+                return WechatHelper.saverefreshtoken(authorization_info);
+            });
+    });
+
+    app.get('/admin/refreshAuth', function (req, res) {
+        // debugger;
+        WechatHelper.refreshtoken("wxbdff782c98c3eb1f")
+            .then(url => {
+                // done token
+                res.end(url);
+            });
     });
 }
