@@ -1,4 +1,8 @@
 // 模板，可以用于自动生成entity
+// access_token 单个商户对应的token
+// access_token_wechat
+// component_verify_ticket 第三方应用的总ticket
+// 
 
 const db = require('../../db'),
     config = require('../../settings');

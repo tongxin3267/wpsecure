@@ -1,6 +1,6 @@
 var option = {
     cookieSecret: 'wposal',
-    db: 'wposal',
+    db: 'wposal2',
     host: '127.0.0.1',
     port: '10105',
     username: 'root',

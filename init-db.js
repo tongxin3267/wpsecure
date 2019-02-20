@@ -27,6 +27,16 @@ function step2() {
                     name: 'access_token'
                 }, {
                     name: "access_token_wechat"
+                }, {
+                    name: "component_verify_ticket"
+                }, {
+                    name: "component_access_token" // may useless
+                }, {
+                    name: "pre_auth_code" // may useless, no need to save
+                }, {
+                    name: "authorizer_refresh_token" // 用来刷新解决的token, appId
+                }, {
+                    name: "authorizer_access_token" // 真正调用接口的token, appId
                 }])
                 .then(() => {
                     return model.siteInfo.create({

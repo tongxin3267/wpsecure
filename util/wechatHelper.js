@@ -13,11 +13,18 @@ var https = require('https'),
 
 var Wechat = {
     option: {
-        appid: "wxa155aceaa74876cb",
-        appSecret: "10266a3d9426016582b3ba34d937acc1",
+        appid: "wxd4cd3a00e87c0492",
+        appSecret: "h25b22d9fc83482e79bd67849cb7e273f1",
         mch_id: "",
         Mch_key: "",
-        notify_url: "http://localhost/wechat/wxpay"
+        notify_url: "http://localhost/wechat/wxpay",
+        token: "efinertwxotoken",
+        aesKey: new Buffer.from('xs2uDjITp5WhVawEOt8un0YD1RvGqJ6pHcNG1mIkIFf=', 'base64'),
+        iv: "xs2uDjITp5WhVawE"
+    },
+    setkeyIv: function () {
+        this.option.aesKey = new Buffer(this.option.aesKey + '=', 'base64');
+        this.option.iv = this.option.aesKey.slice(0, 16);
     },
     getSessionKey: function (code, callback) {
         var that = this;
@@ -262,6 +269,155 @@ var Wechat = {
                         }
                     });
             });
-    }
+    },
+    decryptMsg: function (msgSignature, timestamp, nonce, data) {
+        // this.setkeyIv();
+
+        var that = this;
+        return this.selfParse(data)
+            .then(xml => {
+                var msg_encrypt = xml.xml.Encrypt[0];
+                if (that.getSignature(timestamp, nonce, msg_encrypt) != msgSignature) {
+                    throw new Error('msgSignature is not invalid');
+                };
+                var decryptedMessage = that.decrypt(msg_encrypt);
+                return that.selfParse(decryptedMessage);
+            });
+    },
+    getSignature: function (timestamp, nonce, encrypt) {
+        // token?
+        var raw_signature = [this.option.token, timestamp, nonce, encrypt].sort().join('');
+        var sha1 = crypto.createHash("sha1");
+        sha1.update(raw_signature);
+        return sha1.digest("hex");
+    },
+    decrypt: function (str) {
+        var aesCipher = crypto.createDecipheriv("aes-256-cbc", this.option.aesKey, this.option.iv);
+        aesCipher.setAutoPadding(false);
+        var decipheredBuff = Buffer.concat([aesCipher.update(str, 'base64'), aesCipher.final()]);
+        decipheredBuff = this.PKCS7Decoder(decipheredBuff);
+        var len_netOrder_corpid = decipheredBuff.slice(16);
+        var msg_len = len_netOrder_corpid.slice(0, 4).readUInt32BE(0);
+        var result = len_netOrder_corpid.slice(4, msg_len + 4).toString();
+        var appId = len_netOrder_corpid.slice(msg_len + 4).toString();
+        if (appId != this.option.appid) {
+            throw new Error('appId is invalid');
+        }
+        return result;
+    },
+    PKCS7Decoder: function (buff) {
+        var pad = buff[buff.length - 1];
+        if (pad < 1 || pad > 32) {
+            pad = 0;
+        }
+        return buff.slice(0, buff.length - pad);
+    },
+    getWXComponentToken: function () {
+        var that = this;
+        debugger;
+        return SystemConfigure.getFilter({
+                name: "component_verify_ticket"
+            })
+            .then(ticket => {
+                return new Promise(function (resolve, reject) {
+                    request({
+                        url: 'https://api.weixin.qq.com/cgi-bin/component/api_component_token',
+                        method: 'POST',
+                        json: {
+                            "component_appid": that.option.appid,
+                            "component_appsecret": that.option.appSecret,
+                            "component_verify_ticket": ticket.value
+                        },
+                    }, (err, res, data) => {
+                        debugger;
+                        // const data = JSON.parse(body);
+                        if (data.errcode) {
+                            reject(data.errmsg);
+                        } else {
+                            resolve(data.component_access_token);
+                        }
+                    });
+                });
+            });
+
+    },
+    checkComponetToken: function () {
+        var that = this;
+        debugger;
+        return SystemConfigure.getFilter({
+                name: "component_access_token"
+            })
+            .then(token => {
+                debugger;
+                if (token) {
+                    if (token.value) {
+                        // 2 小时有效，可以简单处理为1.5小时过期
+                        // var tokenJSON = JSON.parse(token.value);
+                        if (moment().isAfter(moment(token.updatedDate).add(1.5, "hours"))) {
+                            // need update
+                        } else {
+                            return {
+                                token: token.value
+                            };
+                        }
+                    }
+                    // no value need update and expire need update
+                    // send log
+                    // 过期
+                    return that.getWXComponentToken()
+                        .then(result => {
+                            // 更新token信息
+                            debugger;
+                            return SystemConfigure.update({
+                                    value: result,
+                                    updatedDate: new Date()
+                                }, {
+                                    where: {
+                                        name: "component_access_token"
+                                    }
+                                })
+                                .then(u => {
+                                    debugger;
+                                    return {
+                                        token: result
+                                    };
+                                });
+                        })
+                        .catch(er => {
+                            debugger;
+                            return {
+                                error: er
+                            };
+                        });
+                } else {
+                    return false;
+                }
+            });
+    },
+    getpreauthcode: function (toAppId) {
+        var that = this;
+        debugger;
+        return checkComponetToken()
+            .then(token => {
+                return new Promise(function (resolve, reject) {
+                    request({
+                        url: 'https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=' + token.token,
+                        method: 'POST',
+                        json: {
+                            "component_appid": that.option.appid
+                        }
+                    }, (err, res, data) => {
+                        debugger;
+                        // const data = JSON.parse(body);
+                        if (data.errcode) {
+                            reject(data.errmsg);
+                        } else {
+                            var url = "https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=1&no_scan=1&component_appid=" + this.option.appid + "&pre_auth_code=" + data.pre_auth_code + "&redirect_uri=xxxx&biz_appid=" + toAppId + "#wechat_redirect";
+                            resolve(url);
+                        }
+                    });
+                });
+            });
+    },
 };
 module.exports = Wechat;
