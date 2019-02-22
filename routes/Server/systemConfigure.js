@@ -19,15 +19,16 @@ module.exports = function (app) {
             WechatHelper.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
                 .then(data => {
                     // data.xml.Encrypt[0];
-
-                    return SystemConfigure.update({
-                        value: data.xml.ComponentVerifyTicket[0],
-                        updatedDate: new Date()
-                    }, {
-                        where: {
-                            name: "component_verify_ticket"
-                        }
-                    });
+                    if (data.xml && data.xml.ComponentVerifyTicket) {
+                        return SystemConfigure.update({
+                            value: data.xml.ComponentVerifyTicket[0],
+                            updatedDate: new Date()
+                        }, {
+                            where: {
+                                name: "component_verify_ticket"
+                            }
+                        });
+                    }
                 })
                 .then(() => {
                     res.end("success");
@@ -37,7 +38,7 @@ module.exports = function (app) {
 
     app.get('/admin/getAuth', function (req, res) {
         // debugger;
-        WechatHelper.getpreauthcode("wxbdff782c98c3eb1f")
+        WechatHelper.getpreauthcode("wx3011a1e121c1683e")
             .then(url => {
                 // done token
                 // res.end(url);
@@ -56,7 +57,7 @@ module.exports = function (app) {
 
     app.get('/admin/refreshAuth', function (req, res) {
         // debugger;
-        WechatHelper.refreshtoken("wxbdff782c98c3eb1f")
+        WechatHelper.refreshtoken("wx3011a1e121c1683e")
             .then(url => {
                 // done token
                 res.end(url);

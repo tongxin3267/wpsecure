@@ -31,8 +31,6 @@ function step2() {
                     name: "component_verify_ticket" // need save every 2 hours
                 }, {
                     name: "component_access_token" // need save every 2 hours
-                }, {
-                    name: "pre_auth_code" // may useless, no need to save
                 }])
                 .then(() => {
                     return model.siteInfo.create({

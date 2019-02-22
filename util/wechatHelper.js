@@ -421,7 +421,7 @@ var Wechat = {
     },
     firstrefreshtoken: function (auth_code) {
         var that = this;
-        debugger;
+        // debugger;
         return this.checkComponetToken()
             .then(token => {
                 return new Promise(function (resolve, reject) {
@@ -433,7 +433,7 @@ var Wechat = {
                             "authorization_code": auth_code
                         },
                     }, (err, res, data) => {
-                        debugger;
+                        // debugger;
                         // const data = JSON.parse(body);
                         if (data.errcode) {
                             reject(data.errmsg);
@@ -526,7 +526,6 @@ var Wechat = {
                     }]);
                 }
             })
-
     }
 };
 module.exports = Wechat;
