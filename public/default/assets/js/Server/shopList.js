@@ -40,14 +40,23 @@ $(document).ready(function () {
             });
 
             $("#btnPay").click(function (e) {
-                //$(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode" />');
-                selfAjax("post", "/admin/shop/getQRCode", null, function (data) {
+                selfAjax("post", "/admin/getcusQRCode", null, function (data) {
                     if (data.error) {
                         showAlert(data.error);
                         return;
                     }
-                    $(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode?q=' + data.qrCode + '" />');
+                    $(".showQR").append('<img style="width:100px;height:100px;" src="https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURI(data) + '" />');
                 });
+
+
+                //$(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode" />');
+                // selfAjax("post", "/admin/shop/getQRCode", null, function (data) {
+                //     if (data.error) {
+                //         showAlert(data.error);
+                //         return;
+                //     }
+                //     $(".showQR").append('<img style="width:100px;height:100px;" src="/admin/shop/getQRCode?q=' + data.qrCode + '" />');
+                // });
             });
 
             $("#myModal #btnSave").on("click", function (e) {

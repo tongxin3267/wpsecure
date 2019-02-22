@@ -339,7 +339,6 @@ var Wechat = {
                     });
                 });
             });
-
     },
     checkComponetToken: function () {
         var that = this;
@@ -526,6 +525,37 @@ var Wechat = {
                     }]);
                 }
             })
+    },
+    getcusQRCode: function (toAppId) {
+        return SystemConfigure.getFilter({
+                appId: toAppId,
+                name: "authorizer_access_token"
+            })
+            .then(token => {
+                return new Promise(function (resolve, reject) {
+                    request({
+                        url: 'https://api.weixin.qq.com/cgi-bin/qrcode/create?component_access_token=' + token.value,
+                        method: 'POST',
+                        json: {
+                            "expire_seconds": 604800,
+                            "action_name": "QR_SCENE",
+                            "action_info": {
+                                "scene": {
+                                    "scene_id": 123
+                                }
+                            }
+                        },
+                    }, (err, res, data) => {
+                        // debugger;
+                        // const data = JSON.parse(body);
+                        if (data.errcode) {
+                            reject(data.errmsg);
+                        } else {
+                            resolve(data.ticket);
+                        }
+                    });
+                });
+            });
     }
 };
 module.exports = Wechat;

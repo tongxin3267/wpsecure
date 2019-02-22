@@ -60,7 +60,14 @@ module.exports = function (app) {
         WechatHelper.refreshtoken("wx3011a1e121c1683e")
             .then(url => {
                 // done token
-                res.end(url);
+                res.end("sucess");
+            });
+    });
+
+    app.post('/admin/getcusQRCode', function (req, res) {
+        return WechatHelper.getcusQRCode("wx3011a1e121c1683e")
+            .then(ticket => {
+                res.jsonp(ticket);
             });
     });
 }
