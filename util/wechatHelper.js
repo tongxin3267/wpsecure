@@ -1,12 +1,23 @@
 var https = require('https'),
     zlib = require('zlib'),
     crypto = require('crypto'),
-    parseString = require('xml2js').parseString,
+    xml2js = require('xml2js'),
+    parseString = xml2js.parseString,
+    builder = new xml2js.Builder({
+        rootName: 'xml',
+        cdata: true,
+        headless: true,
+        renderOpts: {
+            indent: ' ',
+            pretty: 'true'
+        }
+    }),
     util = require("util"),
     settings = require('../settings'),
     moment = require("moment"),
     model = require("../model.js"),
     SystemConfigure = model.systemConfigure,
+    wecrypto = require("wechat-crypto"),
 
     OpLogs = require("../models/mongodb/opLogs.js"),
     request = require('request');
@@ -182,6 +193,7 @@ var Wechat = {
         });
         xmlContent = xmlContent + "</xml>";
         return xmlContent;
+        // return builder.buildObject(sendObject);
     },
     createNonceStr: function () {
         return Math.random().toString(36).substr(2, 15)
@@ -272,7 +284,6 @@ var Wechat = {
     },
     decryptMsg: function (msgSignature, timestamp, nonce, data) {
         // this.setkeyIv();
-
         var that = this;
         return this.selfParse(data)
             .then(xml => {
@@ -283,6 +294,23 @@ var Wechat = {
                 var decryptedMessage = that.decrypt(msg_encrypt);
                 return that.selfParse(decryptedMessage);
             });
+    },
+    encryptMsg: function (replyMsg, opts) {
+        var wecrypto1 = new wecrypto(this.option.token, "xs2uDjITp5WhVawEOt8un0YD1RvGqJ6pHcNG1mIkIFf", this.option.appid);
+        var result = {};
+        var options = opts || {};
+        result.Encrypt = wecrypto1.encrypt(builder.buildObject(replyMsg));
+        result.Nonce = options.nonce || parseInt((Math.random() * 100000000000), 10);
+        result.TimeStamp = options.timestamp || new Date().getTime();
+        result.MsgSignature = this.getSignature(result.TimeStamp, result.Nonce, result.Encrypt);
+        return builder.buildObject(result);
+        // var result = {};
+        // var options = opts || {};
+        // result.Encrypt = this.encrypt(this.toxml(replyMsg));
+        // result.Nonce = options.nonce || parseInt((Math.random() * 100000000000), 10);
+        // result.TimeStamp = options.timestamp || new Date().getTime();
+        // result.MsgSignature = this.getSignature(result.TimeStamp, result.Nonce, result.Encrypt);
+        // return builder.buildObject(result);
     },
     getSignature: function (timestamp, nonce, encrypt) {
         // token?
@@ -305,12 +333,45 @@ var Wechat = {
         }
         return result;
     },
+    encrypt: function (xmlMsg) {
+        var randomString = crypto.pseudoRandomBytes(16);
+
+        var msg = new Buffer(xmlMsg);
+
+        // 获取4B的内容长度的网络字节序
+        var msgLength = new Buffer(4);
+        msgLength.writeUInt32BE(msg.length, 0);
+
+        var id = new Buffer(this.option.appid);
+
+        var bufMsg = Buffer.concat([randomString, msgLength, msg, id]);
+
+        // 对明文进行补位操作
+        var encoded = this.PKCS7Encoder(bufMsg);
+
+        // 创建加密对象，AES采用CBC模式，数据采用PKCS#7填充；IV初始向量大小为16字节，取AESKey前16字节
+        var cipher = crypto.createCipheriv('aes-256-cbc', this.option.aesKey, this.option.iv);
+        cipher.setAutoPadding(false);
+
+        var cipheredMsg = Buffer.concat([cipher.update(encoded), cipher.final()]);
+
+        // 返回加密数据的base64编码
+        return cipheredMsg.toString('base64');
+    },
     PKCS7Decoder: function (buff) {
         var pad = buff[buff.length - 1];
         if (pad < 1 || pad > 32) {
             pad = 0;
         }
         return buff.slice(0, buff.length - pad);
+    },
+    PKCS7Encoder: function (buff) {
+        var blockSize = 32;
+        var strSize = buff.length;
+        var amountToPad = blockSize - (strSize % blockSize);
+        var pad = new Buffer(amountToPad - 1);
+        pad.fill(String.fromCharCode(amountToPad));
+        return Buffer.concat([buff, pad]);
     },
     getWXComponentToken: function () {
         var that = this;
@@ -537,7 +598,7 @@ var Wechat = {
                         url: 'https://api.weixin.qq.com/cgi-bin/qrcode/create?component_access_token=' + token.value,
                         method: 'POST',
                         json: {
-                            "expire_seconds": 604800,
+                            "expire_seconds": 600,
                             "action_name": "QR_SCENE",
                             "action_info": {
                                 "scene": {

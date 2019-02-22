@@ -70,4 +70,54 @@ module.exports = function (app) {
                 res.jsonp(ticket);
             });
     });
+
+    ///admin/$APPID$/callback
+    app.post('/admin/:appId/callback', function (req, res) {
+        var arr = [];
+        req.on("data", function (data) {
+            arr.push(data);
+            // debugger;
+        });
+
+        req.on("end", function () {
+            var data = Buffer.concat(arr).toString(),
+                toappId = req.params.appId;
+            WechatHelper.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
+                .then(data => {
+                    // data.xml.Encrypt[0];
+                    if (data.xml && data.xml.MsgType[0] == "event" && data.xml.Event) {
+                        switch (data.xml.Event[0]) {
+                            case "SCAN":
+                            case "subscribe":
+                                // send message back
+                                var returnObj = {
+                                    ToUserName: data.xml.FromUserName[0],
+                                    FromUserName: data.xml.ToUserName[0],
+                                    CreateTime: (new Date).getTime(),
+                                    MsgType: "news",
+                                    // Content: "hello world"
+                                    ArticleCount: 1,
+                                    Articles: [{
+                                        item: {
+                                            Title: "点击此处，开始支付",
+                                            Description: "",
+                                            PicUrl: "",
+                                            Url: "http://baidu.com"
+                                        }
+                                    }]
+                                };
+                                // res.set('Content-Type', 'text/xml');
+                                // var result = WechatHelper.toxml(returnObj);
+                                var result = WechatHelper.encryptMsg(returnObj)
+                                console.log(result);
+                                res.send(result);
+                                break;
+                            default:
+                                res.end("");
+                                break;
+                        }
+                    }
+                });
+        });
+    });
 }
