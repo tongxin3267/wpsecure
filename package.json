@@ -10,6 +10,7 @@
   "license": "GPL",
   "scripts": {
     "start": "node app.js",
+    "gulp": "gulp",
     "test": "node-debug app.js"
   },
   "dependencies": {
