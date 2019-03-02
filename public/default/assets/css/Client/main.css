@@ -66,6 +66,16 @@ footer,
     color: #fff;
 }
 
+.manage .toolbar {
+    display: flex;
+    justify-content: space-between;
+    /* padding: 10px; */
+}
+
+.manage .toolbar button {
+    margin: 10px;
+}
+
 .manage .paths table {
     width: 100%;
     text-align: center;
