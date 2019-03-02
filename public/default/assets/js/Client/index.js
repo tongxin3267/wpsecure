@@ -11,6 +11,9 @@ $(document).ready(function () {
             this.timer();
         },
         initData: function () {
+            setInterval(function () {
+                $("#btnAdmin").text(moment().format("YYYY-MM-DD HH:mm:ss"));
+            }, 1000);
             // get existing goods and goods count
             selfAjax("post", "/Client/goods", null, function (result) {
                 if (result.error) {

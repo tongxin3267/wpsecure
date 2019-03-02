@@ -48,6 +48,14 @@ footer,
     }
 }
 
+#btnAdmin {
+    background-color: transparent;
+    border: 0;
+    color: #fff;
+    font-size: 28px;
+    margin-right: 20px;
+}
+
 .login #loginForm {
     width: 300px;
     margin: 10px auto;
