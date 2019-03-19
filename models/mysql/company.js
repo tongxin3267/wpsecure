@@ -1,60 +1,66 @@
-// 网站配置信息，可以放微信信息等
-
+//公司，站点是基于公司的，公司要公众号关注，钱付给供应商
 const db = require('../../db'),
     config = require('../../settings');
 
 // 章节默认为4级，每级4位 最多16位
-const SiteInfo = db.defineModel('siteInfos', {
+const Company = db.defineModel('companys', {
     name: {
+        // 公司名称
         type: db.STRING(50)
     },
     description: {
         type: db.STRING(100),
         defaultValue: ""
-    },
-    bgImg: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    advImg: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    advideo: {
-        type: db.STRING(50),
-        defaultValue: ""
-    },
-    companyId: {
+    }, // 其他信息
+    sequence: {
         type: db.INTEGER,
         defaultValue: 0
+    },
+    we_appId: {
+        type: db.STRING(32),
+        defaultValue: ''
+    },
+    we_appSecret: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    we_mch_id: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
+    we_Mch_key: {
+        type: db.STRING(50),
+        defaultValue: ''
     }
 });
-module.exports = SiteInfo;
+module.exports = Company;
 
 //读取用户信息
-SiteInfo.getFilter = function (filter) {
+Company.getFilter = function (filter) {
     filter.isDeleted = false;
-    return SiteInfo.findOne({
+    return Company.findOne({
         'where': filter
     });
 };
 
-SiteInfo.getFilters = function (filter) {
+Company.getFilters = function (filter) {
     filter.isDeleted = false;
-    return SiteInfo.findAll({
+    return Company.findAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ]
     });
 };
 
-SiteInfo.getFiltersWithPage = function (page, filter) {
+Company.getFiltersWithPage = function (page, filter) {
     filter.isDeleted = false;
-    return SiteInfo.findAndCountAll({
+    return Company.findAndCountAll({
         'where': filter,
         order: [
+            ['sequence'],
             ['createdDate'],
             ['_id']
         ],
