@@ -29,6 +29,16 @@ $(document).ready(function () {
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
+                $('#myModal #description').val("");
+                $('#myModal #we_appId').val("");
+                $('#myModal #we_appSecret').val("");
+                $('#myModal #we_mch_id').val("");
+                $('#myModal #we_Mch_key').val("");
+                $('#myModal #ali_appId').val();
+                $('#myModal #ali_privateKey').val();
+                $('#myModal #ali_alipayPublicKey').val();
+                $('#myModal #ali_gateway').val();
+                $('#myModal #ali_app_auth_token').val();
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -41,7 +51,17 @@ $(document).ready(function () {
                     var postURI = "/admin/supplier/add",
                         postObj = {
                             name: $.trim($('#myModal #name').val()),
-                            sequence: $.trim($('#myModal #sequence').val())
+                            sequence: $.trim($('#myModal #sequence').val()),
+                            description: $('#myModal #description').val(),
+                            we_appId: $('#myModal #we_appId').val(),
+                            we_appSecret: $('#myModal #we_appSecret').val(),
+                            we_mch_id: $('#myModal #we_mch_id').val(),
+                            we_Mch_key: $('#myModal #we_Mch_key').val(),
+                            ali_appId: $('#myModal #ali_appId').val(),
+                            ali_privateKey: $('#myModal #ali_privateKey').val(),
+                            ali_alipayPublicKey: $('#myModal #ali_alipayPublicKey').val(),
+                            ali_gateway: $('#myModal #ali_gateway').val(),
+                            ali_app_auth_token: $('#myModal #ali_app_auth_token').val()
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/supplier/edit";
@@ -66,6 +86,16 @@ $(document).ready(function () {
                 $('#myModal #myModalLabel').text("修改名称");
                 $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #description').val(entity.description);
+                $('#myModal #we_appId').val(entity.we_appId);
+                $('#myModal #we_appSecret').val(entity.we_appSecret);
+                $('#myModal #we_mch_id').val(entity.we_mch_id);
+                $('#myModal #we_Mch_key').val(entity.we_Mch_key);
+                $('#myModal #ali_appId').val(entity.ali_appId);
+                $('#myModal #ali_privateKey').val(entity.ali_privateKey);
+                $('#myModal #ali_alipayPublicKey').val(entity.ali_alipayPublicKey);
+                $('#myModal #ali_gateway').val(entity.ali_gateway);
+                $('#myModal #ali_app_auth_token').val(entity.ali_app_auth_token);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -105,7 +135,7 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                            (record.sequence || 0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

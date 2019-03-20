@@ -33,7 +33,7 @@
             <div class="form-group">
                 <label for="description" class="control-label">背景图:</label>
                 <div>
-                    <img src="/uploads/images/bg.jpg" width="50px" />
+                    <img id="bimage" src="/uploads/images/bg.jpg" width="50px" />
                 </div>
                 <div>
                     <input name="bgImage" id='bgImage' style="display:inline-block;" accept="image/jpeg" type='file' />
@@ -45,12 +45,13 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">
-                <label for="description" class="control-label">广告图:</label>
+                <label class="control-label">广告图:</label>
                 <div>
-                    <img src="/uploads/images/front.jpg" width="200px" />
+                    <img id="img" src="/uploads/images/front.jpg" width="200px" />
                 </div>
                 <div>
-                    <input name="advImage" id='advImage' style="display:inline-block;" accept="image/jpeg" type='file' />
+                    <input name="advImage" id='advImage' style="display:inline-block;" accept="image/jpeg"
+                        type='file' />
                     <button id="btnAdvImageUpload" class="btn btn-default btn-sm">上传</button>
                 </div>
             </div>

@@ -4,24 +4,12 @@ var crypto = require('crypto'),
     auth = require("./auth");
 
 module.exports = function (app) {
-    // app.get('/admin', auth.checkLogin)
-    // app.get('/admin', function (req, res) {
-    //     auth.serverOption({
-    //         title: '>管理员设置',
-    //         user: req.session.admin
-    //     }).then(option => {
-    //         res.render('Server/siteInfoList.html', option);
-    //     });
-    // });
-
     app.get('/admin/login', auth.checkNotLogin);
     app.get('/admin/login', function (req, res) {
-        // req.subdomains[0] 用来确定客户的名字
-        auth.serverOption({
+        res.render('Server/login.html', {
             title: '登录',
-            user: req.session.admin
-        }).then(option => {
-            res.render('Server/login.html', option);
+            user: req.session.admin,
+            websiteTitle: model.db.config.websiteTitle
         });
     });
 

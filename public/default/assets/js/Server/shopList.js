@@ -37,6 +37,7 @@ $(document).ready(function () {
                     backdrop: 'static',
                     keyboard: false
                 });
+                that.initDropDown();
             });
 
             $("#btnPay").click(function (e) {
@@ -102,6 +103,10 @@ $(document).ready(function () {
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
+                });
+
+                that.initDropDown(function () {
+                    $('#myModal #supplier').val(entity.supplierId);
                 });
             });
 
@@ -202,6 +207,24 @@ $(document).ready(function () {
                     }
                 });
             }, 0);
+        },
+        initDropDown: function (callback) {
+            selfAjax("post", "/admin/supplierList/all", null,
+                function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    $("#myModal #supplier").empty();
+                    if (data && data.length > 0) {
+                        var d = $(document.createDocumentFragment());
+                        data.forEach(function (record) {
+                            d.append('<option value="{0}">{1}</option>'.format(record._id, record.name));
+                        });
+                        $("#myModal #supplier").append(d);
+                    }
+                    return callback && callback();
+                });
         }
     };
 

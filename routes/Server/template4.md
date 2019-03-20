@@ -7,11 +7,10 @@ var model = require("../../model.js"),
 module.exports = function(app) {
     app.get('/admin/#name#List', checkLogin);
     app.get('/admin/#name#List', function(req, res) {
-        auth.serverOption({
+         res.render('Server/#name#List.html', {
             title: '>校区列表',
-            user: req.session.admin
-        }).then(option => {
-            res.render('Server/#name#List.html', option);
+            user: req.session.admin,
+            websiteTitle: req.session.company.name
         });
     });
 

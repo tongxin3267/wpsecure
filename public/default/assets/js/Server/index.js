@@ -4,7 +4,7 @@ $(document).ready(function () {
     });
 
     $("#header_btnBasic").on("click", function (e) {
-        location.href = "/admin/adminList";
+        location.href = "/admin/siteInfo";
     });
 
     $("#header_btnSystem").on("click", function (e) {

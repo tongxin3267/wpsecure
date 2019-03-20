@@ -33,10 +33,10 @@ function step2() {
                     name: "component_access_token" // need save every 2 hours
                 }])
                 .then(() => {
-                    return model.siteInfo.create({
-                        name: "测试",
-                        description: "这是测试信息"
-                    });
+                    // return model.siteInfo.create({
+                    //     name: "测试",
+                    //     description: "这是测试信息"
+                    // });
                 });
         });
 };

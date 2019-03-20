@@ -14,7 +14,10 @@ $(document).ready(function () {
             $(".toolbar #btnSave").on("click", function (e) {
                 postObj = {
                     name: $.trim($('.mainModal #name').val()),
-                    description: $.trim($('.mainModal #description').val())
+                    description: $.trim($('.mainModal #description').val()),
+                    bgImg: ($(".mainModal #bimage").attr("src") && $(".mainModal #bimage").attr("src").substr(15)),
+                    advImg: ($(".mainModal #img").attr("src") && $(".mainModal #img").attr("src").substr(15)),
+                    advideo: ($(".mainModal #video").attr("src") && $(".mainModal #video").attr("src").substr(15))
                 };
                 postURI = "/admin/siteInfo/edit";
                 selfAjax("post", postURI, postObj, function (data) {
@@ -39,6 +42,7 @@ $(document).ready(function () {
                         contentType: false,
                         processData: false,
                         success: function (data) {
+                            $(".mainModal #bimage").attr("src", data.filename);
                             showAlert("上传成功！");
                         }
                     });
@@ -58,6 +62,7 @@ $(document).ready(function () {
                         contentType: false,
                         processData: false,
                         success: function (data) {
+                            $(".mainModal #img").attr("src", data.filename);
                             showAlert("上传成功！");
                         }
                     });
@@ -76,6 +81,7 @@ $(document).ready(function () {
                         contentType: false,
                         processData: false,
                         success: function (data) {
+                            $(".mainModal #video").attr("src", data.filename);
                             showAlert("上传成功！");
                         }
                     });
@@ -93,6 +99,9 @@ $(document).ready(function () {
                 }
                 $(".mainModal #name").val(data.name);
                 $(".mainModal #description").val(data.description);
+                $(".mainModal #bimage").attr("src", "/uploads/images/" + data.bgImg);
+                $(".mainModal #img").attr("src", "/uploads/images/" + data.advImg);
+                $(".mainModal #video").attr("src", "/uploads/videos/" + data.advideo);
             });
         }
     };

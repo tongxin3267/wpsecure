@@ -19,6 +19,9 @@ module.exports = function (app) {
         SiteInfo.update({
                 name: req.body.name,
                 description: req.body.description,
+                bgImg: req.body.bgImg,
+                advImg: req.body.advImg,
+                advideo: req.body.advideo,
                 deletedBy: req.session.admin._id
             }, {
                 where: {

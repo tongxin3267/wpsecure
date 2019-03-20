@@ -46,42 +46,15 @@ module.exports = function (app) {
 
     app.post('/admin/bgImageUp', checkLogin);
     app.post('/admin/bgImageUp', upload.single('bgImage'), function (req, res, next) {
-        if (req.body.name == "bgImage") {
-            var oldpath = path.join(serverPath, "../public/uploads/images", req.file.filename),
-                newpath = path.join(serverPath, "../public/uploads/images", "bg.jpg");
-            fs.rename(oldpath, newpath, function (err) {
-                if (err) {
-                    throw err;
-                }
-                res.json({
-                    sucess: true
-                });
-            });
-        } else if (req.body.name == "advImage") {
-            var oldpath = path.join(serverPath, "../public/uploads/images", req.file.filename),
-                newpath = path.join(serverPath, "../public/uploads/images", "front.jpg");
-            fs.rename(oldpath, newpath, function (err) {
-                if (err) {
-                    throw err;
-                }
-                res.json({
-                    sucess: true
-                });
-            });
-        }
+        res.json({
+            filename: "/uploads/images/" + req.file.filename
+        });
     });
 
     app.post('/admin/advVideoUp', checkLogin);
     app.post('/admin/advVideoUp', upload.single('bgVideo'), function (req, res, next) {
-        var oldpath = path.join(serverPath, "../public/uploads/videos", req.file.filename),
-            newpath = path.join(serverPath, "../public/uploads/videos", "adv.mp4");
-        fs.rename(oldpath, newpath, function (err) {
-            if (err) {
-                throw err;
-            }
-            res.json({
-                sucess: true
-            });
+        res.json({
+            filename: "/uploads/videos/" + req.file.filename
         });
     });
 }

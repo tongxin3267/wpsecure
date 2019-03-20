@@ -8,19 +8,29 @@ var model = require("../../model.js"),
 module.exports = function (app) {
     app.get('/admin/supplierList', checkLogin);
     app.get('/admin/supplierList', function (req, res) {
-        auth.serverOption({
-            title: '>校区列表',
-            user: req.session.admin
-        }).then(option => {
-            res.render('ServersupplierList.html', option);
+        res.render('Server/supplierList.html', {
+            title: '>供应商列表',
+            user: req.session.admin,
+            websiteTitle: req.session.company.name
         });
     });
 
     app.post('/admin/supplier/add', checkLogin);
     app.post('/admin/supplier/add', function (req, res) {
         Supplier.create({
+                companyId: req.session.company._id,
                 name: req.body.name,
                 sequence: req.body.sequence,
+                description: req.body.description,
+                we_appId: req.body.we_appId,
+                we_appSecret: req.body.we_appSecret,
+                we_mch_id: req.body.we_mch_id,
+                we_Mch_key: req.body.we_Mch_key,
+                ali_appId: req.body.ali_appId,
+                ali_privateKey: req.body.ali_privateKey,
+                ali_alipayPublicKey: req.body.ali_alipayPublicKey,
+                ali_gateway: req.body.ali_gateway,
+                ali_app_auth_token: req.body.ali_app_auth_token,
                 createdBy: req.session.admin._id
             })
             .then(function (result) {
@@ -35,6 +45,16 @@ module.exports = function (app) {
         Supplier.update({
                 name: req.body.name,
                 sequence: req.body.sequence,
+                description: req.body.description,
+                we_appId: req.body.we_appId,
+                we_appSecret: req.body.we_appSecret,
+                we_mch_id: req.body.we_mch_id,
+                we_Mch_key: req.body.we_Mch_key,
+                ali_appId: req.body.ali_appId,
+                ali_privateKey: req.body.ali_privateKey,
+                ali_alipayPublicKey: req.body.ali_alipayPublicKey,
+                ali_gateway: req.body.ali_gateway,
+                ali_app_auth_token: req.body.ali_app_auth_token,
                 deletedBy: req.session.admin._id,
                 updatedDate: new Date()
             }, {
@@ -73,14 +93,13 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        var filter = {};
+        var filter = {
+            companyId: req.session.company._id
+        };
         if (req.body.name && req.body.name.trim()) {
             filter.name = {
                 $like: `%${req.body.name.trim()}%`
             };
-        }
-        if (req.body.grade) {
-            filter.gradeId = req.body.grade;
         }
 
         Supplier.getFiltersWithPage(page, filter)
@@ -91,6 +110,18 @@ module.exports = function (app) {
                     page: page,
                     pageSize: pageSize
                 });
+            });
+    });
+
+    app.post('/admin/supplierList/all', checkLogin);
+    app.post('/admin/supplierList/all', function (req, res) {
+        var filter = {
+            companyId: req.session.company._id
+        };
+
+        Supplier.getFilters(filter)
+            .then(function (results) {
+                res.jsonp(results);
             });
     });
 }
