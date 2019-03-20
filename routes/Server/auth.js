@@ -42,12 +42,5 @@ module.exports = {
                 }
             }
         };
-    },
-    serverOption: function (option) {
-        return SiteInfo.getFilter({})
-            .then(info => {
-                option.websiteTitle = info.name;
-                return option;
-            });
     }
 };

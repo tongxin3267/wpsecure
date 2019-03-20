@@ -29,6 +29,11 @@ $(document).ready(function () {
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
+                $('#myModal #description').val("");
+                $('#myModal #we_appId').val("");
+                $('#myModal #we_appSecret').val("");
+                $('#myModal #we_mch_id').val("");
+                $('#myModal #we_Mch_key').val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -41,7 +46,12 @@ $(document).ready(function () {
                     var postURI = "/admin/company/add",
                         postObj = {
                             name: $.trim($('#myModal #name').val()),
-                            sequence: $.trim($('#myModal #sequence').val())
+                            sequence: $.trim($('#myModal #sequence').val()),
+                            description: $('#myModal #description').val(),
+                            we_appId: $('#myModal #we_appId').val(),
+                            we_appSecret: $('#myModal #we_appSecret').val(),
+                            we_mch_id: $('#myModal #we_mch_id').val(),
+                            we_Mch_key: $('#myModal #we_Mch_key').val()
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/company/edit";
@@ -67,6 +77,11 @@ $(document).ready(function () {
                 $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
                 $('#myModal #id').val(entity._id);
+                $('#myModal #description').val(entity.description);
+                $('#myModal #we_appId').val(entity.we_appId);
+                $('#myModal #we_appSecret').val(entity.we_appSecret);
+                $('#myModal #we_mch_id').val(entity.we_mch_id);
+                $('#myModal #we_Mch_key').val(entity.we_Mch_key);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -89,6 +104,11 @@ $(document).ready(function () {
                     });
                 });
             });
+
+            $("#gridBody").on("click", "td.link", function (e) {
+                var obj = e.currentTarget;
+                location.href = "/admin/siteInfo/{0}".format($(obj).parent().attr("id"));
+            });
         },
         pageInitData: function () {
             this.pageSearch();
@@ -104,8 +124,8 @@ $(document).ready(function () {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
-                        var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                        var $tr = $('<tr id=' + record._id + '><td class="link">' + record.name + '</td><td>' +
+                            (record.sequence || 0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

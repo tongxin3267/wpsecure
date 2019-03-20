@@ -11,7 +11,7 @@ module.exports = function(app) {
             title: '>校区列表',
             user: req.session.admin
         }).then(option => {
-            res.render('Server#name#List.html', option);
+            res.render('Server/#name#List.html', option);
         });
     });
 

@@ -1,4 +1,6 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main_company.html" %}
+{% block left %} {% include "Server/partial/companySetting.html" %} {%
+endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -30,8 +32,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:150px;">校区</th>
-                <th style="width:200px;">地址</th>
+                <th style="width:150px;">公司名称</th>
+                <th style="width:200px;">微信appId</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -40,7 +42,7 @@
     </table>
 </div>
 <div id="mainModal">
- {% include "Server/partial/popuppaging.html" %}
+    {% include "Server/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -55,11 +57,33 @@
                 <form>
                     <div class="form-group">
                         <label for="name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" required name="name" id="name">
+                        <input type="text" maxlength="50" class="form-control" required name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="control-label">描述:</label>
+                        <textarea rows="2" style="resize:none" maxlength="100" class="form-control" name="description"
+                            id="description"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
+                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence"
+                            value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="we_appId" class="control-label">微信appId:</label>
+                        <input type="text" maxlength="32" class="form-control" name="we_appId" id="we_appId">
+                    </div>
+                    <div class="form-group">
+                        <label for="we_appSecret" class="control-label">微信Secret:</label>
+                        <input type="text" maxlength="32" class="form-control" name="we_appSecret" id="we_appSecret">
+                    </div>
+                    <div class="form-group">
+                        <label for="we_mch_id" class="control-label">微信mch_id:</label>
+                        <input type="text" maxlength="32" class="form-control" name="we_mch_id" id="we_mch_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="we_Mch_key" class="control-label">微信Mch_key:</label>
+                        <input type="text" maxlength="32" class="form-control" name="we_Mch_key" id="we_Mch_key">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

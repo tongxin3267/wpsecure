@@ -4,15 +4,15 @@ var crypto = require('crypto'),
     auth = require("./auth");
 
 module.exports = function (app) {
-    app.get('/admin', auth.checkLogin)
-    app.get('/admin', function (req, res) {
-        auth.serverOption({
-            title: '>管理员设置',
-            user: req.session.admin
-        }).then(option => {
-            res.render('Server/siteInfoList.html', option);
-        });
-    });
+    // app.get('/admin', auth.checkLogin)
+    // app.get('/admin', function (req, res) {
+    //     auth.serverOption({
+    //         title: '>管理员设置',
+    //         user: req.session.admin
+    //     }).then(option => {
+    //         res.render('Server/siteInfoList.html', option);
+    //     });
+    // });
 
     app.get('/admin/login', auth.checkNotLogin);
     app.get('/admin/login', function (req, res) {

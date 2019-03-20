@@ -7,11 +7,10 @@ var model = require("../../model.js"),
 module.exports = function (app) {
     app.get('/admin/siteInfo', checkLogin);
     app.get('/admin/siteInfo', function (req, res) {
-        auth.serverOption({
+        res.render('Server/siteInfoList.html', {
             title: '>站点信息',
-            user: req.session.admin
-        }).then(option => {
-            res.render('Server/siteInfoList.html', option);
+            user: req.session.admin,
+            websiteTitle: req.session.company.name
         });
     });
 
@@ -22,7 +21,9 @@ module.exports = function (app) {
                 description: req.body.description,
                 deletedBy: req.session.admin._id
             }, {
-                where: {}
+                where: {
+                    companyId: req.session.company._id
+                }
             })
             .then(function () {
                 res.jsonp({
@@ -33,9 +34,22 @@ module.exports = function (app) {
 
     app.post('/admin/siteInfoList/search', checkLogin);
     app.post('/admin/siteInfoList/search', function (req, res) {
-        SiteInfo.getFilter({})
+        SiteInfo.getFilter({
+                companyId: req.session.company._id
+            })
             .then(function (result) {
-                res.jsonp(result);
+                if (result) {
+                    res.jsonp(result);
+                } else {
+                    return SiteInfo.create({
+                            companyId: req.session.company._id,
+                            name: req.session.company.name,
+                            createdBy: req.session.admin._id
+                        })
+                        .then(site => {
+                            res.jsonp(site);
+                        });
+                }
             });
     });
 }

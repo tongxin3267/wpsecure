@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %}
+{% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -40,7 +41,7 @@
     </table>
 </div>
 <div id="mainModal">
- {% include "Server/partial/popuppaging.html" %}
+    {% include "Server/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -59,7 +60,8 @@
                     </div>
                     <div class="form-group">
                         <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
+                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence"
+                            value="0">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>

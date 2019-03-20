@@ -1,12 +1,13 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Supplier = model.supplier,
+    Company = model.company,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.get('/admin/supplierList', checkLogin);
-    app.get('/admin/supplierList', function(req, res) {
+    app.get('/admin/supplierList', function (req, res) {
         auth.serverOption({
             title: '>校区列表',
             user: req.session.admin
@@ -16,28 +17,27 @@ module.exports = function(app) {
     });
 
     app.post('/admin/supplier/add', checkLogin);
-    app.post('/admin/supplier/add', function(req, res) {
+    app.post('/admin/supplier/add', function (req, res) {
         Supplier.create({
-            name: req.body.name,
-            sequence: req.body.sequence,
-            createdBy: req.session.admin._id
-        })
-        .then(function(result){
-            if(result)
-            {
-                 res.jsonp(result);
-            }
-        });
+                name: req.body.name,
+                sequence: req.body.sequence,
+                createdBy: req.session.admin._id
+            })
+            .then(function (result) {
+                if (result) {
+                    res.jsonp(result);
+                }
+            });
     });
 
     app.post('/admin/supplier/edit', checkLogin);
-    app.post('/admin/supplier/edit', function(req, res) {
+    app.post('/admin/supplier/edit', function (req, res) {
         Supplier.update({
-            name: req.body.name,
-            sequence: req.body.sequence,
-            deletedBy: req.session.admin._id,
-            updatedDate: new Date()
-        }, {
+                name: req.body.name,
+                sequence: req.body.sequence,
+                deletedBy: req.session.admin._id,
+                updatedDate: new Date()
+            }, {
                 where: {
                     _id: req.body.id
                 }
@@ -50,7 +50,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/supplier/delete', checkLogin);
-    app.post('/admin/supplier/delete', function(req, res) {
+    app.post('/admin/supplier/delete', function (req, res) {
         Supplier.update({
                 isDeleted: true,
                 deletedBy: req.session.admin._id,
@@ -68,7 +68,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/supplierList/search', checkLogin);
-    app.post('/admin/supplierList/search', function(req, res) {
+    app.post('/admin/supplierList/search', function (req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -85,7 +85,7 @@ module.exports = function(app) {
 
         Supplier.getFiltersWithPage(page, filter)
             .then(function (result) {
-               res.jsonp({
+                res.jsonp({
                     records: result.rows,
                     total: result.count,
                     page: page,

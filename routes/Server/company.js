@@ -4,40 +4,68 @@ var model = require("../../model.js"),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
-module.exports = function(app) {
-    app.get('/admin/companyList', checkLogin);
-    app.get('/admin/companyList', function(req, res) {
-        auth.serverOption({
-            title: '>校区列表',
-            user: req.session.admin
-        }).then(option => {
-            res.render('ServercompanyList.html', option);
-        });
+module.exports = function (app) {
+    app.get('/admin', checkLogin);
+    app.get('/admin', function (req, res) {
+        var option = {
+            title: '>公司列表',
+            user: req.session.admin,
+            websiteTitle: model.db.config.websiteTitle
+        };
+        res.render('Server/companyList.html', option);
+    });
+
+    app.get('/admin/siteInfo/:comId', checkLogin);
+    app.get('/admin/siteInfo/:comId', function (req, res) {
+        Company.getFilter({
+                _id: req.params.comId
+            })
+            .then(company => {
+                if (company) {
+                    req.session.company = company;
+                    res.render('Server/siteInfoList.html', {
+                        title: '>站点信息',
+                        user: req.session.admin,
+                        websiteTitle: company.name
+                    });
+                } else {
+                    res.redirect("/admin");
+                }
+            });
     });
 
     app.post('/admin/company/add', checkLogin);
-    app.post('/admin/company/add', function(req, res) {
+    app.post('/admin/company/add', function (req, res) {
         Company.create({
-            name: req.body.name,
-            sequence: req.body.sequence,
-            createdBy: req.session.admin._id
-        })
-        .then(function(result){
-            if(result)
-            {
-                 res.jsonp(result);
-            }
-        });
+                name: req.body.name,
+                description: req.body.description,
+                we_appId: req.body.we_appId,
+                we_appSecret: req.body.we_appSecret,
+                we_mch_id: req.body.we_mch_id,
+                we_Mch_key: req.body.we_Mch_key,
+                sequence: req.body.sequence,
+                createdBy: req.session.admin._id
+            })
+            .then(function (result) {
+                if (result) {
+                    res.jsonp(result);
+                }
+            });
     });
 
     app.post('/admin/company/edit', checkLogin);
-    app.post('/admin/company/edit', function(req, res) {
+    app.post('/admin/company/edit', function (req, res) {
         Company.update({
-            name: req.body.name,
-            sequence: req.body.sequence,
-            deletedBy: req.session.admin._id,
-            updatedDate: new Date()
-        }, {
+                name: req.body.name,
+                sequence: req.body.sequence,
+                description: req.body.description,
+                we_appId: req.body.we_appId,
+                we_appSecret: req.body.we_appSecret,
+                we_mch_id: req.body.we_mch_id,
+                we_Mch_key: req.body.we_Mch_key,
+                deletedBy: req.session.admin._id,
+                updatedDate: new Date()
+            }, {
                 where: {
                     _id: req.body.id
                 }
@@ -50,7 +78,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/company/delete', checkLogin);
-    app.post('/admin/company/delete', function(req, res) {
+    app.post('/admin/company/delete', function (req, res) {
         Company.update({
                 isDeleted: true,
                 deletedBy: req.session.admin._id,
@@ -68,7 +96,7 @@ module.exports = function(app) {
     });
 
     app.post('/admin/companyList/search', checkLogin);
-    app.post('/admin/companyList/search', function(req, res) {
+    app.post('/admin/companyList/search', function (req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -79,13 +107,10 @@ module.exports = function(app) {
                 $like: `%${req.body.name.trim()}%`
             };
         }
-        if (req.body.grade) {
-            filter.gradeId = req.body.grade;
-        }
 
         Company.getFiltersWithPage(page, filter)
             .then(function (result) {
-               res.jsonp({
+                res.jsonp({
                     records: result.rows,
                     total: result.count,
                     page: page,
