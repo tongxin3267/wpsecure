@@ -124,7 +124,7 @@ module.exports = function (app) {
                     });
             })
             .catch(er => {
-
+                res.jsonp(er.message || er);
             });
     });
 }
