@@ -1,61 +1,86 @@
-$(document).ready(function () {
-    var pageManager = {
-        option: {
-            video: document.getElementById("video"),
-            lastTime: new Date().getTime(),
-            timeOut: 20 * 1000
-        },
-        init: function () {
-            this.initData();
-            this.initEvents();
-            this.timer();
-        },
-        initData: function () {
-            setInterval(function () {
-                $("#btnAdmin").text(moment().format("YYYY-MM-DD HH:mm:ss"));
-            }, 1000);
-            // get existing goods and goods count
-            selfAjax("post", "/Client/goods", null, function (result) {
-                if (result.error) {
-                    showAlert(result.error);
-                    return;
-                }
+var hideConfirmForm, sureConfirmForm;
+window.showAlert = function (msg, title, callback) {
+    $('#confirmModal').show();
+    $('#confirmModal .weui-dialog__bd').text(msg);
 
-            });
-        },
-        initEvents: function () {
-            var that = this;
+    $('#confirmModal .weui-dialog__ft #btnCancel').text("确定");
+    $('#confirmModal .weui-dialog__ft #btnSure').hide();
 
-            /* 鼠标移动事件 */
-            $(document).mousemove(function () {
-                that.pauseVideo();
-                console.log("change last time!");
-            });
+    hideConfirmForm = function () {
+        callback && callback();
+        $('#confirmModal').hide();
+    };
+};
 
-            if ($("#isLock").val() == "false") {
-                $(".toBuy").click(function (e) {
-                    location.href = "/client/focus";
-                });
-            }
-        },
-        pauseVideo: function () {
-            this.option.video.pause();
-            $(".video").hide();
-            this.option.lastTime = new Date().getTime(); //更新操作时间
-            this.timer();
-        },
-        timer: function () {
-            var currentTime = new Date().getTime(); //更新当前时间
-            if (currentTime - this.option.lastTime > this.option.timeOut) { //判断是否超时
-                window.clearTimeout(this.option.inter);
-                // 待机，播放广告
-                this.option.video.play();
-                $(".video").show();
-            } else {
-                this.option.inter = setTimeout(this.timer.bind(this), 2000);
-            }
-        }
+window.showConfirm = function (msg, title, hidecallback, surecallback) {
+    $('#confirmModal').show();
+    $('#confirmModal .weui-dialog__bd').text(msg);
+
+    $('#confirmModal .weui-dialog__ft #btnCancel').text("取消");
+    $('#confirmModal .weui-dialog__ft #btnSure').show();
+
+    hideConfirmForm = function () {
+        hidecallback && hidecallback();
+        $('#confirmModal').hide();
     };
 
-    pageManager.init();
+    sureConfirmForm = function () {
+        surecallback && surecallback();
+        $('#confirmModal').hide();
+    };
+};
+
+window.loading = function () {
+    $("#loadingIndicator").show();
+};
+
+window.hideLoading = function () {
+    $("#loadingIndicator").hide();
+};
+
+$(document).ready(function () {
+    $('#confirmModal .weui-dialog__ft #btnSure').on("click", function (e) {
+        sureConfirmForm && sureConfirmForm();
+    });
+
+    $('#confirmModal .weui-dialog__ft #btnCancel').on("click", function (e) {
+        hideConfirmForm && hideConfirmForm();
+    });
 });
+
+
+window.selfAjax = function (method, url, filter, callback) {
+    loading();
+    return $[method](
+        url,
+        filter,
+        function (data) {
+            callback(data);
+            hideLoading();
+            return data;
+        });
+};
+
+window.is_weixn = function () {
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == "micromessenger") { //这就是微信用的内置浏览器  
+        return true;
+    } else {
+        return false;
+    }
+};
+
+String.prototype.format = function () {
+    var result = this;
+    if (arguments.length == 0)
+        return null;
+    for (var i = 0; i < arguments.length; i++) {
+        var re = new RegExp('\\{' + (i) + '\\}', 'gm');
+        result = result.replace(re, arguments[i]);
+    }
+    return result;
+};
+
+if (!is_weixn()) {
+    // location.replace("/900");
+}

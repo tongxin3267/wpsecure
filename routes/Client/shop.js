@@ -23,6 +23,8 @@ var model = require("../../model.js"),
     api = new WechatAPI(model.db.config.appid, model.db.config.appSecret);
 
 module.exports = function (app) {
+    return;
+
     app.get('/Client', function (req, res) {
         // 获取所有门店, user need to check
         res.render('Client/index2.html', {

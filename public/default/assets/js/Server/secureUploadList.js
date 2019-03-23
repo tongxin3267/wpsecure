@@ -27,7 +27,12 @@ $(document).ready(function () {
                 // $('#name').removeAttr("disabled");
                 $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
-                $("#myModal #position").val("");$("#myModal #description").val("");$("#myModal #secureStatus").val(0);$("#myModal #secureLevel").val(0);$("#myModal #responseUser").val(0);$("#myModal #responseResult").val("");$("#myModal #_id").val(0);$("#myModal #createdBy").val("");$("#myModal #createdDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));$("#myModal #updatedDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));$("#myModal #isDeleted").val("0");$("#myModal #deletedBy").val("");$("#myModal #deletedDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));
+                $("#myModal #position").val("");
+                $("#myModal #description").val("");
+                $("#myModal #secureStatus").val(0);
+                $("#myModal #secureLevel").val(0);
+                $("#myModal #responseUser").val(0);
+                $("#myModal #responseResult").val("");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -39,7 +44,12 @@ $(document).ready(function () {
                 if (validator.isValid()) {
                     var postURI = "/admin/secureUpload/add",
                         postObj = {
-                            position: $.trim($("#myModal #position").val()),description: $.trim($("#myModal #description").val()),secureStatus: $.trim($("#myModal #secureStatus").val()),secureLevel: $.trim($("#myModal #secureLevel").val()),responseUser: $.trim($("#myModal #responseUser").val()),responseResult: $.trim($("#myModal #responseResult").val()),_id: $.trim($("#myModal #_id").val()),createdBy: $.trim($("#myModal #createdBy").val()),createdDate: $.trim($("#myModal #createdDate").val()),updatedDate: $.trim($("#myModal #updatedDate").val()),isDeleted: $.trim($("#myModal #isDeleted").val()),deletedBy: $.trim($("#myModal #deletedBy").val()),deletedDate: $.trim($("#myModal #deletedDate").val()),
+                            position: $.trim($("#myModal #position").val()),
+                            description: $.trim($("#myModal #description").val()),
+                            secureStatus: $.trim($("#myModal #secureStatus").val()),
+                            secureLevel: $.trim($("#myModal #secureLevel").val()),
+                            responseUser: $.trim($("#myModal #responseUser").val()),
+                            responseResult: $.trim($("#myModal #responseResult").val()),
                         };
                     if ($('#id').val()) {
                         postURI = "/admin/secureUpload/edit";
@@ -62,7 +72,12 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
-                $("#myModal #position").val(entity.position);$("#myModal #description").val(entity.description);$("#myModal #secureStatus").val(entity.secureStatus);$("#myModal #secureLevel").val(entity.secureLevel);$("#myModal #responseUser").val(entity.responseUser);$("#myModal #responseResult").val(entity.responseResult);$("#myModal #_id").val(entity._id);$("#myModal #createdBy").val(entity.createdBy);$("#myModal #createdDate").val(entity.createdDate);$("#myModal #updatedDate").val(entity.updatedDate);$("#myModal #isDeleted").val(entity.isDeleted);$("#myModal #deletedBy").val(entity.deletedBy);$("#myModal #deletedDate").val(entity.deletedDate);
+                $("#myModal #position").val(entity.position);
+                $("#myModal #description").val(entity.description);
+                $("#myModal #secureStatus").val(entity.secureStatus);
+                $("#myModal #secureLevel").val(entity.secureLevel);
+                $("#myModal #responseUser").val(entity.responseUser);
+                $("#myModal #responseResult").val(entity.responseResult);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -102,7 +117,7 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.sequence ||0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                            (record.sequence || 0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

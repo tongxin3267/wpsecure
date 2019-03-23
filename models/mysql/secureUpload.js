@@ -16,6 +16,11 @@ const SecureUpload = db.defineModel('secureUploads', {
         defaultValue: "",
         comment: "问题描述"
     }, // 描述信息，用于seo
+    imageName: {
+        type: db.STRING(50),
+        defaultValue: "",
+        comment: "图片"
+    },
     secureStatus: {
         // 状态：0 已提交 1 已处理 9 处理中
         type: db.INTEGER,
@@ -39,6 +44,11 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.STRING(500),
         defaultValue: "",
         comment: "整顿情况"
+    },
+    responseImage: {
+        type: db.STRING(50),
+        defaultValue: "",
+        comment: "图片"
     }
 });
 module.exports = SecureUpload;

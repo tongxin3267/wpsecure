@@ -1,4 +1,5 @@
-{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %} {% endblock %} {% block main %}
+{% extends "Server/partial/main.html" %} {% block left %} {% include "Server/partial/basicSetting.html" %}
+{% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
@@ -40,7 +41,7 @@
     </table>
 </div>
 <div id="mainModal">
- {% include "Server/partial/popuppaging.html" %}
+    {% include "Server/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -48,12 +49,28 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-group"><label for="position" class="control-label">地点:</label><input type="text" maxlength="50" class="form-control" name="position" id="position"></div><div class="form-group"><label for="description" class="control-label">问题描述:</label><input type="text" maxlength="500" class="form-control" name="description" id="description"></div><div class="form-group"><label for="secureStatus" class="control-label">状态:</label><input type="number" maxlength="10" class="form-control" name="secureStatus" id="secureStatus" value="0"></div><div class="form-group"><label for="secureLevel" class="control-label">安全等级:</label><input type="number" maxlength="10" class="form-control" name="secureLevel" id="secureLevel" value="0"></div><div class="form-group"><label for="responseUser" class="control-label">责任人:</label><input type="number" maxlength="10" class="form-control" name="responseUser" id="responseUser" value="0"></div><div class="form-group"><label for="responseResult" class="control-label">整顿情况:</label><input type="text" maxlength="500" class="form-control" name="responseResult" id="responseResult"></div><div class="form-group"><label for="_id" class="control-label">主键，自增:</label><input type="number" maxlength="10" class="form-control" name="_id" id="_id" value="0"></div><div class="form-group"><label for="createdBy" class="control-label">undefined:</label><input type="text" maxlength="50" class="form-control" name="createdBy" id="createdBy"></div><div class="form-group"><label for="createdDate" class="control-label">undefined:</label><input type="text" class="form-control" name="createdDate" required id="createdDate"></div><div class="form-group"><label for="updatedDate" class="control-label">undefined:</label><input type="text" class="form-control" name="updatedDate" required id="updatedDate"></div><div class="form-group"><label for="isDeleted" class="control-label">undefined:</label><select name="isDeleted" id="isDeleted"><option value="0">否</option><option value="1">是</option></select></div><div class="form-group"><label for="deletedBy" class="control-label">undefined:</label><input type="text" maxlength="50" class="form-control" name="deletedBy" id="deletedBy"></div><div class="form-group"><label for="deletedDate" class="control-label">undefined:</label><input type="text" class="form-control" name="deletedDate" required id="deletedDate"></div>
+                    <div class="form-group"><label for="position" class="control-label">地点:</label><input type="text"
+                            maxlength="50" class="form-control" name="position" id="position"></div>
+                    <div class="form-group"><label for="description" class="control-label">问题描述:</label><input
+                            type="text" maxlength="500" class="form-control" name="description" id="description"></div>
+                    <div class="form-group"><label for="secureStatus" class="control-label">状态:</label><input
+                            type="number" maxlength="10" class="form-control" name="secureStatus" id="secureStatus"
+                            value="0"></div>
+                    <div class="form-group"><label for="secureLevel" class="control-label">安全等级:</label><input
+                            type="number" maxlength="10" class="form-control" name="secureLevel" id="secureLevel"
+                            value="0"></div>
+                    <div class="form-group"><label for="responseUser" class="control-label">责任人:</label><input
+                            type="number" maxlength="10" class="form-control" name="responseUser" id="responseUser"
+                            value="0"></div>
+                    <div class="form-group"><label for="responseResult" class="control-label">整顿情况:</label><input
+                            type="text" maxlength="500" class="form-control" name="responseResult" id="responseResult">
+                    </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
             </div>

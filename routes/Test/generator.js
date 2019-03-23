@@ -75,9 +75,10 @@ module.exports = function (app) {
                 case "deletedBy":
                 case "deletedDate":
                 case "version":
+                    continue;
                     break;
             }
-            objBasicAttributes += (`${key}:req.body.${key}`);
+            objBasicAttributes += (`${key}:req.body.${key},`);
 
             var curField = newEntity.attributes[key];
             switch (curField.type.key) {
