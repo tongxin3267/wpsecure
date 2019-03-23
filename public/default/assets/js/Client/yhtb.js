@@ -29,7 +29,7 @@ $(document).ready(function () {
                 }
             });
 
-            $('#showTooltips').click(function (e) {
+            $('.weui-btn-area #showTooltips').click(function (e) {
                 var filter = {
                     imageName: that.options.curImg,
                     position: $.trim($("#position").val()),
