@@ -9,15 +9,17 @@
     <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
     <script type="text/javascript" src="/default/assets/js/Server/index.js"></script>
+    <script type="text/javascript" src="/default/assets/js/Test/generator.js"></script>
 </head>
 
 <body>
-
-    <form id="form1" name="directFrm" method="post" action="generator">
+    <form id="form1" name="directFrm">
         <div style="width:200px; margin: 0 auto;">
             <div>{{ title }}</div>
-            <div>对象名称：<input type="text" name="objId" maxlength="50" size="25" value="" style="color:#000000;font-size:14px;"></div>
-            <div><input type="submit" name="button" id="button" value="提交" /></div>
+            <div>对象名称：<input type="text" name="objId" id="objId" maxlength="50" size="25" value=""
+                    style="color:#000000;font-size:14px;"></div>
+            <div><input type="button" name="button1" id="button1" value="生成db" /></div>
+            <div><input type="button" name="button2" id="button2" value="生成logic" /></div>
         </div>
     </form>
 </body>

@@ -40,8 +40,6 @@ module.exports = #Name#;
     return #Name#.findAll({
         'where': filter,
         order: [
-            ['sequence'],
-            ['createdDate'],
             ['_id']
         ]
     });
@@ -52,8 +50,6 @@ module.exports = #Name#;
     return #Name#.findAndCountAll({
         'where': filter,
         order: [
-            ['sequence'],
-            ['createdDate'],
             ['_id']
         ],
         offset: config.pageSize * (page - 1),

@@ -14,12 +14,110 @@ var model = require("../../model.js"),
     ShopGoodAttrVal = model.shopGoodAttrVal,
     User = model.user,
     Ws_user = model.ws_user,
-    WechatHelper = require('../../util/wechatHelper'),
+    wechat_pay = require('../../util/wechatH5Helper'),
+    client = wechat_pay.client,
     crypto = require('crypto'),
     auth = require("./auth"),
-    checkLogin = auth.checkLogin;
+    checkLogin = auth.checkLogin,
+    WechatAPI = require('wechat-api'),
+    api = new WechatAPI(model.db.config.appid, model.db.config.appSecret);
 
 module.exports = function (app) {
+    app.get('/Client', function (req, res) {
+        // 获取所有门店, user need to check
+        res.render('Client/index2.html', {
+            websiteTitle: model.db.config.websiteTitle + "-选择门店",
+            authUrl: client.getAuthorizeURL('http://dushidao.com/Client/userCode', 'stt', 'snsapi_userinfo')
+        });
+    });
+
+    app.get('/Client/userCode', function (req, res) {
+        var code = req.query.code;
+        client.getAccessToken(code, function (err, result) {
+            var accessToken = result.data.access_token;
+            var openid = result.data.openid;
+            client.getUser(openid, function (err, result) {
+                var userInfo = result;
+                // 1. save to db
+                return Ws_user.getFilter({
+                        wxId: userInfo.openid
+                    })
+                    .then(user => {
+                        if (user) {
+                            if (userInfo.nickname != user.uname || userInfo.headimgurl != user.uavatar) {
+                                // 更新
+                                return Ws_user.update({
+                                        uname: userInfo.nickname,
+                                        uavatar: userInfo.headimgurl,
+                                    }, {
+                                        where: {
+                                            wxId: userInfo.openid
+                                        }
+                                    })
+                                    .then(u => {
+                                        user.uname = userInfo.nickname;
+                                        user.uavatar = userInfo.headimgurl;
+                                        req.session.user = user;
+                                    });
+                            } else {
+                                req.session.user = user;
+                            }
+                        } else {
+                            // 新建
+                            return Ws_user.create({
+                                    wxId: userInfo.openid,
+                                    uname: userInfo.nickname,
+                                    uavatar: userInfo.headimgurl,
+                                    ugender: userInfo.sex
+                                })
+                                .then(user => {
+                                    req.session.user = user;
+                                });
+                        }
+                    })
+                    .then(() => {
+                        // 2. show page
+                        res.render('Client/index2.html', {
+                            websiteTitle: model.db.config.websiteTitle
+                        });
+                    });
+            });
+        });
+    });
+
+    app.get('/Client/sendTemplate', function (req, res) {
+        api.sendTemplate("oUbLd58pV6Z6k2QXS2i1r3sC2mfo", "V5AzGTTSZM5GOry9zDbqANzR4uLP27J_-ihYVSD-cl0", "http://dushidao.com/Client", {
+            "first": {
+                "value": "恭喜你睡着了！",
+                "color": "#173177"
+            },
+            "keyword1": {
+                "value": "巧克力",
+                "color": "#173177"
+            },
+            "keyword2": {
+                "value": "39.8元",
+                "color": "#173177"
+            },
+            "keyword3": {
+                "value": "2014年9月22日",
+                "color": "#173177"
+            },
+            "keyword4": {
+                "value": "2014年9月22日",
+                "color": "#173177"
+            },
+            "keyword5": {
+                "value": "2014年9月22日",
+                "color": "#173177"
+            }
+        }, function (err, data, res) {
+            if (data.errmsg == "ok") {
+                res.end("hello");
+            }
+        });
+    });
+
     app.get('/Client/focus', auth.checkLogin(auth));
     app.get('/Client/focus', function (req, res) {
         res.render('Client/focus.html', {

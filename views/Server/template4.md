@@ -53,14 +53,7 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-group">
-                        <label for="name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" required name="name" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="sequence" class="control-label">顺序:</label>
-                        <input type="number" maxlength="10" class="form-control" name="sequence" required id="sequence" value="0">
-                    </div>
+                    #viewAttributes#
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
             </div>

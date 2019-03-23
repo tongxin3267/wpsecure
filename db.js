@@ -3,8 +3,12 @@ const Sequelize = require('sequelize');
 const uuid = require('uuid');
 
 const config = require('./settings');
+const isDevelopment = (process.env.NODE_ENV == "development");
 
-console.log('init sequelize...');
+if (isDevelopment) {
+    console.log('init sequelize...');
+}
+
 
 function generateId() {
     var strArr = uuid.v1().split("-");
@@ -13,6 +17,7 @@ function generateId() {
 
 var sequelize = new Sequelize(config.db, config.username, config.password, {
     host: config.host,
+    logging: (isDevelopment ? true : false),
     dialect: 'mysql',
     dialectOptions: {
         charset: 'utf8mb4'
@@ -89,17 +94,25 @@ function defineModel(name, attributes, options) {
     options.timestamps = false;
     options.hooks = {
         beforeCreate: function (obj, options) {
-            console.log('will create entity...' + obj);
+            if (isDevelopment) {
+                console.log('will create entity...' + obj);
+            }
         },
         beforeUpdate: function (obj, options) {
-            console.log('will update entity...');
+            if (isDevelopment) {
+                console.log('will update entity...');
+            }
             obj.updatedDate = Date.now();
         },
         beforeBulkCreate: function (objs, options) {
-            console.log('will create entity...');
+            if (isDevelopment) {
+                console.log('will create entity...');
+            }
         },
         beforeBulkUpdate: function (options) {
-            console.log('will update entity...');
+            if (isDevelopment) {
+                console.log('will update entity...');
+            }
             options.attributes.updatedDate = Date.now();
         }
     };
@@ -107,7 +120,7 @@ function defineModel(name, attributes, options) {
     return sequelize.define(name, attrs, options);
 }
 
-const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW', 'DATEONLY'];
+const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW'];
 
 var exp = {
     defineModel: defineModel,
@@ -131,5 +144,6 @@ exp.ID = ID_TYPE;
 exp.generateId = generateId;
 exp.config = config;
 exp.sequelize = sequelize;
+exp.isDevelopment = isDevelopment;
 
 module.exports = exp;

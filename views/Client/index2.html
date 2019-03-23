@@ -1,0 +1,10 @@
+{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="personalCenter">
+    <div class="weui-cells__title" style="text-align: center;">hello</div>
+    <div class="weui-cells">
+        <button id="btnSend">消息</button>
+    </div>
+</div>
+<input type="hidden" name="authUrl" id="authUrl" value={{authUrl}}>
+<script type="text/javascript" src="/default/assets/js/Client/index2.js"></script>
+{% endblock %}

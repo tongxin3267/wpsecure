@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.pageInitData();
         },
         pageInitStyle: function () {
-            $("#left_btn#Name#").addClass("active");
+            $("#left_btnSecureUpload").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 // $('#name').removeAttr("disabled");
                 $('#myModal #myModalLabel').text("新增管理员");
                 $('#myModal #id').val("");
-                #jsAddAttributes#
+                $("#myModal #position").val("");$("#myModal #description").val("");$("#myModal #secureStatus").val(0);$("#myModal #secureLevel").val(0);$("#myModal #responseUser").val(0);$("#myModal #responseResult").val("");$("#myModal #_id").val(0);$("#myModal #createdBy").val("");$("#myModal #createdDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));$("#myModal #updatedDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));$("#myModal #isDeleted").val("0");$("#myModal #deletedBy").val("");$("#myModal #deletedDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -37,12 +37,12 @@ $(document).ready(function () {
             $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/#name#/add",
+                    var postURI = "/admin/secureUpload/add",
                         postObj = {
-                            #jsSaveAttributes#
+                            position: $.trim($("#myModal #position").val()),description: $.trim($("#myModal #description").val()),secureStatus: $.trim($("#myModal #secureStatus").val()),secureLevel: $.trim($("#myModal #secureLevel").val()),responseUser: $.trim($("#myModal #responseUser").val()),responseResult: $.trim($("#myModal #responseResult").val()),_id: $.trim($("#myModal #_id").val()),createdBy: $.trim($("#myModal #createdBy").val()),createdDate: $.trim($("#myModal #createdDate").val()),updatedDate: $.trim($("#myModal #updatedDate").val()),isDeleted: $.trim($("#myModal #isDeleted").val()),deletedBy: $.trim($("#myModal #deletedBy").val()),deletedDate: $.trim($("#myModal #deletedDate").val()),
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/#name#/edit";
+                        postURI = "/admin/secureUpload/edit";
                         postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -62,7 +62,7 @@ $(document).ready(function () {
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
                 $('#myModal #myModalLabel').text("修改名称");
-                #jsEditAttributes#
+                $("#myModal #position").val(entity.position);$("#myModal #description").val(entity.description);$("#myModal #secureStatus").val(entity.secureStatus);$("#myModal #secureLevel").val(entity.secureLevel);$("#myModal #responseUser").val(entity.responseUser);$("#myModal #responseResult").val(entity.responseResult);$("#myModal #_id").val(entity._id);$("#myModal #createdBy").val(entity.createdBy);$("#myModal #createdDate").val(entity.createdDate);$("#myModal #updatedDate").val(entity.updatedDate);$("#myModal #isDeleted").val(entity.isDeleted);$("#myModal #deletedBy").val(entity.deletedBy);$("#myModal #deletedDate").val(entity.deletedDate);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -75,7 +75,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/#name#/delete", {
+                    selfAjax("post", "/admin/secureUpload/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -97,7 +97,7 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.pageOptions.$mainSelectBody.empty();
-            selfAjax("post", "/admin/#name#List/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/admin/secureUploadList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {

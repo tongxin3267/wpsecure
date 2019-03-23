@@ -1,23 +1,23 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
-    #Name# = model.#name#,
+    SecureUpload = model.secureUpload,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function(app) {
-    app.get('/admin/#name#List', checkLogin);
-    app.get('/admin/#name#List', function(req, res) {
-         res.render('Server/#name#List.html', {
+    app.get('/admin/secureUploadList', checkLogin);
+    app.get('/admin/secureUploadList', function(req, res) {
+         res.render('Server/secureUploadList.html', {
             title: '>校区列表',
             user: req.session.admin,
             websiteTitle: model.db.config.websiteTitle
         });
     });
 
-    app.post('/admin/#name#/add', checkLogin);
-    app.post('/admin/#name#/add', function(req, res) {
-        #Name#.create({
-            #BasicAttributes#
+    app.post('/admin/secureUpload/add', checkLogin);
+    app.post('/admin/secureUpload/add', function(req, res) {
+        SecureUpload.create({
+            position:req.body.positiondescription:req.body.descriptionsecureStatus:req.body.secureStatussecureLevel:req.body.secureLevelresponseUser:req.body.responseUserresponseResult:req.body.responseResult_id:req.body._idcreatedBy:req.body.createdBycreatedDate:req.body.createdDateupdatedDate:req.body.updatedDateisDeleted:req.body.isDeleteddeletedBy:req.body.deletedBydeletedDate:req.body.deletedDateversion:req.body.version
             createdBy: req.session.admin._id
         })
         .then(function(result){
@@ -28,10 +28,10 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/admin/#name#/edit', checkLogin);
-    app.post('/admin/#name#/edit', function(req, res) {
-        #Name#.update({
-            #BasicAttributes#
+    app.post('/admin/secureUpload/edit', checkLogin);
+    app.post('/admin/secureUpload/edit', function(req, res) {
+        SecureUpload.update({
+            position:req.body.positiondescription:req.body.descriptionsecureStatus:req.body.secureStatussecureLevel:req.body.secureLevelresponseUser:req.body.responseUserresponseResult:req.body.responseResult_id:req.body._idcreatedBy:req.body.createdBycreatedDate:req.body.createdDateupdatedDate:req.body.updatedDateisDeleted:req.body.isDeleteddeletedBy:req.body.deletedBydeletedDate:req.body.deletedDateversion:req.body.version
             deletedBy: req.session.admin._id,
             updatedDate: new Date()
         }, {
@@ -46,9 +46,9 @@ module.exports = function(app) {
             });
     });
 
-    app.post('/admin/#name#/delete', checkLogin);
-    app.post('/admin/#name#/delete', function(req, res) {
-        #Name#.update({
+    app.post('/admin/secureUpload/delete', checkLogin);
+    app.post('/admin/secureUpload/delete', function(req, res) {
+        SecureUpload.update({
                 isDeleted: true,
                 deletedBy: req.session.admin._id,
                 deletedDate: new Date()
@@ -64,8 +64,8 @@ module.exports = function(app) {
             });
     });
 
-    app.post('/admin/#name#List/search', checkLogin);
-    app.post('/admin/#name#List/search', function(req, res) {
+    app.post('/admin/secureUploadList/search', checkLogin);
+    app.post('/admin/secureUploadList/search', function(req, res) {
 
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
@@ -80,7 +80,7 @@ module.exports = function(app) {
             filter.gradeId = req.body.grade;
         }
 
-        #Name#.getFiltersWithPage(page, filter)
+        SecureUpload.getFiltersWithPage(page, filter)
             .then(function (result) {
                res.jsonp({
                     records: result.rows,
