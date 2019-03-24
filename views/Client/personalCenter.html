@@ -1,0 +1,29 @@
+{% extends "Client/partial/main-header.html" %} {% block main %}
+<div class="personalCenter">
+    <div class="my">
+        <div class="top-mod weui-flex">
+            <div>
+                <img src={{user.uavatar}} />
+                <div>{{user.uname}}</div>
+            </div>
+        </div>
+        <div class="weui-cells" style="margin-top:0">
+            <a class="weui-cell weui-cell_access meupload" href="javascript:;">
+                <div class="weui-cell__bd">
+                    <p>我提交的隐患</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+            <a class="weui-cell weui-cell_access tome" href="javascript:;">
+                <div class="weui-cell__bd">
+                    <p>我处理的隐患</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/default/assets/js/Client/personalCenter.js"></script>
+{% endblock %}

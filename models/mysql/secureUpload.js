@@ -82,3 +82,15 @@ SecureUpload.getFiltersWithPage = function (page, filter) {
         limit: config.pageSize
     });
 };
+
+SecureUpload.getPageOfFilter = function (page, filter) {
+    filter.isDeleted = false;
+    return SecureUpload.findAll({
+        'where': filter,
+        order: [
+            ['_id', 'DESC']
+        ],
+        offset: config.pageSize * (page - 1),
+        limit: config.pageSize
+    });
+};
