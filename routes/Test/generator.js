@@ -98,13 +98,13 @@ module.exports = function (app) {
                 case "DATE":
                     viewAttributes += '<div class="form-group"><label for="' + key + '" class="control-label">' + (curField.comment) + ':</label><input type="text" class="form-control" name="' + key + '" required id="' + key + '"></div>'
                     jsAddAttributes += '$("#myModal #' + key + '").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));';
-                    jsEditAttributes += '$("#myModal #' + key + '").val(entity.' + key + ');';
+                    jsEditAttributes += '$("#myModal #' + key + '").val(moment(entity.' + key + ').format("YYYY-MM-DD HH:mm"));';
                     jsSaveAttributes += key + ': $.trim($("#myModal #' + key + '").val()),';
                     break;
                 case "BOOLEAN":
                     viewAttributes += '<div class="form-group"><label for="' + key + '" class="control-label">' + (curField.comment) + ':</label><select name="' + key + '" id="' + key + '"><option value="0">否</option><option value="1">是</option></select></div>';
                     jsAddAttributes += '$("#myModal #' + key + '").val("0");';
-                    jsEditAttributes += '$("#myModal #' + key + '").val(entity.' + key + ');';
+                    jsEditAttributes += '$("#myModal #' + key + '").val(entity.' + key + '?1:0);';
                     jsSaveAttributes += key + ': $.trim($("#myModal #' + key + '").val()),';
                     break;
                 case "DECIMAL":
@@ -149,5 +149,45 @@ module.exports = function (app) {
         res.jsonp({
             sucess: true
         });
+    });
+
+    function copyfile(file1, file2) {
+        return new Promise(function (resolve, reject) {
+            fs.rename(file1, file2, function (err) {
+                if (err) {
+                    reject();
+                    return;
+                }
+                resolve();
+            });
+        });
+    };
+
+    app.post('/copyfiles', function (req, res) {
+        var objId = req.body.objId,
+            root = process.cwd(),
+            fromPath = path.join(root, "models/mysql/" + objId + ".js"),
+            targetPath = path.join(req.body.topath, "models/mysql/" + objId + ".js");
+        return copyfile(fromPath, targetPath)
+            .then(() => {
+                fromPath = path.join(root, "routes/Server/" + objId + ".js");
+                targetPath = path.join(req.body.topath, "routes/Server/" + objId + ".js");
+                return copyfile(fromPath, targetPath)
+            })
+            .then(() => {
+                fromPath = path.join(root, "views/Server/" + objId + "List.html");
+                targetPath = path.join(req.body.topath, "views/Server/" + objId + "List.html");
+                return copyfile(fromPath, targetPath)
+            })
+            .then(() => {
+                fromPath = path.join(root, "public/default/assets/js/Server/" + objId + "List.js");
+                targetPath = path.join(req.body.topath, "public/default/assets/js/Server/" + objId + "List.js");
+                return copyfile(fromPath, targetPath)
+            })
+            .then(() => {
+                res.jsonp({
+                    sucess: true
+                });
+            });
     });
 };

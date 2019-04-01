@@ -62,12 +62,12 @@ function defineModel(name, attributes, options) {
     };
     attrs.createdDate = {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('NOW'),
         allowNull: false
     };
     attrs.updatedDate = {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('NOW'),
         allowNull: false
     };
     attrs.isDeleted = {
@@ -120,7 +120,7 @@ function defineModel(name, attributes, options) {
     return sequelize.define(name, attrs, options);
 }
 
-const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW'];
+const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW', 'fn'];
 
 var exp = {
     defineModel: defineModel,

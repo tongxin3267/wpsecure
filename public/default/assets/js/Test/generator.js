@@ -34,6 +34,19 @@ $(document).ready(function () {
                     alert("sucess!");
                 });
             });
+
+            $("#button3").on("click", function (e) {
+                selfAjax("post", "/copyfiles", {
+                    objId: $("#objId").val(),
+                    topath: $("#topath").val()
+                }, function (data) {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    alert("sucess!");
+                });
+            });
         },
         initData: function () {
 

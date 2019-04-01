@@ -21,7 +21,6 @@ $(document).ready(function () {
             });
 
             $("#btnAdd").on("click", function (e) {
-                isNew = true;
                 that.pageDestroy();
                 that.pageAddValidation();
                 // $('#name').removeAttr("disabled");
