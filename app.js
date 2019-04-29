@@ -7,6 +7,7 @@ var path = require('path'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
+    os = require("os"),
 
     routes = require('./routes/index.js'),
     settings = require('./settings'),
