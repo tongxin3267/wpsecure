@@ -21,10 +21,10 @@ var path = require('path'),
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 var accessLogStream = rfs('access.log', {
-        size: '500M',
-        interval: '1d', // rotate daily
-        path: logDirectory
-    }),
+    size: '500M',
+    interval: '1d', // rotate daily
+    path: logDirectory
+}),
     errorLog = fs.createWriteStream(path.join(logDirectory, 'error.log'), {
         flags: 'a'
     });
@@ -32,7 +32,7 @@ app.use(morgan('combined', {
     stream: accessLogStream
 }));
 
-app.set('port', process.env.PORT || 2371);
+app.set('port', process.env.PORT || 2370);
 nunjucks.configure('views', {
     autoescape: true,
     express: app

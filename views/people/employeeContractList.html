@@ -1,25 +1,15 @@
-{% extends "Server/partial/main_company.html" %}
-{% block left %} {% include "Server/partial/companySetting.html" %} {% endblock
-%} {% block main %}
+{% extends "people/partial/main.html" %} {% block left %} {% include "people/partial/basicSetting.html" %}
+{% endblock %} {% block main %}
 <div class="title">
     <h1>
         {{ title }}
     </h1>
 </div>
+<input type="hidden" id="employeeId" value="{{employeeId}}">
 <div class="panel panel-default mainModal">
     <div class="panel-body">
         <form id="InfoSearch">
-            <div class="row form-horizontal">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="Name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
-                </div>
-            </div>
+            &nbsp;
         </form>
     </div>
 </div>
@@ -32,9 +22,9 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th style="width:150px;">管理员</th>
-                <th style="width:200px;">所属分店</th>
-                <th style="width:100px;">角色</th>
+                <th style="width:150px;">第n次合同</th>
+                <th style="width:200px;">开始时间</th>
+                <th style="width:200px;">结束时间</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -43,7 +33,7 @@
     </table>
 </div>
 <div id="mainModal">
-    {% include "Server/partial/popuppaging.html" %}
+    {% include "people/partial/popuppaging.html" %}
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
@@ -58,18 +48,17 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" required name="name" id="name">
+                        <label for="sequence" class="control-label">序号:</label>
+                        <input type="number" maxlength="10" class="form-control" name="sequence" id="sequence"
+                            value="0">
                     </div>
                     <div class="form-group">
-                        <label for="userPwd" class="control-label">密码:</label>
-                        <input type="password" maxlength="15" class="form-control" name="userPwd" id="userPwd">
+                        <label for="startDate" class="control-label">开始日期:</label>
+                        <input type="text" class="form-control" name="startDate" required id="startDate">
                     </div>
                     <div class="form-group">
-                        <label for="role" class="control-label">角色:</label>
-                        <select name="role" id="role" class="form-control">
-                            <option value="5">管理员</option>
-                        </select>
+                        <label for="endDate" class="control-label">结束日期:</label>
+                        <input type="text" class="form-control" name="endDate" required id="endDate">
                     </div>
                     <input type="hidden" class="form-control" name="id" id="id">
                 </form>
@@ -81,5 +70,6 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="/default/assets/js/Server/adminList.js"></script>
+<script type="text/javascript" src="/default/assets/js/moment.min.js"></script>
+<script type="text/javascript" src="/default/assets/js/people/employeeContractList.js"></script>
 {% endblock %}

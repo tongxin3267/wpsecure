@@ -5,6 +5,10 @@ const db = require('../../db'),
 
 // 章节默认为4级，每级4位 最多16位
 const SecureUpload = db.defineModel('secureUploads', {
+    companyId: {
+        type: db.INTEGER,
+        comment: "公司Id"
+    },
     position: {
         // 地点
         type: db.STRING(50),

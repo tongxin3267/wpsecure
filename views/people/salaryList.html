@@ -1,0 +1,53 @@
+{% extends "people/partial/main.html" %} {% block left %} {% include "people/partial/basicSetting.html" %}
+{% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch" class="form-inline">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="Name" class="control-label">员工:</label>
+                    <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                </div>
+                <div class="form-group">
+                    <label for="year" class="control-label">年度:</label>
+                    <select name="year" id="year" class="form-control">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="month" class="control-label">月份:</label>
+                    <select name="month" id="month" class="form-control">
+                    </select>
+                </div>
+                <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnAdd" class="btn btn-default btn-sm">上传</button>
+    </div>
+</div>
+<div class="content mainModal" style="overflow-x: auto;">
+    <table class="table table-striped mintd" style="">
+        <thead>
+            <tr>
+                <th style="width:150px;">员工姓名</th>
+                <th style="width:150px;">手机号</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+<div id="mainModal">
+    {% include "people/partial/popuppaging.html" %}
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/people/salaryList.js"></script>
+{% endblock %}

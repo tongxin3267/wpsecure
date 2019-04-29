@@ -1,0 +1,49 @@
+{% extends "people/partial/main.html" %} {% block left %} {% include "people/partial/basicSetting.html" %}
+{% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id='editfile' method='post'>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="year" class="control-label">年度:</label>
+                        <select name="year" id="year" class="form-control">
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="month" class="control-label">月份:</label>
+                        <select name="month" id="month" class="form-control">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="avatar" class="control-label">工资导入</label>
+                        <div style="padding-top: 0;">
+                            <input name="avatar" id='upfile' style="display:inline-block;"
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                type='file' />
+                            <button type="button" id="btnSubmit" class="btn btn-primary">开始导入</button>
+                        </div>
+                        <div>
+                            <button type="button" id="btnResult" class="btn btn-primary panelButton">查看结果</button>
+                            <button type="button" id="btnClear" class="btn btn-primary panelButton">清空结果</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} {% block modal %}
+<script type="text/javascript" src="/default/assets/js/people/batchuploadSalary.js?v=1.0"></script>
+{% endblock %}

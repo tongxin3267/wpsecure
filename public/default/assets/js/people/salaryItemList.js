@@ -9,7 +9,7 @@ $(document).ready(function () {
             this.pageInitData();
         },
         pageInitStyle: function () {
-            $("#left_btnCompany").addClass("active");
+            $("#left_btnSalaryItem").addClass("active");
 
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
@@ -21,19 +21,14 @@ $(document).ready(function () {
             });
 
             $("#btnAdd").on("click", function (e) {
-                isNew = true;
                 that.pageDestroy();
                 that.pageAddValidation();
                 // $('#name').removeAttr("disabled");
-                $('#myModal #myModalLabel').text("新增管理员");
+                $('#myModal #myModalLabel').text("新增工资项");
                 $('#myModal #id').val("");
-                $('#myModal #name').val("");
-                $('#myModal #sequence').val(0);
-                $('#myModal #description').val("");
-                $('#myModal #we_appId').val("");
-                $('#myModal #we_appSecret').val("");
-                $('#myModal #we_mch_id').val("");
-                $('#myModal #we_Mch_key').val("");
+                $("#myModal #name").val("");
+                $("#myModal #fieldName").val("");
+                $("#myModal #operateType").val("统计");
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -43,18 +38,13 @@ $(document).ready(function () {
             $("#myModal #btnSave").on("click", function (e) {
                 var validator = $('#myModal').data('formValidation').validate();
                 if (validator.isValid()) {
-                    var postURI = "/admin/company/add",
+                    var postURI = "/people/salaryItem/add",
                         postObj = {
-                            name: $.trim($('#myModal #name').val()),
-                            sequence: $.trim($('#myModal #sequence').val()),
-                            description: $('#myModal #description').val(),
-                            we_appId: $('#myModal #we_appId').val(),
-                            we_appSecret: $('#myModal #we_appSecret').val(),
-                            we_mch_id: $('#myModal #we_mch_id').val(),
-                            we_Mch_key: $('#myModal #we_Mch_key').val()
+                            name: $.trim($("#myModal #name").val()),
+                            operateType: $.trim($("#myModal #operateType").val()),
                         };
                     if ($('#id').val()) {
-                        postURI = "/admin/company/edit";
+                        postURI = "/people/salaryItem/edit";
                         postObj.id = $('#myModal #id').val();
                     }
                     selfAjax("post", postURI, postObj, function (data) {
@@ -73,15 +63,11 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 // $('#name').attr("disabled", "disabled");
-                $('#myModal #myModalLabel').text("修改名称");
-                $('#myModal #name').val(entity.name);
-                $('#myModal #sequence').val(entity.sequence);
+                $('#myModal #myModalLabel').text("修改工资项");
+                $("#myModal #name").val(entity.name);
+                $("#myModal #fieldName").val(entity.fieldName);
+                $("#myModal #operateType").val(entity.operateType);
                 $('#myModal #id').val(entity._id);
-                $('#myModal #description').val(entity.description);
-                $('#myModal #we_appId').val(entity.we_appId);
-                $('#myModal #we_appSecret').val(entity.we_appSecret);
-                $('#myModal #we_mch_id').val(entity.we_mch_id);
-                $('#myModal #we_Mch_key').val(entity.we_Mch_key);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false
@@ -93,7 +79,7 @@ $(document).ready(function () {
                 var obj = e.currentTarget;
                 var entity = $(obj).parent().data("obj");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/admin/company/delete", {
+                    selfAjax("post", "/people/salaryItem/delete", {
                         id: entity._id
                     }, function (data) {
                         if (data.error) {
@@ -115,12 +101,12 @@ $(document).ready(function () {
                 },
                 pStr = p ? "p=" + p : "";
             this.pageOptions.$mainSelectBody.empty();
-            selfAjax("post", "/admin/companyList/search?" + pStr, filter, function (data) {
+            selfAjax("post", "/people/salaryItemList/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.sequence || 0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                            record.fieldName + '</td><td>' + record.operateType + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

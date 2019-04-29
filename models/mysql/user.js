@@ -12,20 +12,6 @@ const User = db.defineModel('users', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    wxId: {
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    shopName: {
-        // 分店名称
-        type: db.STRING(50),
-        defaultValue: ''
-    },
-    shopId: {
-        // 分店Id
-        type: db.INTEGER,
-        defaultValue: 0
-    },
     role: {
         type: db.INTEGER,
         defaultValue: 0

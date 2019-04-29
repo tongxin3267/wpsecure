@@ -13,6 +13,10 @@ const SystemConfigure = db.defineModel('systemConfigures', {
         // access_token
         type: db.STRING(50)
     },
+    companyId: {
+        type: db.INTEGER,
+        comment: "公司Id"
+    },
     appId: {
         type: db.STRING(50),
         defaultValue: ''

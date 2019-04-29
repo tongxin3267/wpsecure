@@ -3,10 +3,6 @@ $(document).ready(function () {
         location.href = "/admin/adminList";
     });
 
-    $("#left_btnUser").on("click", function (e) {
-        location.href = "/admin/userList";
-    });
-
     $("#left_btnCompany").on("click", function (e) {
         location.href = "/admin";
     });

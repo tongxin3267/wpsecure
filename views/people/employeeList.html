@@ -1,0 +1,317 @@
+{% extends "people/partial/main.html" %} {% block left %} {% include "people/partial/basicSetting.html" %}
+{% endblock %}
+{% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch" class="form-inline">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="Name" class="control-label">名字:</label>
+                    <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
+                </div>
+                <div class="form-group">
+                    <label for="searchdeptName" class="control-label">部门:</label>
+                    <select name="searchdeptName" id="searchdeptName" class="form-control">
+                        <option value=""></option>
+                        <option value="校长室">校长室</option>
+                        <option value="小浣熊">小浣熊</option>
+                        <option value="wonders">wonders</option>
+                        <option value="小学语文组">小学语文组</option>
+                        <option value="小学数学组">小学数学组</option>
+                        <option value="小学英语组">小学英语组</option>
+                        <option value="初中语文组">初中语文组</option>
+                        <option value="初中数学组">初中数学组</option>
+                        <option value="初中英语组">初中英语组</option>
+                        <option value="初中理化组">初中理化组</option>
+                        <option value="高中理科组">高中理科组</option>
+                        <option value="高中英语组">高中英语组</option>
+                        <option value="出国部">出国部</option>
+                        <option value="市场部">市场部</option>
+                        <option value="教管部">教管部</option>
+                        <option value="综合部">综合部</option>
+                        <option value="营地教育部">营地教育部</option>
+                    </select>
+                </div>
+                <span style="display:none">
+                    已删除<input type="checkbox" id="chkDeleted">
+                </span>
+                <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnAdd" class="btn btn-default btn-sm">新增</button>
+        <button id="btnBatchAdd" class="btn btn-default btn-sm">批量新增</button>
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:100px">姓名</th>
+                <th style="width:100px">英文名</th>
+                <th style="width:150px">电话</th>
+                <th style="width:200px">部门</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+<div id="mainModal">
+    {% include "people/partial/popuppaging.html" %}
+</div> {% endblock %} {% block modal %}
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form class="">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="name" class="control-label">姓名:</label>
+                                <input type="text" maxlength="30" class="form-control" name="name" id="name">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="engName" class="control-label">英文名:</label>
+                                <input type="text" maxlength="30" class="form-control" name="engName" id="engName">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="mobile" class="control-label">电话:</label>
+                                <input type="text" maxlength="30" class="form-control" name="mobile" id="mobile">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="departmentName" class="control-label">部门:</label>
+                                <select name="departmentName" id="departmentName" class="form-control">
+                                    <option value="校长室">校长室</option>
+                                    <option value="小浣熊">小浣熊</option>
+                                    <option value="wonders">wonders</option>
+                                    <option value="小学语文组">小学语文组</option>
+                                    <option value="小学数学组">小学数学组</option>
+                                    <option value="小学英语组">小学英语组</option>
+                                    <option value="初中语文组">初中语文组</option>
+                                    <option value="初中数学组">初中数学组</option>
+                                    <option value="初中英语组">初中英语组</option>
+                                    <option value="初中理化组">初中理化组</option>
+                                    <option value="高中理科组">高中理科组</option>
+                                    <option value="高中英语组">高中英语组</option>
+                                    <option value="出国部">出国部</option>
+                                    <option value="市场部">市场部</option>
+                                    <option value="教管部">教管部</option>
+                                    <option value="综合部">综合部</option>
+                                    <option value="教管部">营地教育部</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="subject" class="control-label">科目:</label>
+                                <select name="subject" id="subject" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="gradeType" class="control-label">年级:</label>
+                                <select name="gradeType" id="gradeType" class="form-control">
+                                    <option value="5">小学</option>
+                                    <option value="10">初中</option>
+                                    <option value="15">高中</option>
+                                    <option value="20">出国</option>
+                                    <option value="25">Wonders</option>
+                                    <option value="0">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="nativePlace" class="control-label">籍贯:</label>
+                                <input type="text" maxlength="50" class="form-control" name="nativePlace"
+                                    id="nativePlace">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="idType" class="control-label">户口性质:</label>
+                                <select name="idType" id="idType" class="form-control">
+                                    <option value="城镇">城镇</option>
+                                    <option value="农村">农村</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="marryType" class="control-label">婚育状况:</label>
+                                <select name="marryType" id="marryType" class="form-control">
+                                    <option value="未婚">未婚</option>
+                                    <option value="已婚未育">已婚未育</option>
+                                    <option value="已婚已育">已婚已育</option>
+                                    <option value="离异">离异</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="partyType" class="control-label">政治面貌:</label>
+                                <select name="partyType" id="partyType" class="form-control">
+                                    <option value="共青团员">共青团员</option>
+                                    <option value="预备党员">预备党员</option>
+                                    <option value="共产党员">共产党员</option>
+                                    <option value="民主党派">民主党派</option>
+                                    <option value="群众">群众</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="sex" class="control-label">性别:</label>
+                                <select name="sex" id="sex" class="form-control">
+                                    <option value=0>女</option>
+                                    <option value=1>男</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="isRegSecur" class="control-label">签密:</label>
+                                <select name="isRegSecur" id="isRegSecur" class="form-control">
+                                    <option value=0>否</option>
+                                    <option value=1>是</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="positionType" class="control-label">管理岗？:</label>
+                                <select name="positionType" id="positionType" class="form-control">
+                                    <option value=0>否</option>
+                                    <option value=1>是</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="highEduBg" class="control-label">最高学历:</label>
+                                <select name="highEduBg" id="highEduBg" class="form-control">
+                                    <option value="大专">大专</option>
+                                    <option value="本科">本科</option>
+                                    <option value="硕士研究生">硕士研究生</option>
+                                    <option value="博士研究生">博士研究生</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="graduateSchool" class="control-label">毕业学校:</label>
+                                <input type="text" maxlength="50" class="form-control" name="graduateSchool"
+                                    id="graduateSchool">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="graduateSubject" class="control-label">学习专业:</label>
+                                <input type="text" maxlength="50" class="form-control" name="graduateSubject"
+                                    id="graduateSubject">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="idNumber" class="control-label">身份证号:</label>
+                                <input type="text" maxlength="50" class="form-control" name="idNumber" id="idNumber">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="firstWorkDate" class="control-label">参工时间:</label>
+                                <input type="text" maxlength="50" class="form-control" name="firstWorkDate"
+                                    id="firstWorkDate">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="onBoardDate" class="control-label">入职时间:</label>
+                                <input type="text" maxlength="50" class="form-control" name="onBoardDate"
+                                    id="onBoardDate">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="yearHolidays" class="control-label">总年假:</label>
+                                <input type="text" maxlength="10" class="form-control" name="yearHolidays"
+                                    id="yearHolidays">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="usedHolidays" class="control-label">已用年假:</label>
+                                <input type="text" maxlength="10" class="form-control" name="usedHolidays"
+                                    id="usedHolidays">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="overTime" class="control-label">加班小时:</label>
+                                <input type="text" maxlength="10" class="form-control" name="overTime" id="overTime">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="role" class="control-label">职位性质:</label>
+                                <select name="role" id="role" class="form-control">
+                                    <option value="20">老师</option>
+                                    <option value="11">组长</option>
+                                    <option value="25">其他</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="nickname" class="control-label">别名:</label>
+                                <input type="text" maxlength="30" class="form-control" name="nickname" id="nickname">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" class="form-control" name="id" id="id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="btnSave" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/default/assets/js/moment.min.js"></script>
+<script type="text/javascript" src="/default/assets/js/people/teacher.js?v=1.0"></script>
+{% endblock %}

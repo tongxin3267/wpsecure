@@ -1,0 +1,25 @@
+{% extends "people/partial/main.html" %} {% block left %} {% include toPage %} {% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:180px;">第一列</th>
+                <th style="width:180px;">第二列</th>
+                <th style="width:180px;">第三列</th>
+                <th>错误原因</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<script type="text/javascript" src="/default/assets/js/people/scoreResult.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+{% endblock %}

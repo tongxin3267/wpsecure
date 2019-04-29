@@ -3,8 +3,8 @@ var crypto = require('crypto'),
     Shop = model.shop,
     Ws_user = model.ws_user,
     SecureUpload = model.secureUpload,
-    wechat_pay = require('../../util/wechatH5Helper'),
-    client = wechat_pay.client,
+    // wechat_pay = require('../../util/wechatH5Helper'),
+    // client = wechat_pay.client,
     WechatAPI = require('wechat-api'),
     api = new WechatAPI(model.db.config.appid, model.db.config.appSecret),
     request = require('request'),
@@ -39,16 +39,16 @@ module.exports = function (app) {
                 var userInfo = result;
                 // 1. save to db
                 return Ws_user.getFilter({
-                        wxId: userInfo.openid
-                    })
+                    wxId: userInfo.openid
+                })
                     .then(user => {
                         if (user) {
                             if (userInfo.nickname != user.uname || userInfo.headimgurl != user.uavatar) {
                                 // 更新
                                 return Ws_user.update({
-                                        uname: userInfo.nickname,
-                                        uavatar: userInfo.headimgurl,
-                                    }, {
+                                    uname: userInfo.nickname,
+                                    uavatar: userInfo.headimgurl,
+                                }, {
                                         where: {
                                             wxId: userInfo.openid
                                         }
@@ -64,11 +64,11 @@ module.exports = function (app) {
                         } else {
                             // 新建
                             return Ws_user.create({
-                                    wxId: userInfo.openid,
-                                    uname: userInfo.nickname,
-                                    uavatar: userInfo.headimgurl,
-                                    ugender: userInfo.sex
-                                })
+                                wxId: userInfo.openid,
+                                uname: userInfo.nickname,
+                                uavatar: userInfo.headimgurl,
+                                ugender: userInfo.sex
+                            })
                                 .then(user => {
                                     req.session.user = user;
                                 });
@@ -113,16 +113,16 @@ module.exports = function (app) {
                 var userInfo = result;
                 // 1. save to db
                 return Ws_user.getFilter({
-                        wxId: userInfo.openid
-                    })
+                    wxId: userInfo.openid
+                })
                     .then(user => {
                         if (user) {
                             if (userInfo.nickname != user.uname || userInfo.headimgurl != user.uavatar) {
                                 // 更新
                                 return Ws_user.update({
-                                        uname: userInfo.nickname,
-                                        uavatar: userInfo.headimgurl,
-                                    }, {
+                                    uname: userInfo.nickname,
+                                    uavatar: userInfo.headimgurl,
+                                }, {
                                         where: {
                                             wxId: userInfo.openid
                                         }
@@ -138,11 +138,11 @@ module.exports = function (app) {
                         } else {
                             // 新建
                             return Ws_user.create({
-                                    wxId: userInfo.openid,
-                                    uname: userInfo.nickname,
-                                    uavatar: userInfo.headimgurl,
-                                    ugender: userInfo.sex
-                                })
+                                wxId: userInfo.openid,
+                                uname: userInfo.nickname,
+                                uavatar: userInfo.headimgurl,
+                                ugender: userInfo.sex
+                            })
                                 .then(user => {
                                     req.session.user = user;
                                 });
@@ -178,51 +178,51 @@ module.exports = function (app) {
     app.post('/Client/secureUpload/add', checkLogin);
     app.post('/Client/secureUpload/add', function (req, res) {
         return Ws_user.getFilter({
-                uname: req.body.responseUser
-            })
+            uname: req.body.responseUser
+        })
             .then(user => {
                 return SecureUpload.create({
-                        position: req.body.position,
-                        imageName: req.body.imageName,
-                        description: req.body.description,
-                        responseUser: ((user && user._id) || 1),
-                        createdBy: req.session.user._id
-                    })
+                    position: req.body.position,
+                    imageName: req.body.imageName,
+                    description: req.body.description,
+                    responseUser: ((user && user._id) || 1),
+                    createdBy: req.session.user._id
+                })
                     .then(function (result) {
                         return new Promise(function (resolve, reject) {
-                                api.sendTemplate(user.wxId, "V5AzGTTSZM5GOry9zDbqANzR4uLP27J_-ihYVSD-cl0", "http://secure.dushidao.com/Client/personalCenter", {
-                                    "first": {
-                                        "value": "新的隐患消息！",
-                                        "color": "#173177"
-                                    },
-                                    "keyword1": {
-                                        "value": "巧克力",
-                                        "color": "#173177"
-                                    },
-                                    "keyword2": {
-                                        "value": req.body.position,
-                                        "color": "#173177"
-                                    },
-                                    "keyword3": {
-                                        "value": req.body.description,
-                                        "color": "#173177"
-                                    },
-                                    "keyword4": {
-                                        "value": req.body.responseUser,
-                                        "color": "#173177"
-                                    },
-                                    "keyword5": {
-                                        "value": (new Date()).toLocaleString(),
-                                        "color": "#173177"
-                                    }
-                                }, function (err, data, res) {
-                                    if (data.errmsg == "ok") {
-                                        resolve();
-                                    } else {
-                                        reject();
-                                    }
-                                });
-                            })
+                            api.sendTemplate(user.wxId, "V5AzGTTSZM5GOry9zDbqANzR4uLP27J_-ihYVSD-cl0", "http://secure.dushidao.com/Client/personalCenter", {
+                                "first": {
+                                    "value": "新的隐患消息！",
+                                    "color": "#173177"
+                                },
+                                "keyword1": {
+                                    "value": "巧克力",
+                                    "color": "#173177"
+                                },
+                                "keyword2": {
+                                    "value": req.body.position,
+                                    "color": "#173177"
+                                },
+                                "keyword3": {
+                                    "value": req.body.description,
+                                    "color": "#173177"
+                                },
+                                "keyword4": {
+                                    "value": req.body.responseUser,
+                                    "color": "#173177"
+                                },
+                                "keyword5": {
+                                    "value": (new Date()).toLocaleString(),
+                                    "color": "#173177"
+                                }
+                            }, function (err, data, res) {
+                                if (data.errmsg == "ok") {
+                                    resolve();
+                                } else {
+                                    reject();
+                                }
+                            });
+                        })
                             .then(() => {
                                 res.jsonp("消息发送成功");
                             })
@@ -239,11 +239,11 @@ module.exports = function (app) {
     app.post('/Client/secureUpload/addResponse', checkLogin);
     app.post('/Client/secureUpload/addResponse', function (req, res) {
         return SecureUpload.update({
-                responseImage: req.body.responseImage,
-                responseResult: req.body.responseResult,
-                secureStatus: 1,
-                updatedBy: req.session.user._id
-            }, {
+            responseImage: req.body.responseImage,
+            responseResult: req.body.responseResult,
+            secureStatus: 1,
+            updatedBy: req.session.user._id
+        }, {
                 where: {
                     _id: req.body._id
                 }

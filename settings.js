@@ -2,7 +2,7 @@ var option = {
     cookieSecret: 'wpsecure',
     db: 'wpsecure',
     host: '127.0.0.1',
-    port: '27017',
+    port: '10105',
     username: 'root',
     password: 'root',
     pageSize: 14,
