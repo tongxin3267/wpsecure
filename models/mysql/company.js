@@ -31,6 +31,10 @@ const Company = db.defineModel('companys', {
     we_Mch_key: {
         type: db.STRING(50),
         defaultValue: ''
+    },
+    peoplePassword: {
+        type: db.STRING(50),
+        defaultValue: ''
     }
 });
 module.exports = Company;
