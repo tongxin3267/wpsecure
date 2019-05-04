@@ -10,7 +10,8 @@ module.exports = function (app) {
     app.get('/people/salaryList', function (req, res) {
         res.render('people/salaryList.html', {
             title: '>工资列表',
-            user: req.session.people,
+            websiteTitle: req.session.company.name,
+            user: req.session.company,
             websiteTitle: model.db.config.websiteTitle
         });
     });
@@ -19,7 +20,8 @@ module.exports = function (app) {
     app.get('/people/batchuploadSalary', function (req, res) {
         res.render('people/batchuploadSalary.html', {
             title: '>工资批量上传',
-            user: req.session.people
+            websiteTitle: req.session.company.name,
+            user: req.session.company
         });
     });
 
@@ -27,7 +29,8 @@ module.exports = function (app) {
     app.get('/people/sumSalary', function (req, res) {
         res.render('people/sumSalary.html', {
             title: '>工资总和统计',
-            user: req.session.people
+            websiteTitle: req.session.company.name,
+            user: req.session.company
         });
     });
 
@@ -39,7 +42,7 @@ module.exports = function (app) {
                 year: req.body.year,
                 month: req.body.month,
                 other: req.body.other,
-                createdBy: req.session.people._id
+                createdBy: req.session.company._id
             })
             .then(function (result) {
                 if (result) {
@@ -56,7 +59,7 @@ module.exports = function (app) {
                 year: req.body.year,
                 month: req.body.month,
                 other: req.body.other,
-                deletedBy: req.session.people._id,
+                deletedBy: req.session.company._id,
                 updatedDate: new Date()
             }, {
                 where: {
@@ -74,7 +77,7 @@ module.exports = function (app) {
     app.post('/people/salary/delete', function (req, res) {
         Salary.update({
                 isDeleted: true,
-                deletedBy: req.session.people._id,
+                deletedBy: req.session.company._id,
                 deletedDate: new Date()
             }, {
                 where: {

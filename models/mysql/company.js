@@ -8,6 +8,10 @@ const Company = db.defineModel('companys', {
         // 公司名称
         type: db.STRING(50)
     },
+    password: {
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     description: {
         type: db.STRING(100),
         defaultValue: ""
@@ -32,10 +36,10 @@ const Company = db.defineModel('companys', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    peoplePassword: {
-        type: db.STRING(50),
-        defaultValue: ''
-    }
+    // peoplePassword: {
+    //     type: db.STRING(50),
+    //     defaultValue: ''
+    // }
 });
 module.exports = Company;
 

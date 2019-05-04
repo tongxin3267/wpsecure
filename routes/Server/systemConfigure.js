@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     SystemConfigure = model.systemConfigure,
+    Employee = model.employee,
     wechat = require('../../util/wechatHelper'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -19,14 +20,13 @@ module.exports = function (app) {
             .then(data => {
                 wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
                     .then(data => {
-                        // console.log(data.xml.Event[0]);
-                        if (data.xml.Event[0] == "subscribe") {
-                            // 订阅 会有fromuser
-                            // ToUserName
-                            var userArr = data.xml.FromUserName[0];
-                            // unsubscribe 取消订阅
-                        } else {
-
+                        switch (data.xml.Event[0]) {
+                            case "subscribe":
+                                addNewEmployee(data.xml.FromUserName[0]);
+                                break;
+                            case "unsubscribe":
+                                removeEmployee(data.xml.FromUserName[0]);
+                                break;
                         }
                     });
             });
@@ -50,7 +50,7 @@ module.exports = function (app) {
                             // save
                             return SystemConfigure.getFilter({
                                     name: "suite_ticket",
-                                    appId: data.xml.SuiteId[0]
+                                    suitId: data.xml.SuiteId[0]
                                 })
                                 .then(configure => {
                                     if (suiteTicket != configure.value) {
@@ -65,4 +65,38 @@ module.exports = function (app) {
                     });
             });
     });
+
+    // util functions
+    {
+        function addNewEmployee(userId) {
+            Employee.getFilter({
+                    weUserId: userId
+                })
+                .then(employee => {
+                    if (employee) {
+                        if (employee.isDeleted) {
+                            employee.isDeleted = 0;
+                            employee.deletedBy = 0;
+                            employee.save();
+                        }
+                    } else {
+                        // getUserInfo and save to db
+
+                    }
+                });
+        };
+
+        function removeEmployee(userId) {
+            Employee.getFilter({
+                    weUserId: userId
+                })
+                .then(employee => {
+                    if (employee) {
+                        employee.isDeleted = 1;
+                        employee.deletedBy = 0;
+                        employee.save();
+                    }
+                });
+        }
+    }
 }

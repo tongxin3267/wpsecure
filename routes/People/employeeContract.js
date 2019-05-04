@@ -14,7 +14,8 @@ module.exports = function (app) {
             .then(teacher => {
                 res.render('people/employeeContractList.html', {
                     title: '>合同列表-' + teacher.name,
-                    user: req.session.people,
+                    websiteTitle: req.session.company.name,
+                    user: req.session.company,
                     websiteTitle: model.db.config.websiteTitle,
                     employeeId: teacher._id
                 });
@@ -25,7 +26,8 @@ module.exports = function (app) {
     app.get('/people/batchAddContract', function (req, res) {
         res.render('people/batchAddContract.html', {
             title: '>批量添加合同',
-            user: req.session.people
+            websiteTitle: req.session.company.name,
+            user: req.session.company
         });
     });
 
@@ -36,7 +38,7 @@ module.exports = function (app) {
                 sequence: req.body.sequence,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
-                createdBy: req.session.people._id
+                createdBy: req.session.company._id
             })
             .then(function (result) {
                 if (result) {
@@ -52,7 +54,7 @@ module.exports = function (app) {
                 sequence: req.body.sequence,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
-                deletedBy: req.session.people._id,
+                deletedBy: req.session.company._id,
                 updatedDate: new Date()
             }, {
                 where: {
@@ -70,7 +72,7 @@ module.exports = function (app) {
     app.post('/people/employeeContract/delete', function (req, res) {
         EmployeeContract.update({
                 isDeleted: true,
-                deletedBy: req.session.people._id,
+                deletedBy: req.session.company._id,
                 deletedDate: new Date()
             }, {
                 where: {

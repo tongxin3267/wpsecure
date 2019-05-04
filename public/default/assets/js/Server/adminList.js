@@ -29,7 +29,7 @@ $(document).ready(function () {
                 $('#myModal #id').val("");
                 $('#myModal #name').val("");
                 $('#myModal #userPwd').val("");
-                $('#myModal #role').val(0);
+                $('#myModal #role').val(5);
                 $('#myModal').modal({
                     backdrop: 'static',
                     keyboard: false

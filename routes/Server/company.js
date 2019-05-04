@@ -38,6 +38,7 @@ module.exports = function (app) {
     app.post('/admin/company/add', function (req, res) {
         Company.create({
                 name: req.body.name,
+                password: "e10adc3949ba59abbe56e057f20f883e",
                 description: req.body.description,
                 we_appId: req.body.we_appId,
                 we_appSecret: req.body.we_appSecret,

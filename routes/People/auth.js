@@ -1,6 +1,6 @@
 module.exports = {
     checkLogin: function (req, res, next) {
-        if (!req.session.people) {
+        if (!req.session.company) {
             if (req.method == "GET") {
                 res.redirect('/people/login');
                 return;
@@ -14,7 +14,7 @@ module.exports = {
         next();
     },
     checkNotLogin: function (req, res, next) {
-        if (req.session.people) {
+        if (req.session.company) {
             res.redirect('back'); //返回之前的页面
             return;
         }

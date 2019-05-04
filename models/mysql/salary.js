@@ -40,7 +40,7 @@ const Salary = db.defineModel('salarys', {
     },
     other: {
         // 用于显示的字段，没有别的用途
-        type: db.TEXT,
+        type: db.JSON,
         comment: "其他字段"
     }
 });

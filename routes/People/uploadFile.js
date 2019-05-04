@@ -4,8 +4,7 @@ var xlsx = require("node-xlsx"),
     fs = require('fs'),
     model = require("../../model.js"),
     Salary = model.salary,
-    SalaryItem = model.salaryItem,
-    Teacher = model.teacher,
+    Employee = model.employee,
     EmployeeContract = model.employeeContract,
     SystemConfigure = model.systemConfigure,
     ScoreFails = model.scoreFails,
@@ -42,7 +41,8 @@ module.exports = function (app) {
     app.get('/people/score', function (req, res) {
         res.render('people/scoreResult.html', {
             title: '>导入结果失败列表',
-            user: req.session.people,
+            websiteTitle: req.session.company.name,
+            user: req.session.company,
             toPage: "people/partial/basicSetting.html"
         });
     });
@@ -51,10 +51,10 @@ module.exports = function (app) {
     app.get('/people/score/clearAll', checkLogin);
     app.get('/people/score/clearAll', function (req, res) {
         ScoreFails.destroy({
-            where: {
-                createdBy: req.session.people._id
-            }
-        })
+                where: {
+                    createdBy: req.session.company._id
+                }
+            })
             .then(function () {
                 res.jsonp({
                     sucess: true
@@ -66,8 +66,8 @@ module.exports = function (app) {
     app.get('/people/score/getAllWithoutPage', checkLogin);
     app.get('/people/score/getAllWithoutPage', function (req, res) {
         ScoreFails.getFilters({
-            createdBy: req.session.people._id
-        })
+                createdBy: req.session.company._id
+            })
             .then(function (scoreFails) {
                 res.jsonp(scoreFails);
             })
@@ -112,7 +112,7 @@ module.exports = function (app) {
                     if (!list[0].data[i][2]) {
                         break;
                     }
-                    pArray.push(updateSalary(titleAry, items, req.session.people, list[0].data[i], colCount, year, month));
+                    pArray.push(updateSalary(titleAry, items, req.session.company, list[0].data[i], colCount, year, month));
                 }
                 Promise.all(pArray)
                     .then(function () {
@@ -124,13 +124,13 @@ module.exports = function (app) {
     });
 
     function updateSalary(titleAry, items, people, data, colCount, year, month) {
-        return Teacher.getFilter({
-            nickname: data[2].trim()
-        })
+        return Employee.getFilter({
+                nickname: data[2].trim()
+            })
             .then(employee => {
                 SystemConfigure.getFilter({
-                    key: "salaryMonth"
-                })
+                        key: "salaryMonth"
+                    })
                     .then(configure => {
                         var configDate = new Date(configure.value),
                             uploadDate = new Date(year, month, 1);
@@ -146,10 +146,10 @@ module.exports = function (app) {
                     return failedScore(people, data[0], data[1], data[2], '没找到该员工');
                 }
                 return Salary.getFilter({
-                    year: year,
-                    month: month,
-                    employeeId: employee._id
-                })
+                        year: year,
+                        month: month,
+                        employeeId: employee._id
+                    })
                     .then(salary => {
                         if (salary) {
                             // 修改工资项
@@ -219,33 +219,33 @@ module.exports = function (app) {
     };
 
     //  failedScore(score[0], score[1], score[2], examId, subject);
-    function addTeacher(score) {
-        return Teacher.getFilter({
-            nickname: score[3].trim()
-        })
-            .then(function (teacher) {
-                if (teacher) {
-                    teacher.departmentName = score[5].trim();
-                    if (score[1] && score[1].trim()) {
-                        teacher.engName = score[1].trim();
-                    }
-                    return teacher.save();
-                } else {
-                    var md5 = crypto.createHash('md5'),
-                        role = (score[4] && score[4].trim() == "老师") ? 20 : 25,
-                        nickname = ((score[3] && score[3].trim()) || score[0].trim());
-
-                    return Teacher.create({
-                        name: score[0].trim(),
-                        mobile: score[2],
-                        engName: score[1] && score[1].trim(),
-                        nickname: nickname,
-                        role: role,
-                        departmentName: score[5].trim(),
-                        password: md5.update("111111").digest('hex')
-                    });
-                }
+    function addEmployee(score) {
+        var p;
+        if (score[2]) {
+            // 根据编号
+            p = Employee.getFilter({
+                weUserId: score[2].trim()
+            })
+        } else {
+            // 根据手机号
+            p = Employee.getFilter({
+                name: score[0].trim(),
+                mobile: score[1]
             });
+        }
+        p.then(function (employee) {
+            if (employee) {
+                employee.other = score[5].trim();
+                return employee.save();
+            } else {
+                return Employee.create({
+                    name: score[0].trim(),
+                    mobile: score[1],
+                    companyId: req.session.company._id,
+                    other: score[5].trim()
+                });
+            }
+        });
     };
 
     // 批量添加老师
@@ -258,7 +258,7 @@ module.exports = function (app) {
             if (!list[0].data[i][0]) {
                 break; //already done
             }
-            pArray.push(addTeacher(list[0].data[i]));
+            pArray.push(addEmployee(list[0].data[i]));
         }
 
         // res.redirect('/admin/score');
@@ -280,16 +280,16 @@ module.exports = function (app) {
     };
     // 批量添加合同的操作
     function addContract(contract, people) {
-        return Teacher.getFilter({
-            nickname: contract[0].trim()
-        })
-            .then(function (teacher) {
-                if (teacher) {
+        return Employee.getFilter({
+                nickname: contract[0].trim()
+            })
+            .then(function (employee) {
+                if (employee) {
                     // check contract
                     return EmployeeContract.getFilter({
-                        employeeId: teacher._id,
-                        sequence: contract[1]
-                    })
+                            employeeId: employee._id,
+                            sequence: contract[1]
+                        })
                         .then(oldcontract => {
                             if (oldcontract) {
                                 oldcontract.startDate = getExcelDate(contract[2]);
@@ -298,7 +298,7 @@ module.exports = function (app) {
                                 return oldcontract.save();
                             } else {
                                 return EmployeeContract.create({
-                                    employeeId: teacher._id,
+                                    employeeId: employee._id,
                                     sequence: contract[1],
                                     startDate: getExcelDate(contract[2]),
                                     endDate: getExcelDate(contract[3]),
@@ -318,7 +318,7 @@ module.exports = function (app) {
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [],
-            people = req.session.people;
+            people = req.session.company;
         for (var i = 1; i < length; i++) {
             if (!list[0].data[i][0]) {
                 break; //already done

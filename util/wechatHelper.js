@@ -19,8 +19,13 @@ var weapi = {
     _weapi: null,
     _crypto: null,
     thirdAppId: "ww683e156d777a4cf6",
+    thirdSecret: "_yBtCzdlDSkFQrLNiX2KaM4aupMFGSMEcz5G4425n0g",
     thirdToken: "2OxqDavW",
     thirdAESKey: "sWrM5nSmxVWa4lPBB4vN2C6hqJhG7JQUD8cKyls2mag",
+    suite_access_tokenURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_suite_token",
+    pre_auth_codeURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_pre_auth_code?suite_access_token=",
+    set_sessionURL: "https://qyapi.weixin.qq.com/cgi-bin/service/set_session_info?suite_access_token=",
+    get_permanent_codeURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_permanent_code?suite_access_token=",
     weApi: function () {
         if (!this._weapi) {
             this._weapi = new wechatAPI('ww1c286ef33caa2252', 'gdWILiRzCtujjUYkEZFwTYlRT7J_4kGubglbXHnKaHg', '1000013', function (callback) {
@@ -55,6 +60,34 @@ var weapi = {
             this._crypto = new wecrypto(this.thirdToken, this.thirdAESKey, this.thirdAppId);
         }
         return this._crypto;
+    },
+    getURL: function (url) {
+        return new Promise(function (resolve, reject) {
+            request.get(url,
+                function (error, response, body) {
+                    const data = JSON.parse(body);
+                    if (data.errcode) {
+                        reject(data.errmsg);
+                    } else {
+                        resolve(data);
+                    }
+                });
+        });
+    },
+    postURL: function (url, params) {
+        return new Promise(function (resolve, reject) {
+            request({
+                url: url,
+                method: 'POST',
+                json: params
+            }, (err, res, data) => {
+                if (data.errcode) {
+                    reject(data.errmsg);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
     },
     selfParse: function (data) {
         return new Promise(function (resolve, reject) {
@@ -128,5 +161,128 @@ var weapi = {
                 return that.selfParse(decryptedMessage.message);
             });
     },
+    saveaccess_token: function (token, toAppId) {
+        return SystemConfigure.update({
+            value: token,
+            updatedDate: new Date()
+        }, {
+            where: {
+                name: "access_token",
+                appId: toAppId,
+                suitId: this.thirdAppId
+            }
+        });
+    },
+    savepermanent_code: function (code, toAppId) {
+        return SystemConfigure.update({
+            value: code,
+            updatedDate: new Date()
+        }, {
+            where: {
+                name: "permanent_code",
+                appId: toAppId,
+                suitId: this.thirdAppId
+            }
+        });
+    },
+    getsuite_ticket: function () {
+        return SystemConfigure.getFilter({
+            name: 'suite_ticket',
+            suitId: this.thirdAppId
+        });
+    },
+    getsuite_access_token: function () {
+        return SystemConfigure.getFilter({
+            name: "suite_access_token",
+            suitId: this.thirdAppId
+        });
+    },
+    refreshsuite_access_token: function () {
+        var that = this;
+        // debugger;
+        return that.getsuite_ticket()
+            .then(ticket => {
+                return that.postURL(that.suite_access_tokenURL, {
+                        "suite_id": that.thirdAppId,
+                        "suite_secret": that.thirdSecret,
+                        "suite_ticket": ticket.value
+                    })
+                    .then(result => {
+                        return result.suite_access_token;
+                    });
+            });
+    },
+    checksuite_access_token: function () {
+        var that = this;
+        return that.getsuite_access_token()
+            .then(token => {
+                if (token) {
+                    // 2 小时有效，可以简单处理为1.5小时过期
+                    if (moment().isBefore(moment(token.updatedDate).add(1.8, "hours"))) {
+                        return token.value;
+                    }
+
+                    // 过期
+                    return that.refreshsuite_access_token()
+                        .then(newToken => {
+                            token.value = newToken;
+                            token.updatedDate = new Date();
+                            token.save();
+
+                            return newToken;
+                        });
+                }
+                // 出错了
+            });
+    },
+    getpre_auth_code: function () {
+        // 回调方式不需要这个
+        var that = this;
+        return this.checksuite_access_token()
+            .then(token => {
+                return that.getURl(that.pre_auth_codeURL + token);
+            })
+            .then(result => {
+                return result.pre_auth_code;
+            });
+    },
+    set_session_info: function () {
+        // 或许只有设置了这个，才可以引导授权，TBC
+        var that = this; // set_sessionURL
+
+        return this.checksuite_access_token()
+            .then(token => {
+                return that.getpre_auth_code()
+                    .then(code => {
+                        return that.postURL(that.set_sessionURL + token, {
+                                "pre_auth_code": code,
+                                "session_info": {
+                                    "auth_type": 1
+                                }
+                            })
+                            .then(() => {
+                                return code;
+                            });
+                    });
+            })
+            .then(code => {
+                return "https://open.work.weixin.qq.com/3rdapp/install?suite_id=" + that.thirdAppId + "&pre_auth_code=" + code + "&redirect_uri=http://people.dushidao.com/people/setsessionback&state=STATE";
+            });
+    },
+    get_permanent_code: function (code) {
+        var that = this;
+        return this.checksuite_access_token()
+            .then(token => {
+                return that.postURL(that.get_permanent_codeURL + token, {
+                        "auth_code": code
+                    })
+                    .then(result => {
+                        that.saveaccess_token();
+                        that.savepermanent_code();
+                    });
+            });
+    }
+
+
 }
 module.exports = weapi;

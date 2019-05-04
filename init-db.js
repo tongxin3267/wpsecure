@@ -18,26 +18,33 @@ function step2() {
         password = md5.update("admin12345").digest('hex');
 
     return model.user.create({
-        name: "admin",
-        password: password,
-        role: 100
-    })
+            name: "admin",
+            password: password,
+            role: 100
+        })
         .then(o => {
-            // return model.systemConfigure.bulkCreate([{
-            //         name: 'access_token'
-            //     }, {
-            //         name: "access_token_wechat"
-            //     }, {
-            //         name: "component_verify_ticket" // need save every 2 hours
-            //     }, {
-            //         name: "component_access_token" // need save every 2 hours
-            //     }])
-            //     .then(() => {
-            //         // return model.siteInfo.create({
-            //         //     name: "测试",
-            //         //     description: "这是测试信息"
-            //         // });
-            //     });
+            return model.systemConfigure.bulkCreate([{
+                    name: 'suite_ticket',
+                    suitId: 'ww683e156d777a4cf6'
+                }, {
+                    name: "suite_access_token",
+                    suitId: 'ww683e156d777a4cf6'
+                }, {
+                    name: "permanent_code",
+                    suitId: 'ww683e156d777a4cf6',
+                    appId: 'wwb50dd79078e140ef'
+                }, {
+                    name: "access_token",
+                    suitId: 'ww683e156d777a4cf6',
+                    appId: 'wwb50dd79078e140ef'
+                }])
+                .then(() => {
+                    return model.company.create({
+                        name: "一格",
+                        password: "e10adc3949ba59abbe56e057f20f883e",
+                        we_appId: "wwb50dd79078e140ef"
+                    });
+                });
         });
 };
 

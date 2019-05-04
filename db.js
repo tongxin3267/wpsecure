@@ -17,6 +17,7 @@ function generateId() {
 
 var sequelize = new Sequelize(config.db, config.username, config.password, {
     host: config.host,
+    port: 3307,
     logging: (isDevelopment ? true : false),
     dialect: 'mysql',
     dialectOptions: {
@@ -120,7 +121,7 @@ function defineModel(name, attributes, options) {
     return sequelize.define(name, attrs, options);
 }
 
-const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW', 'fn'];
+const TYPES = ['STRING', 'INTEGER', 'BIGINT', 'TEXT', 'DECIMAL', 'DOUBLE', 'DATE', 'DATEONLY', 'BOOLEAN', 'NOW', 'fn', 'JSON'];
 
 var exp = {
     defineModel: defineModel,
