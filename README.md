@@ -11,6 +11,9 @@ CREATE SCHEMA `wpsecure` DEFAULT CHARACTER SET utf8 ;
 
 1. 隐患等级 一般 较大 重大 3个等级
 
+开发注意事项
+1. IP白名单在服务商处设置
+
 ALTER TABLE `companys` 
 ADD COLUMN `password` VARCHAR(50) NOT NULL DEFAULT '' AFTER `version`;
 

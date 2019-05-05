@@ -1,6 +1,7 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     SystemConfigure = model.systemConfigure,
+    Company = model.company,
     Employee = model.employee,
     wechat = require('../../util/wechatHelper'),
     auth = require("./auth"),
@@ -22,10 +23,10 @@ module.exports = function (app) {
                     .then(data => {
                         switch (data.xml.Event[0]) {
                             case "subscribe":
-                                addNewEmployee(data.xml.FromUserName[0]);
+                                addNewEmployee(data.xml.ToUserName[0], data.xml.FromUserName[0]);
                                 break;
                             case "unsubscribe":
-                                removeEmployee(data.xml.FromUserName[0]);
+                                removeEmployee(data.xml.ToUserName[0], data.xml.FromUserName[0]);
                                 break;
                         }
                     });
@@ -45,22 +46,28 @@ module.exports = function (app) {
             .then(data => {
                 wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
                     .then(data => {
-                        if (data.xml.InfoType[0] == "suite_ticket") {
-                            var suiteTicket = data.xml.SuiteTicket[0];
-                            // save
-                            return SystemConfigure.getFilter({
-                                    name: "suite_ticket",
-                                    suitId: data.xml.SuiteId[0]
-                                })
-                                .then(configure => {
-                                    if (suiteTicket != configure.value) {
-                                        configure.value = suiteTicket;
-                                        configure.updatedDate = new Date();
-                                        return configure.save();
-                                    }
-                                });
-                        } else {
-                            // console.log(data.xml.InfoType[0]);
+                        switch (data.xml.InfoType[0]) {
+                            case "suite_ticket":
+                                var suiteTicket = data.xml.SuiteTicket[0];
+                                // save
+                                return SystemConfigure.getFilter({
+                                        name: "suite_ticket",
+                                        suitId: data.xml.SuiteId[0]
+                                    })
+                                    .then(configure => {
+                                        if (suiteTicket != configure.value) {
+                                            configure.value = suiteTicket;
+                                            configure.updatedDate = new Date();
+                                            return configure.save();
+                                        }
+                                    });
+                            case "create_auth":
+                                var AuthCode = data.xml.AuthCode[0],
+                                    SuiteId = data.xml.SuiteId[0];
+                                wechat.refresh_permanent_code(AuthCode, SuiteId);
+                                break;
+                            default:
+                                break;
                         }
                     });
             });
@@ -68,35 +75,84 @@ module.exports = function (app) {
 
     // util functions
     {
-        function addNewEmployee(userId) {
-            Employee.getFilter({
-                    weUserId: userId
+        function addNewEmployee(toAppId, userId) {
+            Company.getFilter({
+                    we_appId: toAppId
                 })
-                .then(employee => {
-                    if (employee) {
-                        if (employee.isDeleted) {
-                            employee.isDeleted = 0;
-                            employee.deletedBy = 0;
-                            employee.save();
-                        }
-                    } else {
-                        // getUserInfo and save to db
-
-                    }
+                .then(company => {
+                    Employee.findOne({
+                            where: {
+                                weUserId: userId,
+                                companyId: company._id
+                            }
+                        })
+                        .then(employee => {
+                            if (employee) {
+                                if (employee.isDeleted) {
+                                    employee.isDeleted = 0;
+                                    employee.deletedBy = 0;
+                                    employee.save();
+                                }
+                            } else {
+                                // getUserInfo and save to db
+                                wechat.getuser(toAppId, userId)
+                                    .then(detail => {
+                                        Employee.create({
+                                            weUserId: userId,
+                                            companyId: company._id,
+                                            name: detail.name,
+                                            mobile: detail.mobile,
+                                            other: {}
+                                        });
+                                    });
+                            }
+                        });
                 });
         };
 
-        function removeEmployee(userId) {
-            Employee.getFilter({
-                    weUserId: userId
+        function removeEmployee(toAppId, userId) {
+            Company.getFilter({
+                    we_appId: toAppId
                 })
-                .then(employee => {
-                    if (employee) {
-                        employee.isDeleted = 1;
-                        employee.deletedBy = 0;
-                        employee.save();
-                    }
+                .then(company => {
+                    Employee.getFilter({
+                            weUserId: userId,
+                            companyId: company._id
+                        })
+                        .then(employee => {
+                            if (employee) {
+                                employee.isDeleted = 1;
+                                employee.deletedBy = 0;
+                                employee.save();
+                            }
+                        });
                 });
         }
+
+        function editEmployee(toAppId, userId) {
+            Company.getFilter({
+                    we_appId: toAppId
+                })
+                .then(company => {
+                    Employee.getFilter({
+                            weUserId: userId,
+                            companyId: company._id
+                        })
+                        .then(employee => {
+                            if (employee) {
+                                if (employee.isDeleted) {
+                                    employee.isDeleted = 0;
+                                    employee.deletedBy = 0;
+                                }
+                                wechat.getuser(toAppId, userId)
+                                    .then(detail => {
+                                        employee.name = detail.name;
+                                        employee.mobile = detail.mobile;
+                                        employee.save();
+                                    });
+                            }
+                        });
+                });
+        };
     }
 }
