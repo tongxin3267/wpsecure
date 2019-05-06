@@ -30,6 +30,8 @@ function step2() {
                     name: "suite_access_token",
                     suitId: 'ww683e156d777a4cf6'
                 }, {
+                    name: "provider_access_token"
+                }, {
                     name: "permanent_code",
                     suitId: 'ww683e156d777a4cf6',
                     appId: 'wwb50dd79078e140ef'

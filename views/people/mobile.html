@@ -1,0 +1,19 @@
+{% extends "people/partial/header.html" %} {% block main %}
+<main class="col-md-24">
+    <div id="myModal" class="login content_body">
+        <form method="post">
+            <input type="hidden" id="name" value="{{name}}">
+            <input type="hidden" id="weUserId" value="{{weUserId}}">
+            <div class="form-group">
+                <label>电话号码</label>
+                <input class="form-control" type="text" name="mobile" id="mobile" />
+            </div>
+            <div class="form-group">
+                <label style="height:34px;">&nbsp;</label>
+                <input id="btnLogin" class="pull-right btn btn-large btn-primary" type="button" value="下一步" />
+            </div>
+        </form>
+    </div>
+</main>
+<script type="text/javascript" src="/default/assets/js/people/mobile.js"></script>
+{% endblock %}

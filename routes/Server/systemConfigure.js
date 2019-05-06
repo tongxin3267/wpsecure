@@ -23,7 +23,6 @@ module.exports = function (app) {
                     .then(data => {
                         switch (data.xml.Event[0]) {
                             case "subscribe":
-                                addNewEmployee(data.xml.ToUserName[0], data.xml.FromUserName[0]);
                                 break;
                             case "unsubscribe":
                                 removeEmployee(data.xml.ToUserName[0], data.xml.FromUserName[0]);
@@ -75,41 +74,6 @@ module.exports = function (app) {
 
     // util functions
     {
-        function addNewEmployee(toAppId, userId) {
-            Company.getFilter({
-                    we_appId: toAppId
-                })
-                .then(company => {
-                    Employee.findOne({
-                            where: {
-                                weUserId: userId,
-                                companyId: company._id
-                            }
-                        })
-                        .then(employee => {
-                            if (employee) {
-                                if (employee.isDeleted) {
-                                    employee.isDeleted = 0;
-                                    employee.deletedBy = 0;
-                                    employee.save();
-                                }
-                            } else {
-                                // getUserInfo and save to db
-                                wechat.getuser(toAppId, userId)
-                                    .then(detail => {
-                                        Employee.create({
-                                            weUserId: userId,
-                                            companyId: company._id,
-                                            name: detail.name,
-                                            mobile: detail.mobile,
-                                            other: {}
-                                        });
-                                    });
-                            }
-                        });
-                });
-        };
-
         function removeEmployee(toAppId, userId) {
             Company.getFilter({
                     we_appId: toAppId
@@ -128,31 +92,47 @@ module.exports = function (app) {
                         });
                 });
         }
+    }
 
-        function editEmployee(toAppId, userId) {
-            Company.getFilter({
-                    we_appId: toAppId
-                })
-                .then(company => {
-                    Employee.getFilter({
-                            weUserId: userId,
-                            companyId: company._id
+    // people functions
+    {
+        app.get('/people/autologin', function (req, res) {
+            var auth_code = req.query.auth_code;
+            wechat.get_login_info(auth_code)
+                .then(info => {
+                    var corpid = info.corp_info.corpid,
+                        userid = info.user_info.userid,
+                        name = info.user_info.name;
+                    Company.getFilter({
+                            we_appId: corpid
                         })
-                        .then(employee => {
-                            if (employee) {
-                                if (employee.isDeleted) {
-                                    employee.isDeleted = 0;
-                                    employee.deletedBy = 0;
-                                }
-                                wechat.getuser(toAppId, userId)
-                                    .then(detail => {
-                                        employee.name = detail.name;
-                                        employee.mobile = detail.mobile;
-                                        employee.save();
-                                    });
-                            }
+                        .then(company => {
+                            req.session.company = company;
+                            Employee.findOne({
+                                    where: {
+                                        companyId: company._id,
+                                        weUserId: userid
+                                    }
+                                })
+                                .then(employee => {
+                                    if (employee) {
+                                        if (employee.isDeleted) {
+                                            // 被删除了的，要恢复
+                                            employee.isDeleted = 0;
+                                            employee.save();
+                                        }
+                                        req.session.people = employee;
+                                        res.redirect("/people");
+                                    } else {
+                                        res.render('people/mobile.html', {
+                                            title: '登录',
+                                            name: name,
+                                            weUserId: userid
+                                        });
+                                    }
+                                });
                         });
                 });
-        };
+        });
     }
 }

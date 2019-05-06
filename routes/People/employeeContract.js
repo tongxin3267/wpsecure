@@ -15,8 +15,7 @@ module.exports = function (app) {
                 res.render('people/employeeContractList.html', {
                     title: '>合同列表-' + teacher.name,
                     websiteTitle: req.session.company.name,
-                    user: req.session.company,
-                    websiteTitle: model.db.config.websiteTitle,
+                    user: req.session.people,
                     employeeId: teacher._id
                 });
             });
@@ -27,7 +26,7 @@ module.exports = function (app) {
         res.render('people/batchAddContract.html', {
             title: '>批量添加合同',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
     });
 

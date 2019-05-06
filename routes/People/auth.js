@@ -1,6 +1,6 @@
 module.exports = {
     checkLogin: function (req, res, next) {
-        if (!req.session.company) {
+        if (!req.session.company || !req.session.people) {
             if (req.method == "GET") {
                 res.redirect('/people/login');
                 return;

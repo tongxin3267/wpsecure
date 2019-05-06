@@ -11,8 +11,7 @@ module.exports = function (app) {
         res.render('people/salaryList.html', {
             title: '>工资列表',
             websiteTitle: req.session.company.name,
-            user: req.session.company,
-            websiteTitle: model.db.config.websiteTitle
+            user: req.session.people
         });
     });
 
@@ -21,7 +20,7 @@ module.exports = function (app) {
         res.render('people/batchuploadSalary.html', {
             title: '>工资批量上传',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
     });
 
@@ -30,7 +29,7 @@ module.exports = function (app) {
         res.render('people/sumSalary.html', {
             title: '>工资总和统计',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
     });
 

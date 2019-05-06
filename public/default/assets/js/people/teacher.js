@@ -30,31 +30,8 @@ $(document).ready(function () {
                 $('#myModal #name').removeAttr("disabled");
                 $('#myModalLabel').text("新增员工");
                 $('#myModal #name').val("");
-                $('#myModal #engName').val("");
                 $('#myModal #mobile').val("");
-                $('#myModal #address').val("");
-                $("#myModal #subject").val("");
-                $("#myModal #gradeType").val("5");
-                $('#myModal #role').val('20');
-                $("#myModal #nativePlace").val("");
-                $("#myModal #idType").val("");
-                $("#myModal #marryType").val("");
-                $("#myModal #partyType").val("");
-                $("#myModal #sex").val("0");
-                $("#myModal #isRegSecur").val("0");
-                $("#myModal #departmentName").val("");
-                $("#myModal #positionType").val("0");
-                $("#myModal #highEduBg").val("");
-                $("#myModal #graduateSchool").val("");
-                $("#myModal #graduateSubject").val("");
-                $("#myModal #idNumber").val("");
-                $("#myModal #firstWorkDate").val("");
-                $("#myModal #onBoardDate").val(moment(new Date()).format("YYYY-MM-DD HH:mm"));
-                $("#myModal #yearHolidays").val("0");
-                $("#myModal #usedHolidays").val("0");
-                $("#myModal #overTime").val(0);
                 $("#myModal #weUserId").val("");
-                $("#myModal #nickname").val("");
                 $('#myModal #id').val('');
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -72,31 +49,8 @@ $(document).ready(function () {
                     var postURI = "/people/employee/add",
                         postObj = {
                             name: $('#myModal #name').val(),
-                            engName: $('#myModal #engName').val(),
                             mobile: $('#myModal #mobile').val(),
-                            subjectId: $('#myModal #subject').val(),
-                            gradeType: $("#myModal #gradeType").val(),
-                            address: $('#myModal #address').val(),
-                            role: $.trim($("#myModal #role").val()),
-                            nativePlace: $.trim($("#myModal #nativePlace").val()),
-                            idType: $.trim($("#myModal #idType").val()),
-                            marryType: $.trim($("#myModal #marryType").val()),
-                            partyType: $.trim($("#myModal #partyType").val()),
-                            sex: $.trim($("#myModal #sex").val()),
-                            isRegSecur: $.trim($("#myModal #isRegSecur").val()),
-                            departmentName: $.trim($("#myModal #departmentName").val()),
-                            positionType: $.trim($("#myModal #positionType").val()),
-                            highEduBg: $.trim($("#myModal #highEduBg").val()),
-                            graduateSchool: $.trim($("#myModal #graduateSchool").val()),
-                            graduateSubject: $.trim($("#myModal #graduateSubject").val()),
-                            idNumber: $.trim($("#myModal #idNumber").val()),
-                            firstWorkDate: $.trim($("#myModal #firstWorkDate").val()),
-                            onBoardDate: $.trim($("#myModal #onBoardDate").val()),
-                            yearHolidays: $.trim($("#myModal #yearHolidays").val()),
-                            usedHolidays: $.trim($("#myModal #usedHolidays").val()),
-                            overTime: $.trim($("#myModal #overTime").val()),
-                            weUserId: $.trim($("#myModal #weUserId").val()),
-                            nickname: $.trim($("#myModal #nickname").val())
+                            weUserId: $.trim($("#myModal #weUserId").val())
                         };
                     if ($('#myModal #id').val()) {
                         postURI = "/people/employee/edit";
@@ -122,31 +76,8 @@ $(document).ready(function () {
                 $('#myModal #name').attr("disabled", "disabled");
                 $('#myModalLabel').text("修改信息");
                 $('#myModal #name').val(entity.name);
-                $('#myModal #engName').val(entity.engName);
                 $('#myModal #mobile').val(entity.mobile);
-                $('#myModal #address').val(entity.address);
-                $("#myModal #subject").val(entity.subjectId);
-                $("#myModal #gradeType").val(entity.gradeType);
-                $('#myModal #role').val(entity.role);
-                $("#myModal #nativePlace").val(entity.nativePlace);
-                $("#myModal #idType").val(entity.idType);
-                $("#myModal #marryType").val(entity.marryType);
-                $("#myModal #partyType").val(entity.partyType);
-                $("#myModal #sex").val(entity.sex ? 1 : 0);
-                $("#myModal #isRegSecur").val(entity.isRegSecur ? 1 : 0);
-                $("#myModal #departmentName").val(entity.departmentName);
-                $("#myModal #positionType").val(entity.positionType ? 1 : 0);
-                $("#myModal #highEduBg").val(entity.highEduBg);
-                $("#myModal #graduateSchool").val(entity.graduateSchool);
-                $("#myModal #graduateSubject").val(entity.graduateSubject);
-                $("#myModal #idNumber").val(entity.idNumber);
-                $("#myModal #firstWorkDate").val(entity.firstWorkDate);
-                $("#myModal #onBoardDate").val(moment(entity.onBoardDate).format("YYYY-MM-DD"));
-                $("#myModal #yearHolidays").val(entity.yearHolidays);
-                $("#myModal #usedHolidays").val(entity.usedHolidays);
-                $("#myModal #overTime").val(entity.overTime);
                 $("#myModal #weUserId").val(entity.weUserId);
-                $("#myModal #nickname").val(entity.nickname);
                 $('#myModal #id').val(entity._id);
                 $('#myModal').modal({
                     backdrop: 'static',
@@ -202,7 +133,6 @@ $(document).ready(function () {
             var that = this;
             var filter = {
                     name: $(".mainModal #InfoSearch #Name").val(),
-                    departmentName: $(".mainModal #InfoSearch #searchdeptName").val(),
                     isDeleted: $(".mainModal #InfoSearch #chkDeleted").prop("checked")
                 },
                 pStr = p ? "p=" + p : "";
@@ -210,8 +140,9 @@ $(document).ready(function () {
             selfAjax("post", "/people/employee/search?" + pStr, filter, function (data) {
                 if (data && data.records.length > 0) {
                     data.records.forEach(function (teacher) {
-                        var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' + (teacher.engName || "") + '</td><td>' +
-                            teacher.mobile + '</td><td>' + teacher.departmentName + '</td><td><div class="btn-group">' + that.pageGetButtons(teacher) + '</div></td></tr>');
+                        var $tr = $('<tr id=' + teacher._id + '><td>' + teacher.name + '</td><td>' +
+                            teacher.mobile + '</td><td>' +
+                            teacher.weUserId + '</td><td><div class="btn-group">' + that.pageGetButtons(teacher) + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", teacher);
                         that.pageOptions.$mainSelectBody.append($tr);
                     });

@@ -42,7 +42,7 @@ module.exports = function (app) {
         res.render('people/scoreResult.html', {
             title: '>导入结果失败列表',
             websiteTitle: req.session.company.name,
-            user: req.session.company,
+            user: req.session.people,
             toPage: "people/partial/basicSetting.html"
         });
     });

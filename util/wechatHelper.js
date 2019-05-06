@@ -24,6 +24,9 @@ var weapi = {
     thirdSecret: "_yBtCzdlDSkFQrLNiX2KaM4aupMFGSMEcz5G4425n0g",
     thirdToken: "2OxqDavW",
     thirdAESKey: "sWrM5nSmxVWa4lPBB4vN2C6hqJhG7JQUD8cKyls2mag",
+    CorpID: "wwb50dd79078e140ef",
+    ProviderSecret: "HENHC8vaLTs7zlTyDnLyADPkCOfEvWYXYmsPtFUgWLIaSoZt2fFdlD3DozOqeft8",
+    get_provider_tokenURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_provider_token",
     suite_access_tokenURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_suite_token",
     pre_auth_codeURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_pre_auth_code?suite_access_token=",
     set_sessionURL: "https://qyapi.weixin.qq.com/cgi-bin/service/set_session_info?suite_access_token=",
@@ -31,6 +34,7 @@ var weapi = {
     get_corp_tokenURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_corp_token?suite_access_token=",
     get_auth_infoURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_auth_info?suite_access_token=",
     getuserURL: "https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=",
+    get_login_infoURL: "https://qyapi.weixin.qq.com/cgi-bin/service/get_login_info?access_token=",
     weApi: function () {
         if (!this._weapi) {
             this._weapi = new wechatAPI('ww1c286ef33caa2252', 'gdWILiRzCtujjUYkEZFwTYlRT7J_4kGubglbXHnKaHg', '1000013', function (callback) {
@@ -364,7 +368,54 @@ var weapi = {
                         });
                     });
             });
-    }
+    },
+    get_login_info: function (code) {
+        var that = this;
+        return this.checkprovider_token()
+            .then(token => {
+                return that.postURL(that.get_login_infoURL + token, {
+                    "auth_code": code
+                });
+            });
+    },
+    get_provider_token: function () {
+        return SystemConfigure.getFilter({
+            name: "provider_access_token"
+        });
+    },
+    refreshprovider_token: function () {
+        var that = this;
+        // debugger;
+        return that.postURL(that.get_provider_tokenURL, {
+                "corpid": that.CorpID,
+                "provider_secret": that.ProviderSecret
+            })
+            .then(result => {
+                return result.provider_access_token;
+            });
+    },
+    checkprovider_token: function () {
+        var that = this;
+        return that.get_provider_token()
+            .then(token => {
+                if (token) {
+                    // 2 小时有效，可以简单处理为1.5小时过期
+                    if (moment().isBefore(moment(token.updatedDate).add(1.8, "hours"))) {
+                        return token.value;
+                    }
 
+                    // 过期
+                    return that.refreshprovider_token()
+                        .then(newToken => {
+                            token.value = newToken;
+                            token.updatedDate = new Date();
+                            token.save();
+
+                            return newToken;
+                        });
+                }
+                // 出错了
+            });
+    },
 }
 module.exports = weapi;

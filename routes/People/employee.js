@@ -12,7 +12,7 @@ module.exports = function (app) {
         res.render('people/employeeList.html', {
             title: '>员工设置',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
     });
 
@@ -21,7 +21,7 @@ module.exports = function (app) {
         res.render('people/employeeList.html', {
             title: '>员工设置',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
     });
 
@@ -30,8 +30,40 @@ module.exports = function (app) {
         res.render('people/batchAddemployee.html', {
             title: '>批量添加员工',
             websiteTitle: req.session.company.name,
-            user: req.session.company
+            user: req.session.people
         });
+    });
+
+    app.post('/people/employee/addManager', function (req, res) {
+        if (!req.session.company) {
+            res.jsonp({
+                error: "not login"
+            });
+            return;
+        }
+        Employee.getFilter({
+                mobile: req.body.mobile
+            })
+            .then(function (employee) {
+                if (employee) {
+                    res.jsonp({
+                        error: "电话号码已经存在了！"
+                    });
+                } else {
+                    Employee.create({
+                            companyId: req.session.company._id,
+                            name: req.body.name,
+                            mobile: req.body.mobile,
+                            weUserId: req.body.weUserId,
+                            other: {},
+                            createdBy: 0
+                        })
+                        .then(function (employee) {
+                            req.session.people = employee;
+                            res.jsonp(employee);
+                        });
+                }
+            });
     });
 
     app.post('/people/employee/add', checkLogin);
@@ -47,33 +79,12 @@ module.exports = function (app) {
                     });
                 } else {
                     Employee.create({
+                            companyId: req.session.company._id,
                             name: req.body.name,
-                            engName: req.body.engName,
                             mobile: req.body.mobile,
-                            address: req.body.address,
-                            subjectId: req.body.subjectId,
-                            gradeType: req.body.gradeType,
-                            role: (req.body.role || 20),
-                            password: md5.update("111111").digest('hex'),
-                            nativePlace: req.body.nativePlace,
-                            idType: req.body.idType,
-                            marryType: req.body.marryType,
-                            partyType: req.body.partyType,
-                            sex: req.body.sex,
-                            isRegSecur: req.body.isRegSecur,
-                            departmentName: req.body.departmentName,
-                            positionType: req.body.positionType,
-                            highEduBg: req.body.highEduBg,
-                            graduateSchool: req.body.graduateSchool,
-                            graduateSubject: req.body.graduateSubject,
-                            idNumber: req.body.idNumber,
-                            firstWorkDate: req.body.firstWorkDate,
-                            onBoardDate: req.body.onBoardDate,
-                            yearHolidays: req.body.yearHolidays,
-                            usedHolidays: req.body.usedHolidays,
-                            overTime: req.body.overTime,
-                            nickname: req.body.nickname,
-                            createdBy: req.session.company._id
+                            weUserId: req.body.weUserId,
+                            other: {},
+                            createdBy: req.session.people._id
                         })
                         .then(function (employee) {
                             res.jsonp(employee);
@@ -99,30 +110,9 @@ module.exports = function (app) {
                 } else {
                     Employee.update({
                             name: req.body.name,
-                            engName: req.body.engName,
                             mobile: req.body.mobile,
-                            subjectId: req.body.subjectId,
-                            gradeType: req.body.gradeType,
-                            role: (req.body.role || 20),
-                            address: req.body.address,
-                            nativePlace: req.body.nativePlace,
-                            idType: req.body.idType,
-                            marryType: req.body.marryType,
-                            partyType: req.body.partyType,
-                            sex: req.body.sex,
-                            isRegSecur: req.body.isRegSecur,
-                            departmentName: req.body.departmentName,
-                            positionType: req.body.positionType,
-                            highEduBg: req.body.highEduBg,
-                            graduateSchool: req.body.graduateSchool,
-                            graduateSubject: req.body.graduateSubject,
-                            idNumber: req.body.idNumber,
-                            firstWorkDate: req.body.firstWorkDate,
-                            onBoardDate: req.body.onBoardDate,
-                            yearHolidays: req.body.yearHolidays,
-                            usedHolidays: req.body.usedHolidays,
-                            overTime: req.body.overTime,
-                            nickname: req.body.nickname
+                            weUserId: req.body.weUserId,
+                            deletedBy: req.session.people._id
                         }, {
                             where: {
                                 _id: req.body.id
@@ -138,8 +128,8 @@ module.exports = function (app) {
     app.post('/people/employee/delete', checkLogin);
     app.post('/people/employee/delete', function (req, res) {
         Employee.update({
-                isDeleted: true,
-                deletedBy: req.session.company._id,
+                isDeleted: 1,
+                deletedBy: req.session.people._id,
                 deletedDate: new Date()
             }, {
                 where: {
@@ -153,11 +143,12 @@ module.exports = function (app) {
             });
     });
 
+    // 删掉的重新恢复
     app.post('/people/employee/recover', checkLogin);
     app.post('/people/employee/recover', function (req, res) {
         Employee.update({
                 isDeleted: false,
-                deletedBy: req.session.company._id,
+                deletedBy: req.session.people._id,
                 updatedDate: new Date()
             }, {
                 where: {
@@ -181,9 +172,6 @@ module.exports = function (app) {
             filter.name = {
                 $like: `%${req.body.name.trim()}%`
             };
-        }
-        if (req.body.departmentName) {
-            filter.departmentName = req.body.departmentName;
         }
 
         if (req.body.isDeleted == "true") {
