@@ -4,6 +4,7 @@
         {{ title }}
     </h1>
 </div>
+<input type="hidden" id="activeMenu" value="{{activeMenu}}">
 <div class="content mainModal">
     <table class="table table-striped">
         <thead>
@@ -20,6 +21,6 @@
 </div>
 {% endblock %} {% block modal %}
 <!-- Modal -->
-<script type="text/javascript" src="/default/assets/js/people/scoreResult.js?v=1.0"></script>
+<script type="text/javascript" src="/default/assets/js/people/scoreResult.js"></script>
 <script type="text/javascript" src="/default/assets/js/moment.js"></script>
 {% endblock %}

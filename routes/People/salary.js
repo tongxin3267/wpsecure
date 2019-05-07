@@ -41,7 +41,7 @@ module.exports = function (app) {
                 year: req.body.year,
                 month: req.body.month,
                 other: req.body.other,
-                createdBy: req.session.company._id
+                createdBy: req.session.people._id
             })
             .then(function (result) {
                 if (result) {
@@ -58,7 +58,7 @@ module.exports = function (app) {
                 year: req.body.year,
                 month: req.body.month,
                 other: req.body.other,
-                deletedBy: req.session.company._id,
+                deletedBy: req.session.people._id,
                 updatedDate: new Date()
             }, {
                 where: {
@@ -76,7 +76,7 @@ module.exports = function (app) {
     app.post('/people/salary/delete', function (req, res) {
         Salary.update({
                 isDeleted: true,
-                deletedBy: req.session.company._id,
+                deletedBy: req.session.people._id,
                 deletedDate: new Date()
             }, {
                 where: {
@@ -98,7 +98,8 @@ module.exports = function (app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {
             year: req.body.year,
-            month: req.body.month
+            month: req.body.month,
+            createdBy: req.session.people._id
         };
         if (req.body.name && req.body.name.trim()) {
             filter.employeeName = req.body.name.trim();

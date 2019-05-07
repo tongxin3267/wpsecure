@@ -26,6 +26,11 @@ const SystemConfigure = db.defineModel('systemConfigures', {
         type: db.STRING(50),
         defaultValue: ''
     },
+    agentId: {
+        // 不同套件不同公司agentId不同
+        type: db.STRING(50),
+        defaultValue: ''
+    },
     value: {
         type: db.STRING(520),
         defaultValue: ''

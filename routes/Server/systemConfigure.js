@@ -63,7 +63,10 @@ module.exports = function (app) {
                             case "create_auth":
                                 var AuthCode = data.xml.AuthCode[0],
                                     SuiteId = data.xml.SuiteId[0];
-                                wechat.refresh_permanent_code(AuthCode, SuiteId);
+                                wechat.refresh_permanent_code(AuthCode, SuiteId)
+                                    .then(result => {
+                                        createCompany(result, SuiteId);
+                                    });
                                 break;
                             default:
                                 break;
@@ -91,47 +94,117 @@ module.exports = function (app) {
                             }
                         });
                 });
-        }
+        };
+
+        function createCompany(result, SuiteId) {
+            var corpid = result.auth_corp_info.corpid;
+            Company.findOne({
+                    where: {
+                        we_appId: corpid
+                    }
+                })
+                .then(company => {
+                    if (!company) {
+                        Company.create({
+                                name: result.auth_corp_info.corp_name,
+                                we_appId: corpid
+                            })
+                            .then(company => {
+                                var curDate = new Date();
+                                SystemConfigure.bulkCreate([{
+                                    name: "salaryMonth",
+                                    appId: corpid,
+                                    value: curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-1",
+                                    companyId: company._id
+                                }, {
+                                    name: "permanent_code",
+                                    suitId: SuiteId,
+                                    appId: corpid,
+                                    companyId: company._id
+                                }, {
+                                    name: "access_token",
+                                    suitId: SuiteId,
+                                    appId: corpid,
+                                    companyId: company._id
+                                }]);
+                            });
+                    }
+                });
+        };
+
+        function autoLogin(req, res, suitId) {
+            var auth_code = req.query.auth_code;
+            return wechat.get_login_info(auth_code)
+                .then(info => {
+                    var corpid = info.corp_info.corpid,
+                        userid = info.user_info.userid,
+                        name = info.user_info.name;
+                    return SystemConfigure.getFilter({
+                            name: "permanent_code",
+                            appId: corpid,
+                            suitId: suitId
+                        })
+                        .then(configure => {
+                            var agentId = configure.agentId;
+                            return wechat.get_admin_list(corpid, agentId)
+                                .then(result => {
+                                    if (result && result.admin.some(admin => {
+                                            return admin.auth_type == 1 && admin.userid == userid;
+                                        })) {
+                                        return Company.getFilter({
+                                                we_appId: corpid
+                                            })
+                                            .then(company => {
+                                                req.session.company = company;
+                                                return Employee.findOne({
+                                                        where: {
+                                                            companyId: company._id,
+                                                            weUserId: userid
+                                                        }
+                                                    })
+                                                    .then(employee => {
+                                                        if (employee) {
+                                                            if (employee.isDeleted) {
+                                                                // 被删除了的，要恢复
+                                                                employee.isDeleted = 0;
+                                                                employee.save();
+                                                            }
+                                                            req.session.people = employee;
+                                                            return true;
+                                                        } else {
+                                                            return {
+                                                                name: name,
+                                                                weUserId: userid
+                                                            };
+                                                        }
+                                                    });
+                                            });
+                                    }
+                                });
+                        });
+
+                });
+        };
     }
 
     // people functions
     {
         app.get('/people/autologin', function (req, res) {
-            var auth_code = req.query.auth_code;
-            wechat.get_login_info(auth_code)
-                .then(info => {
-                    var corpid = info.corp_info.corpid,
-                        userid = info.user_info.userid,
-                        name = info.user_info.name;
-                    Company.getFilter({
-                            we_appId: corpid
-                        })
-                        .then(company => {
-                            req.session.company = company;
-                            Employee.findOne({
-                                    where: {
-                                        companyId: company._id,
-                                        weUserId: userid
-                                    }
-                                })
-                                .then(employee => {
-                                    if (employee) {
-                                        if (employee.isDeleted) {
-                                            // 被删除了的，要恢复
-                                            employee.isDeleted = 0;
-                                            employee.save();
-                                        }
-                                        req.session.people = employee;
-                                        res.redirect("/people");
-                                    } else {
-                                        res.render('people/mobile.html', {
-                                            title: '登录',
-                                            name: name,
-                                            weUserId: userid
-                                        });
-                                    }
-                                });
-                        });
+            autoLogin(req, res, "ww683e156d777a4cf6")
+                .then(result => {
+                    if (result) {
+                        if (result.name) {
+                            res.render('people/mobile.html', {
+                                title: '登录',
+                                name: result.name,
+                                weUserId: result.userid
+                            });
+                        } else {
+                            res.redirect("/people");
+                        }
+                    } else {
+                        res.redirect("/people/login");
+                    }
                 });
         });
     }

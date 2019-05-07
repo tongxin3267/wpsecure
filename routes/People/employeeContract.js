@@ -37,7 +37,7 @@ module.exports = function (app) {
                 sequence: req.body.sequence,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
-                createdBy: req.session.company._id
+                createdBy: req.session.people._id
             })
             .then(function (result) {
                 if (result) {
@@ -53,7 +53,7 @@ module.exports = function (app) {
                 sequence: req.body.sequence,
                 startDate: req.body.startDate,
                 endDate: req.body.endDate,
-                deletedBy: req.session.company._id,
+                deletedBy: req.session.people._id,
                 updatedDate: new Date()
             }, {
                 where: {
@@ -71,7 +71,7 @@ module.exports = function (app) {
     app.post('/people/employeeContract/delete', function (req, res) {
         EmployeeContract.update({
                 isDeleted: true,
-                deletedBy: req.session.company._id,
+                deletedBy: req.session.people._id,
                 deletedDate: new Date()
             }, {
                 where: {

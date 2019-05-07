@@ -1,7 +1,7 @@
 var isNew = true;
 
 $(document).ready(function () {
-    $("#left_btnSalary").addClass("active");
+    $("#" + $("#activeMenu").val()).addClass("active");
     search();
 });
 

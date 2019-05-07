@@ -196,9 +196,10 @@ var weapi = {
             suitId: this.thirdAppId
         });
     },
-    savepermanent_code: function (code, suitId, toAppId) {
+    savepermanent_code: function (code, suitId, toAppId, agentId) {
         return SystemConfigure.update({
             value: code,
+            agentId: agentId,
             updatedDate: new Date()
         }, {
             where: {
@@ -300,9 +301,11 @@ var weapi = {
                         "auth_code": code
                     })
                     .then(result => {
-                        var corpid = result.auth_corp_info.corpid;
+                        var corpid = result.auth_corp_info.corpid,
+                            agentId = result.auth_info.agent[0].agentid;
                         that.saveaccess_token(result.access_token, suitId, corpid);
-                        that.savepermanent_code(result.permanent_code, suitId, corpid);
+                        that.savepermanent_code(result.permanent_code, suitId, corpid, agentId);
+                        return result;
                     });
             });
     },
@@ -417,5 +420,18 @@ var weapi = {
                 // 出错了
             });
     },
+    get_admin_list: function (toAppId, agentId) {
+        var that = this;
+        return this.checksuite_access_token()
+            .then(token => {
+                return that.postURL("https://qyapi.weixin.qq.com/cgi-bin/service/get_admin_list?suite_access_token=" + token, {
+                    "auth_corpid": toAppId,
+                    "agentid": agentId
+                });
+            })
+            .catch(err => {
+
+            });
+    }
 }
 module.exports = weapi;

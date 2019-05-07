@@ -80,7 +80,7 @@ $(document).ready(function () {
                         headerShow = false;
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '></tr>');
-                        var obj = JSON.parse(record.other);
+                        var obj = record.other;
                         $tr.append('<td>' + record.employeeName + '</td><td>' + record.mobile + '</td>');
                         if (!headerShow) {
                             // remove headers and add new header

@@ -40,6 +40,7 @@ module.exports = function (app) {
 
     app.get('/people/logout', function (req, res) {
         req.session.company = null;
+        req.session.people = null;
         res.redirect('/people/login'); //登出成功后跳转到登录页面
     });
 }

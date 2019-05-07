@@ -43,7 +43,8 @@ module.exports = function (app) {
             title: '>导入结果失败列表',
             websiteTitle: req.session.company.name,
             user: req.session.people,
-            toPage: "people/partial/basicSetting.html"
+            toPage: "people/partial/basicSetting.html",
+            activeMenu: req.query.atm
         });
     });
 
@@ -52,7 +53,7 @@ module.exports = function (app) {
     app.get('/people/score/clearAll', function (req, res) {
         ScoreFails.destroy({
                 where: {
-                    createdBy: req.session.company._id
+                    createdBy: req.session.people._id
                 }
             })
             .then(function () {
@@ -66,7 +67,7 @@ module.exports = function (app) {
     app.get('/people/score/getAllWithoutPage', checkLogin);
     app.get('/people/score/getAllWithoutPage', function (req, res) {
         ScoreFails.getFilters({
-                createdBy: req.session.company._id
+                createdBy: req.session.people._id
             })
             .then(function (scoreFails) {
                 res.jsonp(scoreFails);
@@ -79,67 +80,65 @@ module.exports = function (app) {
     // 提交工资
     app.post('/people/salary', upload.single('avatar'), function (req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
-        SalaryItem.getFilters({})
-            .then(items => {
-                // item 单独设置值，其他存到others
-                var year = req.body.year,
-                    month = req.body.month,
-                    length = list[0].data.length,
-                    pArray = [],
-                    titleAry = [],
-                    colCount = 0;
-                while (1) {
-                    if ((!list[0].data[0][colCount]) && (!list[0].data[1][colCount])) {
-                        // 第一行，第二行都为空
-                        break;
-                    }
-                    var cell = {
-                        title: list[0].data[1][colCount],
-                        parent: list[0].data[0][colCount]
-                    }
-                    if (!cell.title) {
-                        cell.title = cell.parent;
-                        cell.parent = "";
-                    } else if (!cell.parent) {
-                        cell.parent = titleAry[colCount - 1].parent;
-                    }
-                    titleAry.push(cell);
-                    colCount++;
+        // item 单独设置值，其他存到others
+        var year = req.body.year,
+            month = req.body.month,
+            length = list[0].data.length,
+            pArray = [],
+            titleAry = [],
+            colCount = 0;
+        while (1) {
+            if ((!list[0].data[0][colCount]) && (!list[0].data[1][colCount])) {
+                // 第一行，第二行都为空
+                break;
+            }
+            var cell = {
+                title: list[0].data[1][colCount],
+                parent: list[0].data[0][colCount]
+            }
+            if (!cell.title) {
+                cell.title = cell.parent;
+                cell.parent = "";
+            } else if (!cell.parent) {
+                cell.parent = titleAry[colCount - 1].parent;
+            }
+            titleAry.push(cell);
+            colCount++;
+        }
+
+        // update salary month
+        SystemConfigure.getFilter({
+                name: "salaryMonth",
+                companyId: req.session.company._id
+            })
+            .then(configure => {
+                var configDate = new Date(configure.value),
+                    uploadDate = new Date(year, month, 1);
+                if (uploadDate > configDate) {
+                    configure.value = year + "-" + month + "-1";
+                    configure.save();
                 }
-                for (var i = 2; i < length; i++) {
-                    // 双层excel
-                    // 0是序号，没有的时候通过name+mobile匹配
-                    if (!list[0].data[i][2]) {
-                        break;
-                    }
-                    pArray.push(updateSalary(titleAry, items, req.session.company, list[0].data[i], colCount, year, month));
-                }
-                Promise.all(pArray)
-                    .then(function () {
-                        res.jsonp({
-                            sucess: true
-                        });
-                    });
+            });
+        for (var i = 2; i < length; i++) {
+            // 双层excel
+            // 0是序号，没有的时候通过name+mobile匹配
+            if (!list[0].data[i][2]) {
+                break;
+            }
+            pArray.push(updateSalary(titleAry, req.session.people, list[0].data[i], colCount, year, month, req.session.company._id));
+        }
+        Promise.all(pArray)
+            .then(function () {
+                res.jsonp({
+                    sucess: true
+                });
             });
     });
 
-    function updateSalary(titleAry, items, people, data, colCount, year, month) {
+    function updateSalary(titleAry, people, data, colCount, year, month, companyId) {
         return Employee.getFilter({
-                nickname: data[2].trim()
-            })
-            .then(employee => {
-                SystemConfigure.getFilter({
-                        key: "salaryMonth"
-                    })
-                    .then(configure => {
-                        var configDate = new Date(configure.value),
-                            uploadDate = new Date(year, month, 1);
-                        if (uploadDate > configDate) {
-                            configure.value = year + "-" + month + "-1";
-                            configure.save();
-                        }
-                    });
-                return employee;
+                mobile: data[1],
+                companyId: companyId
             })
             .then(employee => {
                 if (!employee) {
@@ -171,10 +170,6 @@ module.exports = function (app) {
                                 attrs[titleAry[i]] = data[i] || 0;
                             }
                             replacement.other = JSON.stringify(obj);
-                            items.forEach(item => {
-                                strUpdate += "," + item.fieldName + "=:" + item.fieldName;
-                                replacement[item.fieldName] = (attrs[item.name] || 0);
-                            });
                             return model.db.sequelize.query(strUpdate + " where _id=:id", {
                                 replacements: replacement,
                                 type: model.db.sequelize.QueryTypes.RAW
@@ -183,9 +178,11 @@ module.exports = function (app) {
                             // 新增工资项
                             var attrs = {},
                                 obj = {},
-                                strUpdate = "INSERT INTO salarys (employeeName,employeeId,mobile,year,month,other,createdDate,updatedDate",
-                                strValue = "values (:employeeName,:employeeId,:mobile,:year,:month,:other,now(),now()",
+                                strUpdate = "INSERT INTO salarys (companyId,createdBy,employeeName,employeeId,mobile,year,month,other,createdDate,updatedDate",
+                                strValue = "values (:companyId, :createdBy, :employeeName,:employeeId,:mobile,:year,:month,:other,now(),now()",
                                 replacement = {
+                                    companyId: companyId,
+                                    createdBy: people._id,
                                     employeeName: employee.name,
                                     employeeId: employee._id,
                                     mobile: employee.mobile,
@@ -204,11 +201,6 @@ module.exports = function (app) {
                                 attrs[titleAry[i]] = data[i] || 0;
                             }
                             replacement.other = JSON.stringify(obj);
-                            items.forEach(item => {
-                                strUpdate += "," + item.fieldName;
-                                strValue += ",:" + item.fieldName;
-                                replacement[item.fieldName] = (attrs[item.name] || 0);
-                            });
                             return model.db.sequelize.query(strUpdate + ")" + strValue + ")", {
                                 replacements: replacement,
                                 type: model.db.sequelize.QueryTypes.RAW
@@ -219,7 +211,7 @@ module.exports = function (app) {
     };
 
     //  failedScore(score[0], score[1], score[2], examId, subject);
-    function addEmployee(score) {
+    function addEmployee(score, people, company) {
         var p;
         if (score[2]) {
             // 根据编号
@@ -234,21 +226,28 @@ module.exports = function (app) {
             });
         }
         p.then(function (employee) {
-            if (employee) {
-                employee.other = score[5].trim();
-                return employee.save();
-            } else {
-                return Employee.create({
-                    name: score[0].trim(),
-                    mobile: score[1],
-                    companyId: req.session.company._id,
-                    other: score[5].trim()
-                });
-            }
-        });
+                if (employee) {
+                    employee.mobile = score[1];
+                    if (score[2] && score[2].trim()) {
+                        employee.weUserId = score[2].trim();
+                    }
+                    return employee.save();
+                } else {
+                    return Employee.create({
+                        name: score[0].trim(),
+                        mobile: score[1],
+                        companyId: company._id,
+                        weUserId: (score[2] && score[2].trim()) || '',
+                        other: {}
+                    });
+                }
+            })
+            .catch(err => {
+                return failedScore(people, score[0], score[1], score[2], (err.message || err));
+            });
     };
 
-    // 批量添加老师
+    // 批量添加员工
     app.post('/people/batchAddemployee', upload.single('avatar'), function (req, res, next) {
         var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
@@ -258,7 +257,7 @@ module.exports = function (app) {
             if (!list[0].data[i][0]) {
                 break; //already done
             }
-            pArray.push(addEmployee(list[0].data[i]));
+            pArray.push(addEmployee(list[0].data[i], req.session.people, req.session.company));
         }
 
         // res.redirect('/admin/score');
@@ -318,7 +317,7 @@ module.exports = function (app) {
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [],
-            people = req.session.company;
+            people = req.session.people;
         for (var i = 1; i < length; i++) {
             if (!list[0].data[i][0]) {
                 break; //already done

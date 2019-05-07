@@ -4,7 +4,7 @@ $(document).ready(function () {
     $("#left_btnSalary").addClass("active");
 
     $("#editfile #btnResult").on("click", function (e) {
-        location.href = "/people/score";
+        location.href = "/people/score?atm=left_btnSalary";
     });
 
     $("#editfile #btnClear").on("click", function (e) {
@@ -31,7 +31,7 @@ $(document).ready(function () {
                 processData: false,
             }).then(function (data) {
                 hideLoading();
-                location.href = "/people/score";
+                location.href = "/people/score?atm=left_btnSalary";
             });
         }
     });
