@@ -1,6 +1,6 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
-    Teacher = model.teacher,
+    Employee = model.employee,
     EmployeeContract = model.employeeContract,
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -8,7 +8,8 @@ var model = require("../../model.js"),
 module.exports = function (app) {
     app.get('/people/contract/:employeeId', checkLogin);
     app.get('/people/contract/:employeeId', function (req, res) {
-        Teacher.getFilter({
+        Employee.getFilter({
+                companyId: req.session.company._id,
                 _id: req.params.employeeId
             })
             .then(teacher => {
@@ -33,6 +34,7 @@ module.exports = function (app) {
     app.post('/people/employeeContract/add', checkLogin);
     app.post('/people/employeeContract/add', function (req, res) {
         EmployeeContract.create({
+                companyId: req.session.company._id,
                 employeeId: req.body.employeeId,
                 sequence: req.body.sequence,
                 startDate: req.body.startDate,
@@ -91,7 +93,9 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        var filter = {};
+        var filter = {
+            companyId: req.session.company._id,
+        };
         if (req.body.employeeId) {
             filter.employeeId = req.body.employeeId;
         }

@@ -20,7 +20,7 @@ $("#editfile #btnSubmit").on("click", function (e) {
         }).then(function (data) {
             $('#editfile #btnSubmit').removeAttr("disabled");
             if (data && data.sucess) {
-                location.href = "/people/score";
+                location.href = "/people/score?atm=left_btnContract";
             } else {
                 showAlert("批量导入失败！");
             }
@@ -29,7 +29,7 @@ $("#editfile #btnSubmit").on("click", function (e) {
 });
 
 $("#editfile #btnResult").on("click", function (e) {
-    location.href = "/people/score";
+    location.href = "/people/score?atm=left_btnContract";
 });
 
 $("#editfile #btnClear").on("click", function (e) {

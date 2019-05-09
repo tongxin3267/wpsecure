@@ -42,6 +42,7 @@ module.exports = function (app) {
             return;
         }
         Employee.getFilter({
+                companyId: req.session.company._id,
                 mobile: req.body.mobile
             })
             .then(function (employee) {
@@ -70,6 +71,7 @@ module.exports = function (app) {
     app.post('/people/employee/add', function (req, res) {
         var md5 = crypto.createHash('md5');
         Employee.getFilter({
+                companyId: req.session.company._id,
                 mobile: req.body.mobile
             })
             .then(function (employee) {
@@ -167,7 +169,9 @@ module.exports = function (app) {
         //判断是否是第一页，并把请求的页数转换成 number 类型
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
-        var filter = {};
+        var filter = {
+            companyId: req.session.company._id
+        };
         if (req.body.name && req.body.name.trim()) {
             filter.name = {
                 $like: `%${req.body.name.trim()}%`

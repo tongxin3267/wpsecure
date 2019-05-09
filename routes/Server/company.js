@@ -48,6 +48,7 @@ module.exports = function (app) {
                 createdBy: req.session.admin._id
             })
             .then(function (result) {
+
                 if (result) {
                     res.jsonp(result);
                 }

@@ -3,7 +3,7 @@ const model = require('./model.js'),
 
 function step1() {
     console.log("begin step 1 ... ");
-    return model.sync()
+    return model.sysSuit.sync()
         .then(function () {
             var pArray = [];
             return Promise.all(pArray)
@@ -24,36 +24,24 @@ function step2() {
         })
         .then(o => {
             return model.systemConfigure.bulkCreate([{
-                    name: 'suite_ticket',
-                    suitId: 'ww683e156d777a4cf6'
-                }, {
-                    name: "suite_access_token",
-                    suitId: 'ww683e156d777a4cf6'
-                }, {
+                    companyId: 0,
                     name: "provider_access_token"
-                }, {
-                    name: "permanent_code",
-                    suitId: 'ww683e156d777a4cf6',
-                    appId: 'wwb50dd79078e140ef'
-                }, {
-                    name: "access_token",
-                    suitId: 'ww683e156d777a4cf6',
-                    appId: 'wwb50dd79078e140ef'
                 }])
                 .then(() => {
-                    return model.company.create({
-                        name: "一格",
-                        password: "e10adc3949ba59abbe56e057f20f883e",
-                        we_appId: "wwb50dd79078e140ef"
-                    });
+                    // return model.company.create({
+                    //     name: "一格",
+                    //     password: "e10adc3949ba59abbe56e057f20f883e",
+                    //     we_appId: "wwb50dd79078e140ef"
+                    // });
                 });
         });
 };
 
-step1().then(function () {
-    try {
-        return step2();
-    } catch (err) {
-        console.log(err);
-    }
-});
+step1()
+    .then(function () {
+        try {
+            return step2();
+        } catch (err) {
+            console.log(err);
+        }
+    });

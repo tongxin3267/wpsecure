@@ -48,6 +48,9 @@ module.exports = Salary;
 
 //读取用户信息
 Salary.getFilter = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return Salary.findOne({
         'where': filter
@@ -55,6 +58,9 @@ Salary.getFilter = function (filter) {
 };
 
 Salary.getFilters = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return Salary.findAll({
         'where': filter,
@@ -65,6 +71,9 @@ Salary.getFilters = function (filter) {
 };
 
 Salary.getFiltersWithPage = function (page, filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return Salary.findAndCountAll({
         'where': filter,

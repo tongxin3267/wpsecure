@@ -36,6 +36,7 @@ module.exports = function (app) {
     app.post('/people/salary/add', checkLogin);
     app.post('/people/salary/add', function (req, res) {
         Salary.create({
+                companyId: req.session.company._id,
                 employeeName: req.body.employeeName,
                 employeeId: req.body.employeeId,
                 year: req.body.year,
@@ -97,6 +98,7 @@ module.exports = function (app) {
         var page = req.query.p ? parseInt(req.query.p) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {
+            companyId: req.session.company._id,
             year: req.body.year,
             month: req.body.month,
             createdBy: req.session.people._id
@@ -113,46 +115,6 @@ module.exports = function (app) {
                     page: page,
                     pageSize: pageSize
                 });
-            });
-    });
-
-    // 工资合计
-    app.post('/people/salaryList/sumSalary', checkLogin);
-    app.post('/people/salaryList/sumSalary', function (req, res) {
-        SalaryItem.getFilters({})
-            .then(items => {
-                if (items.length > 0) {
-                    var strSql = "select 1",
-                        strWhere = " from salarys where year=:year and month between :month and :endmonth",
-                        replacements = {
-                            year: req.body.year,
-                            month: req.body.month,
-                            endmonth: req.body.endmonth
-                        };
-                    items.forEach(item => {
-                        strSql += ", sum(" + item.fieldName + ") as '" + item.name + "'";
-                    });
-                    if (req.body.name.trim()) {
-                        strWhere += " and employeeName=:employeeName";
-                        replacements.employeeName = req.body.name.trim();
-                    }
-
-                    return model.db.sequelize.query(strSql + strWhere, {
-                            replacements: replacements,
-                            type: model.db.sequelize.QueryTypes.SELECT
-                        })
-                        .then(results => {
-                            res.jsonp(results);
-                        })
-                        .catch(ex => {
-
-                        });
-                } else {
-                    res.jsonp([]);
-                }
-            })
-            .catch(ex => {
-
             });
     });
 }

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#header_btnBasic").on("click", function (e) {
-        location.href = "/admin/schoolAreaList";
+        location.href = "/people";
     });
 });
 

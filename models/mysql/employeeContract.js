@@ -33,6 +33,9 @@ module.exports = EmployeeContract;
 
 //读取用户信息
 EmployeeContract.getFilter = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return EmployeeContract.findOne({
         'where': filter
@@ -40,6 +43,9 @@ EmployeeContract.getFilter = function (filter) {
 };
 
 EmployeeContract.getFilters = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return EmployeeContract.findAll({
         'where': filter,
@@ -50,6 +56,9 @@ EmployeeContract.getFilters = function (filter) {
 };
 
 EmployeeContract.getFiltersWithPage = function (page, filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return EmployeeContract.findAndCountAll({
         'where': filter,

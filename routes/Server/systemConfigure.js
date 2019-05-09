@@ -8,18 +8,18 @@ var model = require("../../model.js"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
-    app.get('/people/databack', function (req, res) {
-        var data = wechat.baseDecryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.query.echostr);
+    app.get('/people/databack/:suiteId', function (req, res) {
+        var data = wechat.baseDecryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.params.suiteId, req.query.echostr);
         if (data) {
             res.send(data);
         }
     });
 
-    app.post('/people/databack', function (req, res) {
+    app.post('/people/databack/:suiteId', function (req, res) {
         res.end();
         wechat.getRawBody(req)
             .then(data => {
-                wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
+                wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.params.suiteId, data)
                     .then(data => {
                         switch (data.xml.Event[0]) {
                             case "subscribe":
@@ -32,18 +32,18 @@ module.exports = function (app) {
             });
     });
 
-    app.get('/people/commandback', function (req, res) {
-        var data = wechat.baseDecryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.query.echostr);
+    app.get('/people/commandback/:suiteId', function (req, res) {
+        var data = wechat.baseDecryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.params.suiteId, req.query.echostr);
         if (data) {
             res.send(data);
         }
     });
 
-    app.post('/people/commandback', function (req, res) {
+    app.post('/people/commandback/:suiteId', function (req, res) {
         res.send("success");
         wechat.getRawBody(req)
             .then(data => {
-                wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, data)
+                wechat.decryptMsg(req.query.msg_signature, req.query.timestamp, req.query.nonce, req.params.suiteId, data)
                     .then(data => {
                         switch (data.xml.InfoType[0]) {
                             case "suite_ticket":
@@ -51,7 +51,7 @@ module.exports = function (app) {
                                 // save
                                 return SystemConfigure.getFilter({
                                         name: "suite_ticket",
-                                        suitId: data.xml.SuiteId[0]
+                                        suiteId: data.xml.SuiteId[0]
                                     })
                                     .then(configure => {
                                         if (suiteTicket != configure.value) {
@@ -67,6 +67,11 @@ module.exports = function (app) {
                                     .then(result => {
                                         createCompany(result, SuiteId);
                                     });
+                                break;
+                            case "cancel_auth":
+                                var corpId = data.xml.AuthCorpId[0],
+                                    SuiteId = data.xml.SuiteId[0];
+                                deleteCompany(corpId, SuiteId);
                                 break;
                             default:
                                 break;
@@ -97,7 +102,8 @@ module.exports = function (app) {
         };
 
         function createCompany(result, SuiteId) {
-            var corpid = result.auth_corp_info.corpid;
+            var corpid = result.auth_corp_info.corpid,
+                agentId = result.auth_info.agent[0].agentid;
             Company.findOne({
                     where: {
                         we_appId: corpid
@@ -105,6 +111,7 @@ module.exports = function (app) {
                 })
                 .then(company => {
                     if (!company) {
+                        // 此公司第一次安装套件
                         Company.create({
                                 name: result.auth_corp_info.corp_name,
                                 we_appId: corpid
@@ -118,21 +125,68 @@ module.exports = function (app) {
                                     companyId: company._id
                                 }, {
                                     name: "permanent_code",
-                                    suitId: SuiteId,
+                                    suiteId: SuiteId,
                                     appId: corpid,
+                                    value: result.permanent_code,
+                                    agentId: agentId,
                                     companyId: company._id
                                 }, {
                                     name: "access_token",
-                                    suitId: SuiteId,
+                                    suiteId: SuiteId,
                                     appId: corpid,
+                                    value: result.access_token,
                                     companyId: company._id
                                 }]);
+                            });
+                    } else {
+                        // 此公司多次安装套件
+                        SystemConfigure.getFilter({
+                                name: "permanent_code",
+                                suiteId: SuiteId,
+                                appId: corpid,
+                                companyId: company._id
+                            })
+                            .then(configure => {
+                                if (configure) {
+                                    // 有历史配置
+                                } else {
+                                    // 重新配置
+                                    SystemConfigure.bulkCreate([{
+                                        name: "permanent_code",
+                                        suiteId: SuiteId,
+                                        appId: corpid,
+                                        value: result.permanent_code,
+                                        agentId: agentId,
+                                        companyId: company._id
+                                    }, {
+                                        name: "access_token",
+                                        suiteId: SuiteId,
+                                        appId: corpid,
+                                        value: result.access_token,
+                                        companyId: company._id
+                                    }]);
+                                }
                             });
                     }
                 });
         };
 
-        function autoLogin(req, res, suitId) {
+        function deleteCompany(corpId, SuiteId) {
+            Company.getFilter({
+                    we_appId: corpId
+                })
+                .then(company => {
+                    SystemConfigure.destroy({
+                        where: {
+                            companyId: company._id,
+                            suiteId: SuiteId,
+                            appId: corpId
+                        }
+                    });
+                });
+        };
+
+        function autoLogin(req, res, suiteId) {
             var auth_code = req.query.auth_code;
             return wechat.get_login_info(auth_code)
                 .then(info => {
@@ -142,11 +196,11 @@ module.exports = function (app) {
                     return SystemConfigure.getFilter({
                             name: "permanent_code",
                             appId: corpid,
-                            suitId: suitId
+                            suiteId: suiteId
                         })
                         .then(configure => {
                             var agentId = configure.agentId;
-                            return wechat.get_admin_list(corpid, agentId)
+                            return wechat.get_admin_list(corpid, suiteId, agentId)
                                 .then(result => {
                                     if (result && result.admin.some(admin => {
                                             return admin.auth_type == 1 && admin.userid == userid;
@@ -187,10 +241,31 @@ module.exports = function (app) {
         };
     }
 
-    // people functions
+    // login functions
     {
+        // 人事工资等
         app.get('/people/autologin', function (req, res) {
             autoLogin(req, res, "ww683e156d777a4cf6")
+                .then(result => {
+                    if (result) {
+                        if (result.name) {
+                            res.render('people/mobile.html', {
+                                title: '登录',
+                                name: result.name,
+                                weUserId: result.userid
+                            });
+                        } else {
+                            res.redirect("/people");
+                        }
+                    } else {
+                        res.redirect("/people/login");
+                    }
+                });
+        });
+
+        // 隐患提报
+        app.get('/danger/autologin', function (req, res) {
+            autoLogin(req, res, "wwbaec80ad8e9cf684")
                 .then(result => {
                     if (result) {
                         if (result.name) {

@@ -59,6 +59,9 @@ module.exports = SecureUpload;
 
 //读取用户信息
 SecureUpload.getFilter = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return SecureUpload.findOne({
         'where': filter
@@ -66,6 +69,9 @@ SecureUpload.getFilter = function (filter) {
 };
 
 SecureUpload.getFilters = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return SecureUpload.findAll({
         'where': filter,
@@ -76,6 +82,9 @@ SecureUpload.getFilters = function (filter) {
 };
 
 SecureUpload.getFiltersWithPage = function (page, filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return SecureUpload.findAndCountAll({
         'where': filter,

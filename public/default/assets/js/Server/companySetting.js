@@ -7,5 +7,9 @@ $(document).ready(function () {
         location.href = "/admin";
     });
 
+    $("#left_btnSuit").on("click", function (e) {
+        location.href = "/admin/sysSuitList";
+    });
+
     $(".admin-nav .menu-top #header_btnBasic").addClass("active");
 });

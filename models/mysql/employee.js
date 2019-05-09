@@ -33,6 +33,9 @@ module.exports = Employee;
 
 //读取用户信息
 Employee.getFilter = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return Employee.findOne({
         'where': filter
@@ -40,6 +43,9 @@ Employee.getFilter = function (filter) {
 };
 
 Employee.getFilters = function (filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     filter.isDeleted = false;
     return Employee.findAll({
         'where': filter,
@@ -51,6 +57,9 @@ Employee.getFilters = function (filter) {
 };
 
 Employee.getFiltersWithPage = function (page, filter) {
+    if (!filter.companyId) {
+        filter.companyId = -1;
+    }
     if (!filter.isDeleted) {
         filter.isDeleted = false;
     }

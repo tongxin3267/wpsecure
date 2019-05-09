@@ -21,7 +21,7 @@ const SystemConfigure = db.defineModel('systemConfigures', {
         type: db.STRING(50),
         defaultValue: ''
     },
-    suitId: {
+    suiteId: {
         // 不同套件拿到的是不同的配置信息
         type: db.STRING(50),
         defaultValue: ''

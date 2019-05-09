@@ -4,6 +4,10 @@ const db = require('../../db'),
     config = require('../../settings');
 
 const ScoreFail = db.defineModel('scoreFails', {
+    companyId: {
+        type: db.INTEGER,
+        comment: "公司Id"
+    },
     name: {
         type: db.STRING(50),
         defaultValue: ''
