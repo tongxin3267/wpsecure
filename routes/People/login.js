@@ -1,11 +1,28 @@
 var crypto = require('crypto'),
     model = require("../../model.js"),
     Company = model.company,
+    Employee = model.employee,
     auth = require("./auth"),
     checkNotLogin = auth.checkNotLogin;
 
 module.exports = function (app) {
     app.get('/people/login', function (req, res) {
+        if (process.env.NODE_ENV == "development") {
+            return Company.getFilter({
+                    we_appId: "wwb50dd79078e140ef"
+                })
+                .then(company => {
+                    req.session.company = company;
+                    return Employee.getFilter({
+                            companyId: req.session.company._id,
+                            weUserId: "ZhaoWeiPu"
+                        })
+                        .then(user => {
+                            req.session.people = user;
+                            return res.redirect('/people');
+                        });
+                });
+        }
         res.render('people/login.html', {
             title: '登录'
         });

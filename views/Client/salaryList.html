@@ -1,0 +1,23 @@
+﻿{% extends "Client/partial/wechat-header.html" %} {% block main %}
+<div class="container">
+    <div class="weui-cells__title center-title">
+        <div class="weui-cell">
+            <div class="weui-cell__ft">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_default prev">上个月</a>
+            </div>
+            <div class="weui-cell__bd" style="text-align: center;">
+                <span class="curDate"></span>
+            </div>
+            <div class="weui-cell__ft">
+                <a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_default next">下个月</a>
+            </div>
+        </div>
+    </div>
+    <div class="salaryItems">
+
+    </div>
+</div>
+<input type="hidden" id="salaryMonth" value="{{ salaryMonth }}">
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/Client/salaryList.js"></script>
+{% endblock %}

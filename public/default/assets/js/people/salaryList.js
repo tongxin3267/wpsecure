@@ -86,30 +86,17 @@ $(document).ready(function () {
                             // remove headers and add new header
                             $(".table thead tr").empty();
                             dHeader.append('<th style="width:150px;">员工姓名</th><th style="width:150px;">手机号</th>');
-                            for (var key in obj) {
-                                if (typeof (obj[key]) == "object") {
-                                    for (var childkey in obj[key]) {
-                                        dHeader.append('<th>' + childkey + '</th>');
-                                        $tr.append('<td>' + obj[key][childkey] + '</td>');
-                                    }
-                                } else {
-                                    dHeader.append('<th>' + key + '</th>');
-                                    $tr.append('<td>' + obj[key] + '</td>');
-                                }
-                            }
+                            obj.forEach(function (item) {
+                                dHeader.append('<th>' + item.title + '</th>');
+                                $tr.append('<td>' + item.value + '</td>');
+                            });
                             dHeader.append('<th>操作</th>');
                             $(".table thead tr").append(dHeader);
                             headerShow = true;
                         } else {
-                            for (var key in obj) {
-                                if (typeof (obj[key]) == "object") {
-                                    for (var childkey in obj[key]) {
-                                        $tr.append('<td>' + obj[key][childkey] + '</td>');
-                                    }
-                                } else {
-                                    $tr.append('<td>' + obj[key] + '</td>');
-                                }
-                            }
+                            obj.forEach(function (item) {
+                                $tr.append('<td>' + item.value + '</td>');
+                            });
                         }
                         $tr.append('<td><div class="btn-group">' + that.pageGetButtons() + '</div></td>');
                         $tr.find(".btn-group").data("obj", record);

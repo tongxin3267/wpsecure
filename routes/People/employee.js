@@ -1,7 +1,6 @@
 var model = require("../../model.js"),
     pageSize = model.db.config.pageSize,
     Employee = model.employee,
-    Grade = model.grade,
     auth = require("./auth"),
     crypto = require('crypto'),
     checkLogin = auth.checkLogin;

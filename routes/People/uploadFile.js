@@ -165,21 +165,17 @@ module.exports = function (app) {
                         if (salary) {
                             // 修改工资项
                             var attrs = {},
-                                obj = {},
+                                obj = [],
                                 strUpdate = "update salarys set other=:other ",
                                 replacement = {
                                     id: salary._id
                                 };
-                            for (var i = 5; i < colCount; i++) {
-                                if (titleAry[i].parent) {
-                                    if (!obj[titleAry[i].parent]) {
-                                        obj[titleAry[i].parent] = {};
-                                    }
-                                    obj[titleAry[i].parent][titleAry[i].title] = data[i] || 0;
-                                } else {
-                                    obj[titleAry[i].title] = data[i] || 0;
-                                }
-                                attrs[titleAry[i]] = data[i] || 0;
+                            for (var i = 2; i < colCount; i++) {
+                                obj.push({
+                                    title: titleAry[i].title,
+                                    parent: titleAry[i].parent,
+                                    value: data[i] || 0
+                                });
                             }
                             replacement.other = JSON.stringify(obj);
                             return model.db.sequelize.query(strUpdate + " where _id=:id", {
@@ -201,16 +197,12 @@ module.exports = function (app) {
                                     year: year,
                                     month: month
                                 };
-                            for (var i = 5; i < colCount; i++) {
-                                if (titleAry[i].parent) {
-                                    if (!obj[titleAry[i].parent]) {
-                                        obj[titleAry[i].parent] = {};
-                                    }
-                                    obj[titleAry[i].parent][titleAry[i].title] = data[i] || 0;
-                                } else {
-                                    obj[titleAry[i].title] = data[i] || 0;
-                                }
-                                attrs[titleAry[i]] = data[i] || 0;
+                            for (var i = 2; i < colCount; i++) {
+                                obj.push({
+                                    title: titleAry[i].title,
+                                    parent: titleAry[i].parent,
+                                    value: data[i] || 0
+                                });
                             }
                             replacement.other = JSON.stringify(obj);
                             return model.db.sequelize.query(strUpdate + ")" + strValue + ")", {

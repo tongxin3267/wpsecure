@@ -1,9 +1,10 @@
 var moment = require("moment"),
     model = require("../model.js"),
+    config = require('../settings'),
     SystemConfigure = model.systemConfigure,
     SysSuit = model.sysSuit,
+    path = require('path'),
     request = require('request'),
-    wechatAPI = require('wechat-enterprise-api'),
     wecrypto = require("wechat-crypto"),
     crypto = require('crypto'),
     xml2js = require('xml2js'),
@@ -392,6 +393,41 @@ var weapi = {
             .catch(err => {
 
             });
+    },
+    getAuthorizeURL: function (toAppId, url) {
+        return "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + toAppId + "&redirect_uri=" + encodeURIComponent(config.localUrl + url) + "&response_type=code&scope=snsapi_privateinfo&state=STATE#wechat_redirect";
+    },
+    getUserIdByCode: function (suiteId, code) {
+        var that = this;
+        return this.checksuite_access_token(suiteId)
+            .then(token => {
+                return that.getURL("https://qyapi.weixin.qq.com/cgi-bin/service/getuserinfo3rd?access_token=" + token + "&code=" + code);
+            });
+    },
+    getUser: function (suiteId, user_ticket) {
+        var that = this;
+        return this.checksuite_access_token(suiteId)
+            .then(token => {
+                return that.postURL("https://qyapi.weixin.qq.com/cgi-bin/service/getuserdetail3rd?access_token=" + token, {
+                    "user_ticket": user_ticket
+                });
+            });
+    },
+    checkSuiteId(q) {
+        switch (q) {
+            case "1":
+                return "ww683e156d777a4cf6";
+            case "2":
+                return "wwbaec80ad8e9cf684";
+        }
+    },
+    checkLoginPage(q) {
+        switch (q) {
+            case "1":
+                return "/client/salaryView";
+            case "2":
+                return "/client/salaryView";
+        }
     }
 }
 module.exports = weapi;
