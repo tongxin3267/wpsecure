@@ -14,7 +14,7 @@ var xlsx = require("node-xlsx"),
     serverPath = path.join(__dirname, "../"),
     storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, './public/uploads/');
+            cb(null, './public/uploads/temps/');
         },
         filename: function (req, file, cb) {
             cb(null, file.originalname);

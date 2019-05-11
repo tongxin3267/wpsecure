@@ -1,10 +1,9 @@
-{% extends "Client/partial/main-header.html" %} {% block main %}
+{% extends "Client/partial/wechat-header.html" %} {% block main %}
 <div class="personalCenter">
     <div class="my">
         <div class="top-mod weui-flex">
             <div>
-                <img src={{user.uavatar}} />
-                <div>{{user.uname}}</div>
+                <div>{{user.name}}</div>
             </div>
         </div>
         <div class="weui-cells" style="margin-top:0">
@@ -17,11 +16,20 @@
             </a>
             <a class="weui-cell weui-cell_access tome" href="javascript:;">
                 <div class="weui-cell__bd">
-                    <p>我处理的隐患</p>
+                    <p>我负责的隐患</p>
                 </div>
                 <div class="weui-cell__ft">
                 </div>
             </a>
+            {% if user.role == 100 %}
+            <a class="weui-cell weui-cell_access alldanger" href="javascript:;">
+                <div class="weui-cell__bd">
+                    <p>所有隐患</p>
+                </div>
+                <div class="weui-cell__ft">
+                </div>
+            </a>
+            {% endif %}
         </div>
     </div>
 </div>

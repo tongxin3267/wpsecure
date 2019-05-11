@@ -16,6 +16,10 @@ $(document).ready(function () {
                 that.loadData(that.options.curpage + 1);
             });
 
+            $(".weui-cells__title .weui-cell__ftl").click(function (e) {
+                location.href = "/client/reportCenterView";
+            });
+
             $(".personalCenter").on("click", ".weui-panel .result .weui-media-box__title", function (e) {
                 that.options.$curSecure = $(e.currentTarget);
                 var entity = that.options.$curSecure.data("obj");

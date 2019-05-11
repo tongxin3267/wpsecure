@@ -412,22 +412,6 @@ var weapi = {
                     "user_ticket": user_ticket
                 });
             });
-    },
-    checkSuiteId(q) {
-        switch (q) {
-            case "1":
-                return "ww683e156d777a4cf6";
-            case "2":
-                return "wwbaec80ad8e9cf684";
-        }
-    },
-    checkLoginPage(q) {
-        switch (q) {
-            case "1":
-                return "/client/salaryView";
-            case "2":
-                return "/client/salaryView";
-        }
     }
 }
 module.exports = weapi;

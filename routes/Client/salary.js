@@ -6,25 +6,16 @@ var model = require("../../model.js"),
     querystring = require('querystring'),
     moment = require("moment"),
     wechat = require('../../util/wechatHelper'),
+    loginHelper = require('../../util/clientHelper'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
 
 module.exports = function (app) {
     app.get('/client/salaryList', function (req, res) {
         if (process.env.NODE_ENV == "development") {
-            return Company.getFilter({
-                    we_appId: "wwb50dd79078e140ef"
-                })
-                .then(company => {
-                    req.session.company = company;
-                    return Employee.getFilter({
-                            companyId: req.session.company._id,
-                            weUserId: "ZhaoWeiPu"
-                        })
-                        .then(user => {
-                            req.session.user = user;
-                            return res.redirect('/client/salaryView');
-                        });
+            return loginHelper.autoLogin(req)
+                .then(() => {
+                    return res.redirect('/client/salaryView');
                 });
         }
 
@@ -39,7 +30,7 @@ module.exports = function (app) {
 
     app.get('/client/checkuser', function (req, res) {
         var code = req.query.code,
-            suiteId = wechat.checkSuiteId(req.query.q);
+            suiteId = loginHelper.checkSuiteId(req.query.q);
         wechat.getUserIdByCode(suiteId, code)
             .then(results => {
                 var userId = results.UserId,
@@ -80,7 +71,7 @@ module.exports = function (app) {
                                         return employee.save()
                                             .then(employee => {
                                                 req.session.user = employee;
-                                                res.redirect(wechat.checkLoginPage(req.query.q));
+                                                res.redirect(loginHelper.checkLoginPage(req.query.q));
                                             });
                                     } else {
                                         return Promise.reject("您的手机号码不在通讯录里，请联系前台查看！");
@@ -90,7 +81,7 @@ module.exports = function (app) {
                     })
                     .catch(ex => {
                         res.render('Client/error.html', {
-                            title: '>工资列表',
+                            title: '>出錯啦',
                             websiteTitle: req.session.company.name,
                             error: (ex.message || ex)
                         });

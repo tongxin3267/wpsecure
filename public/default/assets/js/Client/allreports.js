@@ -21,7 +21,7 @@ $(document).ready(function () {
         },
         loadData: function (page) {
             var that = this;
-            selfAjax("post", "/Client/secureUpload/myupload", {
+            selfAjax("post", "/Client/secureUpload/allupload", {
                 page: page
             }, function (data) {
                 if (data) {

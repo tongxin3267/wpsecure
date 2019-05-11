@@ -29,25 +29,31 @@ $(document).ready(function () {
                 }
             });
 
-            $('.weui-btn-area #showTooltips').click(function (e) {
-                var filter = {
-                    imageName: that.options.curImg,
-                    position: $.trim($("#position").val()),
-                    description: $.trim($("#description").val()),
-                    responseUser: $.trim($("#responseUser").val())
-                };
-                selfAjax("post", "/Client/secureUpload/add", filter, function (data) {
-                    if (data.error) {
-                        showAlert(data.error);
-                        return;
-                    }
-                    showAlert("提交成功");
+            $('.weui-btn-area #btnDone').click(function (e) {
+                showConfirm("确定要提交吗？");
+                $("#btnConfirmSave").off("click").on("click", function (e) {
+                    var filter = {
+                        imageName: that.options.curImg,
+                        position: $.trim($("#position").val()),
+                        description: $.trim($("#description").val()),
+                        secureLevel: $.trim($("#secureLevel").val()),
+                        responseUser: $.trim($("#responseUser").val()),
+                        copyUser: $.trim($("#copyUser").val())
+                    };
+                    selfAjax("post", "/Client/secureUpload/add", filter, function (data) {
+                        if (data.error) {
+                            showAlert(data.error);
+                            return;
+                        }
+                        showAlert("提交成功");
+                        $('#confirmModal .modal-footer .btn-default').off("click").on("click", function (e) {
+                            location.href = "/Client/myreport";
+                        });
+                    });
                 });
             });
         },
-        initData: function () {
-
-        },
+        initData: function () {},
         uploadImage: function (formData) {
             var that = this;
             loading();

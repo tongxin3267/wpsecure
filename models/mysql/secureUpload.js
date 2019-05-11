@@ -43,6 +43,12 @@ const SecureUpload = db.defineModel('secureUploads', {
         defaultValue: 0,
         comment: "责任人"
     },
+    copyUser: {
+        // 抄送
+        type: db.INTEGER,
+        defaultValue: 0,
+        comment: "抄送人"
+    },
     responseResult: {
         // 整顿情况
         type: db.STRING(500),
@@ -76,7 +82,7 @@ SecureUpload.getFilters = function (filter) {
     return SecureUpload.findAll({
         'where': filter,
         order: [
-            ['_id']
+            ['_id', 'DESC']
         ]
     });
 };
@@ -89,7 +95,7 @@ SecureUpload.getFiltersWithPage = function (page, filter) {
     return SecureUpload.findAndCountAll({
         'where': filter,
         order: [
-            ['_id']
+            ['_id', 'DESC']
         ],
         offset: config.pageSize * (page - 1),
         limit: config.pageSize

@@ -1,4 +1,4 @@
-{% extends "Client/partial/main-header.html" %} {% block main %}
+{% extends "Client/partial/wechat-header.html" %} {% block main %}
 <div class="personalCenter">
     <div class="weui-cells__title" style="text-align: center;">隐患提报</div>
     <div class="weui-cells weui-cells_form">
@@ -33,16 +33,33 @@
                 </div>
             </div>
         </div>
+        <div class="weui-cell weui-cell_select weui-cell_select-after">
+            <div class="weui-cell__hd"><label class="weui-label">隐患等级</label></div>
+            <div class="weui-cell__bd">
+                <select class="weui-select" id="secureLevel">
+                    <option value="0">一般</option>
+                    <option value="5">较大</option>
+                    <option value="9">重大</option>
+                </select>
+            </div>
+        </div>
         <div class="weui-cell">
             <div class="weui-cell__hd"><label class="weui-label">责任人</label></div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text" id="responseUser" disabled="disabled" value="weple"
+                <input class="weui-input" type="text" id="responseUser" disabled="disabled" value="ZhaoWeiPu"
                     placeholder="请输入责任人">
             </div>
         </div>
+        <!-- <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">抄送人</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" id="copyUser" disabled="disabled" value=""
+                    placeholder="请输入抄送人">
+            </div>
+        </div> -->
     </div>
     <div class="weui-btn-area">
-        <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">确定</a>
+        <a class="weui-btn weui-btn_primary" href="javascript:" id="btnDone">确定</a>
     </div>
 </div>
 <script type="text/javascript" src="/default/assets/js/Client/yhtb.js"></script>

@@ -8,7 +8,7 @@ body {
 }
 
 .my .top-mod {
-    height: 10.5rem;
+    height: 5rem;
     background-color: #f6f8fa;
     border-bottom: 1px solid #ff9c35;
     align-items: center;
@@ -46,4 +46,36 @@ body {
 
 .j_bottom .weui-dialog__btn.weui-btn_primary {
     color: #fff;
+}
+
+
+.weui-cell__ftl {
+    text-align: right;
+    color: #999;
+}
+
+.weui-cells__title .weui-cell__ftl {
+    padding-left: 13px;
+    position: relative;
+    width: 30px;
+    height: 20px;
+    float: left;
+}
+
+.weui-cells__title .weui-cell__ftl:after {
+    content: " ";
+    display: inline-block;
+    height: 6px;
+    width: 6px;
+    border-width: 0 0 2px 2px;
+    border-color: #c8c8cd;
+    border-style: solid;
+    -webkit-transform: matrix(.71, .71, -.71, .71, 0, 0);
+    transform: matrix(.71, .71, -.71, .71, 0, 0);
+    position: relative;
+    top: -2px;
+    position: absolute;
+    top: 2px;
+    margin-top: 4px;
+    left: 2px;
 }

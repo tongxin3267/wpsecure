@@ -1,11 +1,12 @@
-var hideConfirmForm;
+var hideConfirmForm, sureConfirmForm;
 window.showAlert = function (msg, title, callback) {
     $('#confirmModal').show();
-    $('#confirmModal #confirmModalLabel').text(title || "提示");
-    $('#confirmModal .modal-body').text(msg);
+    // $('#confirmModal .weui-dialog__hd').hide();
+    $('#confirmModal .weui-dialog__bd').text(msg);
+    $('#confirmModal .weui-dialog__title').text(title || '提醒');
 
-    $('#confirmModal .modal-footer .btn-default').text("确定");
-    $('#confirmModal #btnConfirmSave').hide();
+    $('#confirmModal .weui-dialog__ft .btnCancel').text("确定");
+    $('#confirmModal .weui-dialog__ft #btnSure').hide();
 
     hideConfirmForm = function () {
         callback && callback();
@@ -13,70 +14,70 @@ window.showAlert = function (msg, title, callback) {
     };
 };
 
-window.showConfirm = function (msg, title, hidecallback) {
+window.showConfirm = function (msg, title, hidecallback, surecallback) {
     $('#confirmModal').show();
-    $('#confirmModal #confirmModalLabel').text(title || "确认");
-    $('#confirmModal .modal-body').text(msg);
+    // $('#confirmModal .weui-dialog__hd').hide();
+    $('#confirmModal .weui-dialog__hd .weui-dialog__title').text(title || "确认");
+    $('#confirmModal .weui-dialog__bd').text(msg);
 
-    $('#confirmModal .modal-footer .btn-default').text("取消");
-    $('#confirmModal #btnConfirmSave').show();
+    $('#confirmModal .weui-dialog__ft .btnCancel').text("取消");
+    $('#confirmModal .weui-dialog__ft #btnSure').show();
 
     hideConfirmForm = function () {
         hidecallback && hidecallback();
         $('#confirmModal').hide();
     };
+
+    sureConfirmForm = function () {
+        surecallback && surecallback();
+        $('#confirmModal').hide();
+    };
 };
 
 $(document).ready(function () {
-    $('#confirmModal #btnConfirmSave').on("click", function (e) {
-
+    $('#confirmModal .weui-dialog__ft #btnSure').on("click", function (e) {
+        sureConfirmForm && sureConfirmForm();
     });
 
-    $('#confirmModal .modal-footer .btn-default').on("click", function (e) {
-        hideConfirmForm();
+    $('#confirmModal .weui-dialog__ft #btnCancel').on("click", function (e) {
+        hideConfirmForm && hideConfirmForm();
     });
 });
 
-window.loadingCount = 0; //loading计数
-window.selfAjax = function (method, url, filter) {
-    return loading()
-        .then(function () {
-            return new Promise(function (resolve, reject) {
-                $[method](
-                    url,
-                    filter,
-                    function (data) {
-                        setTimeout(function () {
-                            hideLoading();
-                        }, 0);
-                        resolve(data);
-                    });
-            });
+
+window.selfAjax = function (method, url, filter, callback) {
+    loading();
+    return $[method](
+        url,
+        filter,
+        function (data) {
+            callback(data);
+            hideLoading();
+            return data;
         });
 };
-
+window.loadingCount = 0; //loading计数
 window.loading = function () {
-    return new Promise(function (resolve, reject) {
-        loadingCount++;
-        if (loadingCount == 1) {
-            $("#loadingIndicator").show();
-            resolve();
-        } else {
-            resolve();
-        }
-    });
+    loadingCount++;
+    if (loadingCount == 1) {
+        $("#loadingIndicator").show();
+    }
 };
 
 window.hideLoading = function () {
-    return new Promise(function (resolve, reject) {
-        loadingCount--;
-        if (loadingCount == 0) {
-            $("#loadingIndicator").hide();
-            resolve();
-        } else {
-            resolve();
-        }
-    });
+    loadingCount--;
+    if (loadingCount == 0) {
+        $("#loadingIndicator").hide();
+    }
+};
+
+window.is_weixn = function () {
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == "micromessenger") { //这就是微信用的内置浏览器  
+        return true;
+    } else {
+        return false;
+    }
 };
 
 String.prototype.format = function () {
