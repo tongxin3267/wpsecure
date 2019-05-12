@@ -28,6 +28,26 @@ module.exports = function (app) {
         res.redirect(newUrl);
     });
 
+    function isAdmin(corpid, suiteId) {
+        return SystemConfigure.getFilter({
+                name: "permanent_code",
+                appId: corpid,
+                suiteId: suiteId
+            })
+            .then(configure => {
+                var agentId = configure.agentId;
+                return wechat.get_admin_list(corpid, suiteId, agentId)
+                    .then(result => {
+                        var userid = req.session.user.weUserId;
+                        if (result && result.admin.some(admin => {
+                                return admin.auth_type == 1 && admin.userid == userid;
+                            })) {
+                            req.session.user.role = 100;
+                        }
+                    });
+            });
+    };
+
     app.get('/client/checkuser', function (req, res) {
         var code = req.query.code,
             suiteId = loginHelper.checkSuiteId(req.query.q);
@@ -60,7 +80,14 @@ module.exports = function (app) {
                     })
                     .then(user => {
                         if (user) {
-                            // 更新teacher
+                            if (req.session.user) {
+                                // userid 匹配成功
+                                return isAdmin(CorpId, suiteId)
+                                    .then(() => {
+                                        return res.redirect(loginHelper.checkLoginPage(req.query.q));
+                                    });
+                            }
+                            // userId 匹配不成功 更新employee
                             return Employee.getFilter({
                                     companyId: req.session.company._id,
                                     mobile: user.mobile
@@ -71,7 +98,10 @@ module.exports = function (app) {
                                         return employee.save()
                                             .then(employee => {
                                                 req.session.user = employee;
-                                                res.redirect(loginHelper.checkLoginPage(req.query.q));
+                                                return isAdmin(CorpId, suiteId)
+                                                    .then(() => {
+                                                        return res.redirect(loginHelper.checkLoginPage(req.query.q));
+                                                    });
                                             });
                                     } else {
                                         return Promise.reject("您的手机号码不在通讯录里，请联系前台查看！");

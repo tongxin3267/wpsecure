@@ -170,9 +170,13 @@ module.exports = function (app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {
             companyId: req.session.company._id,
-            createdBy: req.session.user._id
+            createdBy: req.session.user._id,
+            secureStatus: 0
         };
 
+        if (req.body.isHandle == "1") {
+            filter.secureStatus = 1;
+        }
         SecureUpload.getPageOfFilter(page, filter)
             .then(function (records) {
                 res.jsonp(records);
@@ -185,9 +189,12 @@ module.exports = function (app) {
         var page = req.body.page ? parseInt(req.body.page) : 1;
         //查询并返回第 page 页的 20 篇文章
         var filter = {
-            companyId: req.session.company._id
+            companyId: req.session.company._id,
+            secureStatus: 0
         };
-
+        if (req.body.isHandle == "1") {
+            filter.secureStatus = 1;
+        }
         SecureUpload.getPageOfFilter(page, filter)
             .then(function (records) {
                 res.jsonp(records);
@@ -201,9 +208,12 @@ module.exports = function (app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {
             companyId: req.session.company._id,
-            responseUser: req.session.user._id
+            responseUser: req.session.user._id,
+            secureStatus: 0
         };
-
+        if (req.body.isHandle == "1") {
+            filter.secureStatus = 1;
+        }
         SecureUpload.getPageOfFilter(page, filter)
             .then(function (records) {
                 res.jsonp(records);
@@ -217,9 +227,12 @@ module.exports = function (app) {
         //查询并返回第 page 页的 20 篇文章
         var filter = {
             companyId: req.session.company._id,
-            copyUser: req.session.user._id
+            copyUser: req.session.user._id,
+            secureStatus: 0
         };
-
+        if (req.body.isHandle == "1") {
+            filter.secureStatus = 1;
+        }
         SecureUpload.getPageOfFilter(page, filter)
             .then(function (records) {
                 res.jsonp(records);

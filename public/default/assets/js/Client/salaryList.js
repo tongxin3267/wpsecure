@@ -33,42 +33,41 @@ $(document).ready(function () {
         },
         searchSalary: function () {
             selfAjax("post", "/client/salaryList/search", {
-                    year: curYear,
-                    month: curMonth
-                })
-                .then(function (data) {
-                    $(".salaryItems").empty();
-                    if (!data) {
-                        // 没有数据
-                        return;
-                    }
+                year: curYear,
+                month: curMonth
+            }, function (data) {
+                $(".salaryItems").empty();
+                if (!data) {
+                    // 没有数据
+                    return;
+                }
 
-                    if (data.error) {
-                        showAlert(data.error);
-                        return;
-                    }
+                if (data.error) {
+                    showAlert(data.error);
+                    return;
+                }
 
-                    var d = $(document.createDocumentFragment()),
-                        obj = data.other,
-                        $cells = $(' <div class="weui-cells"></div>'),
-                        curParent;
-                    d.append($cells);
-                    obj.forEach(function (item) {
-                        if (item.parent) {
-                            if (curParent != item.parent) {
-                                curParent = item.parent;
-                                $cells = $(' <div class="weui-cells"></div>');
-                                d.append('<div class="weui-cells__title">' + item.parent + '</div>');
-                                d.append($cells);
-                            } else {
-                                $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
-                            }
+                var d = $(document.createDocumentFragment()),
+                    obj = data.other,
+                    $cells = $(' <div class="weui-cells"></div>'),
+                    curParent;
+                d.append($cells);
+                obj.forEach(function (item) {
+                    if (item.parent) {
+                        if (curParent != item.parent) {
+                            curParent = item.parent;
+                            $cells = $(' <div class="weui-cells"></div>');
+                            d.append('<div class="weui-cells__title">' + item.parent + '</div>');
+                            d.append($cells);
                         } else {
                             $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
                         }
-                    })
-                    $(".salaryItems").append(d);
-                });
+                    } else {
+                        $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
+                    }
+                })
+                $(".salaryItems").append(d);
+            });
         },
         newDate: function (increase) {
             if (increase) {

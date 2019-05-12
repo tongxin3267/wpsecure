@@ -13,8 +13,8 @@ module.exports = {
                         weUserId: "ZhaoWeiPu"
                     })
                     .then(user => {
-                        user.role = 100;
-                        req.session.user = user;
+                        // user.dataValues.role = 100;
+                        req.session.user = user.dataValues;
                     });
             });
     },

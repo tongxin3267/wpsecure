@@ -52,6 +52,15 @@ $(document).ready(function () {
                     });
                 });
             });
+            $(".weui-tab .weui-tabbar .myreport").click(function (e) {
+                location.href = "/Client/myreportView";
+            });
+            $(".weui-tab .weui-tabbar .reportme").click(function (e) {
+                location.href = "/Client/reporttomeView";
+            });
+            $(".weui-tab .weui-tabbar .allreport").click(function (e) {
+                location.href = "/Client/allreportsView";
+            });
         },
         initData: function () {},
         uploadImage: function (formData) {

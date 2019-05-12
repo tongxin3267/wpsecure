@@ -4,7 +4,8 @@ $(document).ready(function () {
             curpage: 1,
             curSecureId: 0,
             curImg: "",
-            $curSecure: null
+            $curSecure: null,
+            isHandle: 0
         },
         init: function () {
             this.initEvents();
@@ -16,8 +17,33 @@ $(document).ready(function () {
                 that.loadData(that.options.curpage + 1);
             });
 
-            $(".weui-cells__title .weui-cell__ftl").click(function (e) {
-                location.href = "/client/reportCenterView";
+            $(".weui-tab .weui-tabbar .reportup").click(function (e) {
+                location.href = "/Client/yhtbView";
+            });
+            $(".weui-tab .weui-tabbar .myreport").click(function (e) {
+                location.href = "/Client/myreportView";
+            });
+            $(".weui-tab .weui-tabbar .allreport").click(function (e) {
+                location.href = "/Client/allreportsView";
+            });
+
+            $(".weui-tab .weui-navbar .unhandle").click(function (e) {
+                // page to 1;
+                // clear page
+                that.options.curpage = 1;
+                that.options.isHandle = 0;
+                $(".personalCenter").empty();
+                that.loadData(1);
+                $(".weui-tab .weui-navbar .unhandle").addClass("weui-bar__item_on");
+                $(".weui-tab .weui-navbar .handle").removeClass("weui-bar__item_on");
+            });
+            $(".weui-tab .weui-navbar .handle").click(function (e) {
+                that.options.curpage = 1;
+                that.options.isHandle = 1;
+                $(".personalCenter").empty();
+                that.loadData(1);
+                $(".weui-tab .weui-navbar .handle").addClass("weui-bar__item_on");
+                $(".weui-tab .weui-navbar .unhandle").removeClass("weui-bar__item_on");
             });
 
             $(".personalCenter").on("click", ".weui-panel .result .weui-media-box__title", function (e) {
@@ -81,7 +107,8 @@ $(document).ready(function () {
         loadData: function (page) {
             var that = this;
             selfAjax("post", "/Client/secureUpload/reporttome", {
-                page: page
+                page: page,
+                isHandle: that.options.isHandle
             }, function (data) {
                 if (data) {
                     if (data.error) {

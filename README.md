@@ -21,6 +21,11 @@ CREATE SCHEMA `wpsecure` DEFAULT CHARACTER SET utf8 ;
 7. 合同提醒设置
 8. 隐患信息独立
 9. crm独立
+10. 登录判断是否管理员
+11. 管理端可以导出到excel
+12. 按照公司将图片分folder
+13. 自动选择责任人
+14. 要可修改责任人
 
 
 1. 隐患等级 一般 较大 重大 3个等级
