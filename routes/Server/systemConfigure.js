@@ -112,6 +112,9 @@ module.exports = function (app) {
                 .then(company => {
                     if (!company) {
                         // 此公司第一次安装套件
+                        // 创建folder
+                        fs.mkdir('public/uploads/' + company._id + "/client/images");
+                        // 创建工资项
                         Company.create({
                                 name: result.auth_corp_info.corp_name,
                                 we_appId: corpid
@@ -252,7 +255,8 @@ module.exports = function (app) {
                             res.render('people/mobile.html', {
                                 title: '登录',
                                 name: result.name,
-                                weUserId: result.userid
+                                weUserId: result.userid,
+                                model: "people"
                             });
                         } else {
                             res.redirect("/people");
@@ -272,13 +276,14 @@ module.exports = function (app) {
                             res.render('people/mobile.html', {
                                 title: '登录',
                                 name: result.name,
-                                weUserId: result.userid
+                                weUserId: result.userid,
+                                model: "danger"
                             });
                         } else {
-                            res.redirect("/people");
+                            res.redirect("/danger");
                         }
                     } else {
-                        res.redirect("/people/login");
+                        res.redirect("/danger/login");
                     }
                 });
         });

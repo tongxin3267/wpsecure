@@ -23,7 +23,7 @@ $(document).ready(function () {
                             showAlert(data.error);
                             return;
                         }
-                        location.href = "/people";
+                        location.href = "/" + $("#model").val();
                     });
                 }
             });

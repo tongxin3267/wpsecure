@@ -8,7 +8,8 @@ var path = require('path'),
     serverPath = path.join(__dirname, "../"),
     storage = multer.diskStorage({
         destination: function (req, file, cb) {
-            cb(null, './public/uploads/client/images');
+            var id = req.session.company._id;
+            cb(null, './public/uploads/' + id + '/client/images');
         },
         filename: function (req, file, cb) {
             var extname = path.extname(file.originalname);
@@ -23,7 +24,7 @@ module.exports = function (app) {
     app.post('/client/imageUp', checkLogin);
     app.post('/Client/imageUp', upload.single('upfile'), function (req, res, next) {
         var name = req.file.filename,
-            img = "/uploads/client/images/" + name;
+            img = "/uploads/" + req.session.company._id + "/client/images/" + name;
         // save image to mongodb
         var images = new Images({
             userId: (req.session.user ? req.session.user._id : 1),

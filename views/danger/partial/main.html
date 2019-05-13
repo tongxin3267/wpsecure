@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>{{websiteTitle}}</title>
+    <link rel="stylesheet" href="/default/assets/css/bootstrap.css">
+    <link rel="stylesheet" href="/default/assets/css/danger/admin.css">
+    <link rel="stylesheet" href="/default/assets/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/default/assets/css/formValidation.css">
+    <link rel="stylesheet" href="/default/assets/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript" src="/default/assets/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/default/assets/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/default/assets/js/danger/index.js"></script>
+    <script type="text/javascript" src="/default/assets/js/formValidation.js"></script>
+    <script type="text/javascript" src="/default/assets/js/bootstrapValidation.js"></script>
+</head>
+
+<body>
+    <div class="admin-header">
+        <div class="logo pull-left">{{websiteTitle}}</div>
+        <div class="menu-top pull-left">
+            <ul class="nav nav-pills">
+                <li id="header_btnBasic" role="presentation">基本设置</li>
+            </ul>
+        </div>
+        <div class="userinfo pull-right">
+            用户: {{ user.name }}
+            <a href="/people/logout">退出</a>
+        </div>
+    </div>
+    <div class="admin-content">
+        <div class="admin-left">
+            {% block left %}{% endblock %}
+        </div>
+        <div class="admin-main">
+            {% block main %}{% endblock %}
+        </div>
+    </div>
+    {% block modal %}{% endblock %}
+    <div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="confirmModalLabel">确认</h4>
+                </div>
+                <div class="modal-body">
+                    确定要删除吗?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" id="btnConfirmSave" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-sm" id="loadingIndicator" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" style="margin-top: 50vh;" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    加载中。。。
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

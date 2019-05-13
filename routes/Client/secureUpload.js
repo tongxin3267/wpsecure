@@ -59,7 +59,8 @@ module.exports = function (app) {
     app.get('/Client/myreportView', function (req, res) {
         res.render('Client/myreport.html', {
             websiteTitle: req.session.company.name,
-            user: req.session.user
+            user: req.session.user,
+            companyId: req.session.company._id
         });
     });
 
@@ -71,7 +72,8 @@ module.exports = function (app) {
     app.get('/Client/reporttomeView', function (req, res) {
         res.render('Client/reporttome.html', {
             websiteTitle: req.session.company.name,
-            user: req.session.user
+            user: req.session.user,
+            companyId: req.session.company._id
         });
     });
 
@@ -83,7 +85,8 @@ module.exports = function (app) {
     app.get('/Client/reportcopymeView', function (req, res) {
         res.render('Client/reportcopyme.html', {
             websiteTitle: req.session.company.name,
-            user: req.session.user
+            user: req.session.user,
+            companyId: req.session.company._id
         });
     });
 
@@ -95,7 +98,8 @@ module.exports = function (app) {
     app.get('/Client/allreportsView', function (req, res) {
         res.render('Client/allreports.html', {
             websiteTitle: req.session.company.name,
-            user: req.session.user
+            user: req.session.user,
+            companyId: req.session.company._id
         });
     });
 

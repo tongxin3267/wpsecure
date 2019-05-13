@@ -73,7 +73,7 @@ $(document).ready(function () {
                     entity.responseImage = that.options.curImg;
                     entity.responseResult = $.trim($("#description").val());
 
-                    $(".personalCenter #sId" + that.options.curSecureId + " .result img").attr("src", "/uploads/client/images/" + entity.responseImage);
+                    $(".personalCenter #sId" + that.options.curSecureId + " .result img").attr("src", clientImgPath + entity.responseImage);
                     $(".personalCenter #sId" + that.options.curSecureId + " .result .desc").text(entity.responseResult);
                     $(".personalCenter #sId" + that.options.curSecureId + " .result .weui-media-box__info__meta").text(moment().format("YYYY-MM-DD HH:mm:ss"));
                     $(".editResult").hide();
@@ -139,14 +139,14 @@ $(document).ready(function () {
                 $detail.find(".weui-panel__hd").text(secure.position);
                 $detail.find(".detail .desc").text(secure.description);
                 if (secure.imageName) {
-                    $detail.find(".detail img").attr("src", "/uploads/client/images/" + secure.imageName);
+                    $detail.find(".detail img").attr("src", clientImgPath + secure.imageName);
                 }
                 $detail.find(".detail .weui-media-box__info__meta").text(moment(secure.createdDate).format("YYYY-MM-DD HH:mm:ss"));
                 if (secure.secureStatus == 1) {
                     // 已处理的
                     $detail.find(".result .desc").text(secure.responseResult);
                     if (secure.responseImage) {
-                        $detail.find(".result img").attr("src", "/uploads/client/images/" + secure.responseImage);
+                        $detail.find(".result img").attr("src", clientImgPath + secure.responseImage);
                     }
                     $detail.find(".result .weui-media-box__info__meta").text(moment(secure.updatedDate).format("YYYY-MM-DD HH:mm:ss"));
                 }
@@ -159,7 +159,7 @@ $(document).ready(function () {
             this.options.curSecureId = entity._id;
             $(".editResult").show();
             $(".editResult #description").val(entity.responseResult);
-            $(".weui-uploader .imgFile").css("background-image", "url(/uploads/client/images/" + entity.responseImage + ")");
+            $(".weui-uploader .imgFile").css("background-image", "url(" + clientImgPath + entity.responseImage + ")");
             this.options.curImg = entity.responseImage;
         },
         uploadImage: function (formData) {

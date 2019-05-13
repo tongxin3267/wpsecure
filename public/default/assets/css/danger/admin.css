@@ -1,0 +1,319 @@
+* {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    .modal-max {
+        width: 1000px;
+    }
+}
+
+body {
+    background-color: #fff;
+    height: 100%;
+    font-family: "Microsoft YaHei";
+}
+
+.login {
+    width: 300px;
+}
+
+.content_body {
+    display: block;
+    margin: 20px auto;
+}
+
+.admin-header {
+    height: 80px;
+    background-color: #354b66;
+    color: white;
+}
+
+.admin-header::after {
+    clear: both;
+}
+
+.admin-header .logo {
+    display: inline-block;
+    width: 200px;
+    font-size: 34px;
+    font-weight: bold;
+    padding-left: 50px;
+}
+
+.admin-header .menu-top {
+    display: inline-block;
+}
+
+.admin-header .menu-top li {
+    /*font-weight: bold;*/
+    font-size: 18px;
+    margin-right: 35px;
+    margin-top: 50px;
+}
+
+.admin-header .menu-top li.active {
+    color: #faff64;
+}
+
+.admin-header .menu-top li:first-child {
+    margin-left: 10px;
+}
+
+.admin-header .menu-top li:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.admin-header .userinfo {
+    display: inline-block;
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+.admin-header .userinfo a {
+    color: white;
+    margin-left: 20px;
+}
+
+.admin-header .userinfo a:hover {
+    text-decoration: underline;
+}
+
+.admin-content {
+    position: fixed;
+    left: 0;
+    top: 80px;
+    bottom: 0;
+    width: 100%;
+}
+
+.admin-left {
+    width: 200px;
+    /*display: inline-block;*/
+    background-color: #e8ebef;
+    border-right: 1px solid #BFC8D8;
+    position: absolute;
+    left: 0;
+    top: -30px;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.admin-left .title {
+    color: #354b66;
+    /*padding-left: 53px;*/
+    /*font-weight: bold;*/
+    font-size: 18px;
+    border-bottom: 1px solid #BFC8D8;
+    line-height: 24px;
+    padding: 8px 0 8px 53px;
+}
+
+.admin-left li {
+    color: #354b66;
+    font-size: 14px;
+    line-height: 24px;
+    padding: 4px 0 0 53px;
+}
+
+.admin-left li.block {
+    border-bottom: 1px solid #BFC8D8;
+}
+
+.admin-left li:hover {
+    background-color: #d6dbe0;
+    cursor: pointer;
+}
+
+.admin-left li.active {
+    background-color: #475d76;
+    color: white;
+}
+
+.admin-left li.active:hover {
+    background-color: #475d76;
+    color: white;
+}
+
+.admin-main {
+    padding-left: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+}
+
+.admin-main .title h1 {
+    font-size: 14px;
+    margin: 5px 10px;
+}
+
+.admin-main .toolbar {
+    background-color: #bcc2cd;
+    padding: 7px;
+}
+
+.admin-main .toolbar button {
+    margin-left: 10px;
+}
+
+.admin-main .content .panel {
+    margin: 0 1px;
+}
+
+.admin-main .content .panel .panelButton {
+    margin-top: 25px;
+}
+
+.admin-main .content table {
+    border-bottom: 1px solid rgb(128, 128, 128);
+    margin-bottom: 5px;
+}
+
+.admin-main .content table tr td .btn-group a {
+    height: 20px;
+    padding: 1px 12px;
+    font-size: 12px;
+}
+
+.admin-main .paging {
+    float: right;
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+.modal .modal-header {
+    background-color: #354b66;
+    color: white;
+}
+
+.modal .close {
+    color: white;
+    opacity: 0.7;
+}
+
+.modal .close:hover {
+    opacity: 1;
+}
+
+.modal .btn-group,
+.adminEnroll .btn-group {
+    display: block;
+}
+
+.modal .btn-group input,
+.adminEnroll .btn-group input {
+    width: calc(100% - 34px);
+    float: left;
+}
+
+.modal .btn-group button,
+.adminEnroll .btn-group button {
+    width: 34px;
+    height: 34px;
+}
+
+#selectModal .modal-body {
+    overflow-y: auto;
+}
+
+#selectModal .modal-body table tbody tr:hover {
+    cursor: pointer;
+    background-color: #d6dbe0;
+}
+
+#selectModal .modal-body .panel.panel-default {
+    margin-bottom: 0;
+}
+
+#selectModal .modal-body .table.table-striped {
+    margin-bottom: 0;
+}
+
+#InfoSearch .form-group {
+    padding: 0 10px;
+    margin: 0;
+}
+
+/* #InfoSearch .form-group select,
+#InfoSearch .form-group input {
+    width: calc(100% - 70px);
+    display: inline-block;
+} */
+
+#InfoSearch .form-group {
+    margin-bottom: 0;
+}
+
+#selectModal #InfoSearch .examSearchInfo .col-md-20 {
+    padding-right: 0;
+}
+
+#selectModal #InfoSearch .examSearchInfo .form-group {
+    display: inline-block;
+    width: 205px;
+}
+
+.content.mainModal #schoolUl,
+.content.mainModal #schoolUl ul {
+    list-style-type: none;
+}
+
+.content.mainModal #schoolUl .count {
+    margin-left: 15px;
+}
+
+.content.mainModal #schoolUl .count input {
+    width: 50px;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.coupon #InfoSearch .form-group .btn-group input {
+    width: calc(100% - 70px);
+    float: left;
+}
+
+#myModal .modal-body {
+    overflow-y: auto;
+}
+
+#myModal .modal-body ul.examArea {
+    list-style: none;
+    padding-left: 0;
+}
+
+#myModal .modal-body ul.examArea li {
+    margin-bottom: 5px;
+}
+
+#myModal .modal-body ul.examArea li .areaCount {
+    display: inline-block;
+    width: 60px;
+}
+
+.mainModal .score.detail div {
+    margin: 10px;
+}
+
+.mainModal .score.detail div span {
+    margin-left: 10px;
+}
+
+#confirmModal .modal-body {
+    word-wrap: break-word;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+table.mintd th {
+    min-width: 120px;
+    white-space: nowrap;
+}

@@ -35,6 +35,10 @@ window.showConfirm = function (msg, title, hidecallback, surecallback) {
 };
 
 $(document).ready(function () {
+    if ($("#companyId").val()) {
+        window.companyPath = "/uploads/" + $("#companyId").val();
+        window.clientImgPath = companyPath + "/client/images/";
+    }
     $('#confirmModal .weui-dialog__ft #btnSure').on("click", function (e) {
         sureConfirmForm && sureConfirmForm();
     });

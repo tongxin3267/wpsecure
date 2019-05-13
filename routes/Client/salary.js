@@ -28,7 +28,7 @@ module.exports = function (app) {
         res.redirect(newUrl);
     });
 
-    function isAdmin(corpid, suiteId) {
+    function isAdmin(corpid, suiteId, user) {
         return SystemConfigure.getFilter({
                 name: "permanent_code",
                 appId: corpid,
@@ -38,11 +38,15 @@ module.exports = function (app) {
                 var agentId = configure.agentId;
                 return wechat.get_admin_list(corpid, suiteId, agentId)
                     .then(result => {
-                        var userid = req.session.user.weUserId;
+                        var userid = user.weUserId;
                         if (result && result.admin.some(admin => {
                                 return admin.auth_type == 1 && admin.userid == userid;
                             })) {
-                            req.session.user.role = 100;
+                            if (user.dataValues) {
+                                user.dataValues.role = 100;
+                            } else {
+                                user.role = 100;
+                            }
                         }
                     });
             });
@@ -82,7 +86,7 @@ module.exports = function (app) {
                         if (user) {
                             if (req.session.user) {
                                 // userid 匹配成功
-                                return isAdmin(CorpId, suiteId)
+                                return isAdmin(CorpId, suiteId, req.session.user)
                                     .then(() => {
                                         return res.redirect(loginHelper.checkLoginPage(req.query.q));
                                     });
@@ -98,7 +102,7 @@ module.exports = function (app) {
                                         return employee.save()
                                             .then(employee => {
                                                 req.session.user = employee;
-                                                return isAdmin(CorpId, suiteId)
+                                                return isAdmin(CorpId, suiteId, req.session.user)
                                                     .then(() => {
                                                         return res.redirect(loginHelper.checkLoginPage(req.query.q));
                                                     });
