@@ -9,6 +9,12 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.INTEGER,
         comment: "公司Id"
     },
+    createdName: {
+        // 创建人
+        type: db.STRING(20),
+        defaultValue: "",
+        comment: "创建人名字"
+    },
     position: {
         // 地点
         type: db.STRING(50),
@@ -26,7 +32,7 @@ const SecureUpload = db.defineModel('secureUploads', {
         comment: "图片"
     },
     secureStatus: {
-        // 状态：0 已提交 1 已处理 9 处理中
+        // 状态：0 已提交 1 已处理 9 已确认
         type: db.INTEGER,
         defaultValue: 0,
         comment: "状态"
@@ -42,6 +48,12 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.INTEGER,
         defaultValue: 0,
         comment: "责任人"
+    },
+    responsorName: {
+        // 创建人
+        type: db.STRING(20),
+        defaultValue: "",
+        comment: "责任人名字"
     },
     copyUser: {
         // 抄送
@@ -59,6 +71,18 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.STRING(50),
         defaultValue: "",
         comment: "图片"
+    },
+    doneDate: {
+        type: db.DATE,
+        allowNull: true,
+        defaultValue: db.NOW,
+        comment: "完成时间"
+    },
+    checkDate: {
+        type: db.DATE,
+        allowNull: true,
+        defaultValue: db.NOW,
+        comment: "确认时间"
     }
 });
 module.exports = SecureUpload;

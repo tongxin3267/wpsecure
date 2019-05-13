@@ -412,6 +412,22 @@ var weapi = {
                     "user_ticket": user_ticket
                 });
             });
-    }
+    },
+    getJSSign: function (toAppId, url) {
+        // TBD
+        var that = this;
+        return that.checkjsapi_ticket(toAppId)
+            .then(ticket => {
+                var signObj = {
+                    noncestr: that._createNonceStr(),
+                    jsapi_ticket: ticket,
+                    timestamp: parseInt(new Date().getTime() / 1000, 0),
+                    url: url
+                };
+                signObj.signature = that._urlSign(signObj);
+                signObj.appId = toAppId;
+                return signObj;
+            });
+    },
 }
 module.exports = weapi;

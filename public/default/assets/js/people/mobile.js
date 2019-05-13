@@ -16,7 +16,8 @@ $(document).ready(function () {
                         postObj = {
                             name: $('#myModal #name').val(),
                             mobile: $('#myModal #mobile').val(),
-                            weUserId: $.trim($("#myModal #weUserId").val())
+                            weUserId: $.trim($("#myModal #weUserId").val()),
+                            model: $("#model").val()
                         };
                     selfAjax("post", postURI, postObj, function (data) {
                         if (data.error) {

@@ -81,3 +81,8 @@ html {
     margin-top: 4px;
     left: 2px;
 }
+
+.weui-navbar__item.weui-bar__item_on {
+    color: #09bb07;
+    font-weight: bold;
+}

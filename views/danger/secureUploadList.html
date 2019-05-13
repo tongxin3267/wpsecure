@@ -1,0 +1,52 @@
+{% extends "danger/partial/main.html" %} {% block left %} {% include "danger/partial/basicSetting.html" %}
+{% endblock %} {% block main %}
+<div class="title">
+    <h1>
+        {{ title }}
+    </h1>
+</div>
+<div class="panel panel-default mainModal">
+    <div class="panel-body">
+        <form id="InfoSearch">
+            <div class="row form-inline">
+                <div class="form-group">
+                    <label for="secureStatus" class="control-label">状态:</label>
+                    <select id="secureStatus">
+                        <option value="0">未处理</option>
+                        <option value="1">已处理</option>
+                    </select>
+                </div>
+                <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="toolbar">
+    <div class="toolbar-list">
+        <button id="btnExport" class="btn btn-default btn-sm">导出</button>
+    </div>
+</div>
+<div class="content mainModal">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width:150px;">创建人</th>
+                <th style="width:200px;">创建时间</th>
+                <th style="width:200px;">地点</th>
+                <th style="width:200px;">责任人</th>
+                <th style="width:200px;">完成时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="gridBody">
+        </tbody>
+    </table>
+</div>
+<div id="mainModal">
+    {% include "people/partial/popuppaging.html" %}
+</div>
+{% endblock %} {% block modal %}
+<!-- Modal -->
+<script type="text/javascript" src="/default/assets/js/moment.js"></script>
+<script type="text/javascript" src="/default/assets/js/danger/secureUploadList.js"></script>
+{% endblock %}

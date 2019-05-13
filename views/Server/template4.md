@@ -7,16 +7,12 @@
 <div class="panel panel-default mainModal">
     <div class="panel-body">
         <form id="InfoSearch">
-            <div class="row form-horizontal">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="Name" class="control-label">名称:</label>
-                        <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
-                    </div>
+            <div class="row form-inline">
+                <div class="form-group">
+                    <label for="Name" class="control-label">名称:</label>
+                    <input type="text" maxlength="30" class="form-control" name="Name" id="Name">
                 </div>
-                <div class="col-md-6">
-                    <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
-                </div>
+                <button type="button" id="btnSearch" class="btn btn-primary panelButton">查询</button>
             </div>
         </form>
     </div>

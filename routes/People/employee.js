@@ -59,7 +59,7 @@ module.exports = function (app) {
                             createdBy: 0
                         })
                         .then(function (employee) {
-                            req.session.people = employee;
+                            req.session[req.body.model] = employee;
                             res.jsonp(employee);
                         });
                 }

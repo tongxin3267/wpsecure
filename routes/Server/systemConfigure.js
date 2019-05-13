@@ -80,6 +80,15 @@ module.exports = function (app) {
             });
     });
 
+    // jssdk调用凭证
+    app.post('/Client/jssdk/getconfigure', function (req, res) {
+        var appId = req.body.appId,
+            curUrl = req.body.url;
+        wechat.wxauth.getJSSign(appId, curUrl)
+            .then(obj => {
+                res.jsonp(obj);
+            });
+    });
     // util functions
     {
         function removeEmployee(toAppId, userId) {
@@ -226,8 +235,10 @@ module.exports = function (app) {
                                                                 employee.isDeleted = 0;
                                                                 employee.save();
                                                             }
-                                                            req.session.people = employee;
-                                                            return true;
+                                                            // req.session.people = employee;
+                                                            return {
+                                                                employee: employee
+                                                            };
                                                         } else {
                                                             return {
                                                                 name: name,
@@ -259,6 +270,7 @@ module.exports = function (app) {
                                 model: "people"
                             });
                         } else {
+                            req.session.people = result.employee;
                             res.redirect("/people");
                         }
                     } else {
@@ -280,6 +292,7 @@ module.exports = function (app) {
                                 model: "danger"
                             });
                         } else {
+                            req.session.danger = result.employee;
                             res.redirect("/danger");
                         }
                     } else {

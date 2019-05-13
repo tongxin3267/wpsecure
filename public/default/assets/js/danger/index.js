@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $("#header_btnBasic").on("click", function (e) {
-        location.href = "/people";
+        location.href = "/danger";
     });
 });
 
@@ -75,17 +75,6 @@ window.getAllCheckedIds = function (objs) {
     });
     return trainIds;
 };
-
-//Html编码获取Html转义实体  
-// function htmlEncode(value) {
-//     return encodeURI(value);
-//     // return $('<div/>').text(value).html();
-// };
-//Html解码获取Html实体  
-// function htmlDecode(value) {
-//     return decodeURI(value);
-//     // return $('<div/>').html(value).text();
-// };
 
 String.prototype.format = function () {
     var result = this;

@@ -20,7 +20,7 @@ const Employee = db.defineModel('employees', {
     },
     weUserId: {
         // 微信企业号Id
-        type: db.STRING(20),
+        type: db.STRING(50),
         defaultValue: ''
     },
     other: {

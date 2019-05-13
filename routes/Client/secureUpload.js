@@ -118,7 +118,9 @@ module.exports = function (app) {
                     description: req.body.description,
                     secureLevel: req.body.secureLevel,
                     responseUser: user._id,
-                    createdBy: req.session.user._id
+                    responsorName: user.name,
+                    createdBy: req.session.user._id,
+                    createdName: req.session.user.name
                 };
                 if (req.body.copyUser) {
                     p = Employee.getFilter({
@@ -151,7 +153,8 @@ module.exports = function (app) {
                 responseImage: req.body.responseImage,
                 responseResult: req.body.responseResult,
                 secureStatus: 1,
-                updatedBy: req.session.user._id
+                updatedBy: req.session.user._id,
+                doneDate: new Date()
             }, {
                 where: {
                     _id: req.body._id

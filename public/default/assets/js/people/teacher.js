@@ -155,7 +155,7 @@ $(document).ready(function () {
             if (teacher.isDeleted) {
                 buttons += '<a class="btn btn-default btnRecover">恢复</a>';
             }
-            buttons += '<a class="btn btn-default btnContract">合同</a>';
+            // buttons += '<a class="btn btn-default btnContract">合同</a>';
             return buttons;
         },
         pageDestroy: function () {
