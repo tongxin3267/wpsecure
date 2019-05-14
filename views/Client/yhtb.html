@@ -2,7 +2,7 @@
 <div class="weui-tab">
     <div class="weui-tab__panel">
         <div class="personalCenter">
-            <div class="weui-cells weui-cells_form">
+            <div class="weui-cells ">
                 <div class="weui-cell">
                     <div class="weui-cell__hd"><label class="weui-label">地点</label></div>
                     <div class="weui-cell__bd">
@@ -43,13 +43,12 @@
                         </select>
                     </div>
                 </div>
-                <div class="weui-cell">
-                    <div class="weui-cell__hd"><label class="weui-label">责任人</label></div>
+                <a class="weui-cell weui-cell_access" id="responseUser" href="javascript:;">
                     <div class="weui-cell__bd">
-                        <input class="weui-input" type="text" id="responseUser" disabled="disabled" value="ZhaoWeiPu"
-                            placeholder="请输入责任人">
+                        <label class="weui-label">责任人</label>
                     </div>
-                </div>
+                    <div class="weui-cell__ft" id="responsorName">选择责任人</div>
+                </a>
                 <!-- <div class="weui-cell">
                             <div class="weui-cell__hd"><label class="weui-label">抄送人</label></div>
                             <div class="weui-cell__bd">

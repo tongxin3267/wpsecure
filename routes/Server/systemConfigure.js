@@ -82,9 +82,10 @@ module.exports = function (app) {
 
     // jssdk调用凭证
     app.post('/Client/jssdk/getconfigure', function (req, res) {
-        var appId = req.body.appId,
+        var appId = req.session.company.we_appId,
+            suiteId = req.session.company.suiteId,
             curUrl = req.body.url;
-        wechat.wxauth.getJSSign(appId, curUrl)
+        wechat.getJSSign(appId, suiteId, curUrl)
             .then(obj => {
                 res.jsonp(obj);
             });
@@ -134,6 +135,10 @@ module.exports = function (app) {
                                     name: "salaryMonth",
                                     appId: corpid,
                                     value: curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-1",
+                                    companyId: company._id
+                                }, {
+                                    name: "jsapi_ticket",
+                                    appId: corpid,
                                     companyId: company._id
                                 }, {
                                     name: "permanent_code",

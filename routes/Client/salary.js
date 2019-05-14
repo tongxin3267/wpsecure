@@ -66,6 +66,7 @@ module.exports = function (app) {
                     .then(company => {
                         if (company) {
                             req.session.company = company;
+                            req.session.company.dataValues.suiteId = suiteId;
                             return Employee.getFilter({
                                 companyId: req.session.company._id,
                                 weUserId: userId

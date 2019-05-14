@@ -1,4 +1,26 @@
 $(document).ready(function () {
+    selfAjax("post", "/Client/jssdk/getconfigure", {
+        url: location.href.split('#')[0]
+    }, function (data) {
+        if (data.error) {
+            showAlert(data.error);
+            return;
+        }
+        wx.config({
+            beta: true,
+            debug: true,
+            appId: data.appId,
+            timestamp: data.timestamp,
+            nonceStr: data.noncestr,
+            signature: data.signature,
+            jsApiList: ['chooseImage', 'selectEnterpriseContact'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
+        });
+    });
+
+    wx.error(function (res) {
+        // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+    });
+
     var pageManager = {
         options: {
             curpage: 1,
@@ -44,6 +66,29 @@ $(document).ready(function () {
                 that.loadData(1);
                 $(".weui-tab .weui-navbar .handle").addClass("weui-bar__item_on");
                 $(".weui-tab .weui-navbar .unhandle").removeClass("weui-bar__item_on");
+            });
+
+            $(".personalCenter").on("click", ".weui-panel .responsor", function (e) {
+                // 选择责任人
+                wx.invoke("selectEnterpriseContact", {
+                    "fromDepartmentId": 0,
+                    "mode": "single",
+                    "type": ["user"] // 必填，选择限制类型，指定department、user中的一个或者多个
+                }, function (res) {
+                    if (res.err_msg == "selectEnterpriseContact:ok") {
+                        if (typeof res.result == 'string') {
+                            res.result = JSON.parse(res.result) //由于目前各个终端尚未完全兼容，需要开发者额外判断result类型以保证在各个终端的兼容性
+                        }
+
+                        var selectedUserList = res.result.userList; // 已选的成员列表
+
+                        if (selectedUserList.length > 0) {
+                            var user = selectedUserList[0];
+                            $("#responsorName").text(user.name);
+                            $("#responsorName").attr("userId", user.id);
+                        }
+                    }
+                });
             });
 
             $(".personalCenter").on("click", ".weui-panel .result .weui-media-box__title", function (e) {
@@ -136,12 +181,12 @@ $(document).ready(function () {
                     $detail = $(detail);
                 d.append($detail);
 
-                $detail.find(".weui-panel__hd").text(secure.position);
-                $detail.find(".detail .desc").text(secure.description);
+                $detail.find(".weui-panel__hd").text("地点：" + secure.position);
+                $detail.find(".detail .desc").text("问题：" + secure.description);
                 if (secure.imageName) {
                     $detail.find(".detail img").attr("src", clientImgPath + secure.imageName);
                 }
-                $detail.find(".detail .weui-media-box__info__meta").text(moment(secure.createdDate).format("YYYY-MM-DD HH:mm:ss"));
+                $detail.find(".detail .weui-media-box__info__meta").text("时间：" + moment(secure.createdDate).format("YYYY-MM-DD HH:mm:ss"));
                 if (secure.secureStatus == 1) {
                     // 已处理的
                     $detail.find(".result .desc").text(secure.responseResult);
@@ -149,6 +194,8 @@ $(document).ready(function () {
                         $detail.find(".result img").attr("src", clientImgPath + secure.responseImage);
                     }
                     $detail.find(".result .weui-media-box__info__meta").text(moment(secure.updatedDate).format("YYYY-MM-DD HH:mm:ss"));
+                } else {
+                    $detail.find(".responsor .weui-media-box__title").text("责任人：" + secure.responsorName);
                 }
                 $detail.find(".result .weui-media-box__title").data("obj", JSON.stringify(secure));
                 $detail.attr("id", "sId" + secure._id);

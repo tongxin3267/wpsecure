@@ -3,7 +3,7 @@ const model = require('./model.js'),
 
 function step1() {
     console.log("begin step 1 ... ");
-    return model.sysSuit.sync()
+    return model.sync()
         .then(function () {
             var pArray = [];
             return Promise.all(pArray)

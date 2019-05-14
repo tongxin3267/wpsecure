@@ -111,6 +111,9 @@ module.exports = function (app) {
                 weUserId: req.body.responseUser
             })
             .then(user => {
+                if (!user) {
+                    return Promise.reject("该用户不在工资模块！");
+                }
                 var p, option = {
                     companyId: companyId,
                     position: req.body.position,

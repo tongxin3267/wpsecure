@@ -146,10 +146,13 @@ var weapi = {
     },
     getpermanent_code: function (toAppId, suiteId) {
         return SystemConfigure.getFilter({
-            name: "permanent_code",
-            appId: toAppId,
-            suiteId: suiteId
-        });
+                name: "permanent_code",
+                appId: toAppId,
+                suiteId: suiteId
+            })
+            .then(configure => {
+                return configure.value;
+            });
     },
     savepermanent_code: function (code, suiteId, toAppId, agentId) {
         return SystemConfigure.update({
@@ -307,7 +310,7 @@ var weapi = {
                     }
 
                     // 过期
-                    return that.refresh_corp_token(suiteId)
+                    return that.refresh_corp_token(toAppId, suiteId)
                         .then(newToken => {
                             token.value = newToken;
                             token.updatedDate = new Date();
@@ -381,6 +384,44 @@ var weapi = {
                 // 出错了
             });
     },
+    getjsapi_ticket: function (toAppId) {
+        return SystemConfigure.getFilter({
+            appId: toAppId,
+            name: "jsapi_ticket"
+        });
+    },
+    refreshjsapi_ticket: function (toAppId, suiteId) {
+        var that = this;
+        return this.checkcorp_token(toAppId, suiteId)
+            .then(token => {
+                var url = 'https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=' + token;
+                return that.getURL(url);
+            })
+            .then(result => {
+                return result.ticket;
+            });
+    },
+    checkjsapi_ticket: function (toAppId, suiteId) {
+        var that = this;
+        return that.getjsapi_ticket(toAppId)
+            .then(token => {
+                if (token) {
+                    // 2 小时有效，可以简单处理为1.8小时过期
+                    if (moment().isBefore(moment(token.updatedDate).add(1.8, "hours"))) {
+                        return token.value;
+                    }
+                }
+                // 过期
+                return that.refreshjsapi_ticket(toAppId, suiteId)
+                    .then(newToken => {
+                        token.value = newToken;
+                        token.updatedDate = new Date();
+                        token.save();
+
+                        return newToken;
+                    });
+            });
+    },
     get_admin_list: function (toAppId, suiteId, agentId) {
         var that = this;
         return this.checksuite_access_token(suiteId)
@@ -413,10 +454,27 @@ var weapi = {
                 });
             });
     },
-    getJSSign: function (toAppId, url) {
-        // TBD
+    _urlSign: function (signObject) {
+        var keys = Object.getOwnPropertyNames(signObject).sort(),
+            strSign = "";
+        keys.forEach(function (key) {
+            var v = signObject[key];
+            if ("sign" != key && "key" != key) {
+                strSign += "&" + key + "=" + v;
+            }
+        });
+        var shasum = crypto.createHash('sha1'),
+            realSignStr = strSign.substr(1);
+        // console.log(realSignStr);
+        shasum.update(realSignStr);
+        return shasum.digest('hex');
+    },
+    _createNonceStr: function () {
+        return Math.random().toString(36).substr(2, 15)
+    },
+    getJSSign: function (toAppId, suiteId, url) {
         var that = this;
-        return that.checkjsapi_ticket(toAppId)
+        return that.checkjsapi_ticket(toAppId, suiteId)
             .then(ticket => {
                 var signObj = {
                     noncestr: that._createNonceStr(),
