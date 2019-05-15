@@ -17,7 +17,7 @@ function generateId() {
 
 var sequelize = new Sequelize(config.db, config.username, config.password, {
     host: config.host,
-    port: 3307,
+    // port: 3307,
     logging: (isDevelopment ? true : false),
     dialect: 'mysql',
     dialectOptions: {
