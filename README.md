@@ -24,8 +24,8 @@ CREATE SCHEMA `wpsecure` DEFAULT CHARACTER SET utf8 ;
 10. 登录判断是否管理员  -- done
 11. 管理端可以导出到excel  -- done
 12. 按照公司将图片分folder  --done
-13. 自动选择责任人
-14. 要可修改责任人
+13. 自动选择责任人 -- done
+14. 要可修改责任人 -- done
 15. 责任人提醒
 16. 手机选择图片
 

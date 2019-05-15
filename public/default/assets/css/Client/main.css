@@ -26,7 +26,12 @@ html {
     display: block;
 }
 
-.weui-cells.weui-cells_form.editResult {
+.weui-tab .weui-tab__panel {
+    padding-bottom: 50px;
+}
+
+.weui-cells.responsorResult,
+.weui-cells.editResult {
     position: fixed;
     top: 50px;
     left: 0;

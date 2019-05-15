@@ -9,6 +9,12 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.INTEGER,
         comment: "公司Id"
     },
+    createdUserId: {
+        // 创建人
+        type: db.STRING(50),
+        defaultValue: '',
+        comment: "创建人userId"
+    },
     createdName: {
         // 创建人
         type: db.STRING(20),
@@ -48,6 +54,12 @@ const SecureUpload = db.defineModel('secureUploads', {
         type: db.INTEGER,
         defaultValue: 0,
         comment: "责任人"
+    },
+    responseUserId: {
+        // 责任人
+        type: db.STRING(50),
+        defaultValue: '',
+        comment: "责任人userId"
     },
     responsorName: {
         // 创建人

@@ -122,8 +122,10 @@ module.exports = function (app) {
                     secureLevel: req.body.secureLevel,
                     responseUser: user._id,
                     responsorName: user.name,
+                    responseUserId: user.weUserId,
                     createdBy: req.session.user._id,
-                    createdName: req.session.user.name
+                    createdName: req.session.user.name,
+                    createdUserId: req.session.user.weUserId
                 };
                 if (req.body.copyUser) {
                     p = Employee.getFilter({
@@ -139,7 +141,7 @@ module.exports = function (app) {
                 p.then(() => {
                     return SecureUpload.create(option)
                         .then(function (result) {
-                            res.jsonp("消息发送成功");
+                            res.jsonp("创建成功");
                         });
                 });
             })
@@ -162,6 +164,37 @@ module.exports = function (app) {
                 where: {
                     _id: req.body._id
                 }
+            })
+            .then(secure => {
+                res.jsonp(secure);
+            })
+            .catch(er => {
+                res.jsonp({
+                    error: er.message || er
+                });
+            });
+    });
+
+    app.post('/Client/secureUpload/changeResponsor', checkLogin);
+    app.post('/Client/secureUpload/changeResponsor', function (req, res) {
+        Employee.getFilter({
+                companyId: req.session.company._id,
+                weUserId: req.body.responseUser
+            })
+            .then(user => {
+                if (!user) {
+                    return Promise.reject("该用户不在工资模块！");
+                }
+                return SecureUpload.update({
+                    responseUser: user._id,
+                    responsorName: user.name,
+                    responseUserId: user.weUserId,
+                    updatedBy: req.session.user._id
+                }, {
+                    where: {
+                        _id: req.body._id
+                    }
+                })
             })
             .then(secure => {
                 res.jsonp(secure);

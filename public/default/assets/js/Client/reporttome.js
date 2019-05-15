@@ -69,6 +69,15 @@ $(document).ready(function () {
             });
 
             $(".personalCenter").on("click", ".weui-panel .responsor", function (e) {
+                that.options.$curSecure = $(e.currentTarget).parents(".weui-panel");
+                var entity = that.options.$curSecure.data("obj");
+                that.options.curSecureId = entity._id;
+                $(".responsorResult").show();
+                $(".responsorResult #responsorName").text(entity.responsorName);
+                $(".responsorResult #responsorName").attr("userId", entity.responseUserId);
+            });
+
+            $(".responsorResult #responseUser").click(function (e) {
                 // 选择责任人
                 wx.invoke("selectEnterpriseContact", {
                     "fromDepartmentId": 0,
@@ -79,20 +88,50 @@ $(document).ready(function () {
                         if (typeof res.result == 'string') {
                             res.result = JSON.parse(res.result) //由于目前各个终端尚未完全兼容，需要开发者额外判断result类型以保证在各个终端的兼容性
                         }
-
                         var selectedUserList = res.result.userList; // 已选的成员列表
-
                         if (selectedUserList.length > 0) {
                             var user = selectedUserList[0];
-                            $("#responsorName").text(user.name);
-                            $("#responsorName").attr("userId", user.id);
+                            $(".responsorResult #responsorName").text(user.name);
+                            $(".responsorResult #responsorName").attr("userId", user.id);
                         }
                     }
                 });
             });
 
+            $(".responsorResult .j_bottom .weui-btn_default").click(function (e) {
+                $(".responsorResult").hide();
+            });
+
+            $(".responsorResult .j_bottom .weui-btn_primary").click(function (e) {
+                // save and close then refresh page
+                var entity = that.options.$curSecure.data("obj");
+                var filter = {
+                    responseUser: $.trim($(".responsorResult #responsorName").attr("userId")),
+                    responsorName: $.trim($(".responsorResult #responsorName").text()),
+                    _id: that.options.curSecureId
+                };
+                // alert(entity.responseUserId);
+                if (entity.responseUserId == filter.responseUser) {
+                    // 没有修改不用保存
+                    $(".responsorResult").hide();
+                    return;
+                }
+                selfAjax("post", "/Client/secureUpload/changeResponsor", filter, function (data) {
+                    if (data.error) {
+                        showAlert(data.error);
+                        return;
+                    }
+                    showAlert("提交成功");
+                    entity.responsorName = filter.responsorName;
+                    entity.responseUser = filter.responseUser;
+                    $(".personalCenter #sId" + that.options.curSecureId + " .responsor .weui-media-box__title").text("责任人:" + entity.responsorName + "(点击此处修改)");
+                    $(".responsorResult").hide();
+                    that.options.$curSecure.data("obj", JSON.stringify(entity));
+                });
+            });
+
             $(".personalCenter").on("click", ".weui-panel .result .weui-media-box__title", function (e) {
-                that.options.$curSecure = $(e.currentTarget);
+                that.options.$curSecure = $(e.currentTarget).parents(".weui-panel");
                 var entity = that.options.$curSecure.data("obj");
                 that.rendEdit(entity);
             });
@@ -189,15 +228,16 @@ $(document).ready(function () {
                 $detail.find(".detail .weui-media-box__info__meta").text("时间：" + moment(secure.createdDate).format("YYYY-MM-DD HH:mm:ss"));
                 if (secure.secureStatus == 1) {
                     // 已处理的
+                    $detail.find(".result").show();
                     $detail.find(".result .desc").text(secure.responseResult);
                     if (secure.responseImage) {
                         $detail.find(".result img").attr("src", clientImgPath + secure.responseImage);
                     }
                     $detail.find(".result .weui-media-box__info__meta").text(moment(secure.updatedDate).format("YYYY-MM-DD HH:mm:ss"));
                 } else {
-                    $detail.find(".responsor .weui-media-box__title").text("责任人：" + secure.responsorName);
+                    $detail.find(".responsor .weui-media-box__title").text("责任人：" + secure.responsorName + "(点击此处修改)");
                 }
-                $detail.find(".result .weui-media-box__title").data("obj", JSON.stringify(secure));
+                $detail.data("obj", JSON.stringify(secure));
                 $detail.attr("id", "sId" + secure._id);
             });
             $(".personalCenter").append(d);
