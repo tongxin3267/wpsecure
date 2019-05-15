@@ -44,18 +44,19 @@ $(document).ready(function () {
                     // upload image
                     var fileObj = e.currentTarget.files[0],
                         formData = new FormData();
-                    if (fileObj.size / 1024 > 1025) { //大于1M，进行压缩上传
-                        that.photoCompress(fileObj, {
-                            quality: 0.2
-                        }, function (base64Codes) {
-                            var bl = that.convertBase64UrlToBlob(base64Codes);
-                            formData.append("upfile", bl, Date.parse(new Date()) + ".jpg");
-                            that.uploadImage(formData);
-                        });
-                    } else { //小于等于1M 原图上传
-                        formData.append("upfile", fileObj);
+                    // if (fileObj.size / 1024 > 1025) { //大于1M，进行压缩上传
+                    that.photoCompress(fileObj, {
+                        width: 800,
+                        quality: 0.2
+                    }, function (base64Codes) {
+                        var bl = that.convertBase64UrlToBlob(base64Codes);
+                        formData.append("upfile", bl, Date.parse(new Date()) + ".jpg");
                         that.uploadImage(formData);
-                    }
+                    });
+                    // } else { //小于等于1M 原图上传
+                    //     formData.append("upfile", fileObj);
+                    //     that.uploadImage(formData);
+                    // }
                 }
             });
 
