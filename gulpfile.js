@@ -14,7 +14,7 @@ var minify = composer(uglifyjs, console);
 
 gulp.task('copy-public', function () {
     console.log('to copy-public ...');
-    return gulp.src(['public/**', "!public/default/**"], {
+    return gulp.src('public/**', {
             base: 'public'
         })
         .pipe(gulp.dest('build/public'));
@@ -36,7 +36,9 @@ gulp.task('copy-views', ['clean'], function () {
 
 gulp.task('css-rev', ['copy-views'], function () {
     console.log('to css-rev ...');
-    return gulp.src('public/default/assets/css/*/*.css')
+    return gulp.src('public/default/assets/css/*/*.css', {
+            base: 'public'
+        })
         .pipe(rev())
         .pipe(gulp.dest('build/public')) // copy original assets to build dir 
         // .pipe(gulp.dest('build')) // write rev'd assets to build dir 
@@ -64,7 +66,9 @@ gulp.task('compressCss', ['css-rev'], function () {
 
 gulp.task('js-rev', ['compressCss'], function () {
     console.log('to js-rev ...');
-    return gulp.src('public/default/assets/js/*/*.js')
+    return gulp.src('public/default/assets/js/*/*.js', {
+            base: 'public'
+        })
         .pipe(rev())
         .pipe(gulp.dest('build/public')) // copy original assets to build dir  
         .pipe(rev.manifest())
