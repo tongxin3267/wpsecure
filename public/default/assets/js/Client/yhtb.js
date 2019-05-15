@@ -84,6 +84,9 @@ $(document).ready(function () {
             });
 
             $('.weui-btn-area #btnDone').click(function (e) {
+                if ($.trim($("#responsorName").attr("userId")) == "") {
+                    return showAlert("请选择责任人！");
+                }
                 showConfirm("确定要提交吗？");
                 $("#btnSure").off("click").on("click", function (e) {
                     var filter = {
