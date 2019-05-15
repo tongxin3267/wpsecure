@@ -8,7 +8,7 @@ $(document).ready(function () {
         }
         wx.config({
             beta: true,
-            debug: true,
+            // debug: true,
             appId: data.appId,
             timestamp: data.timestamp,
             nonceStr: data.noncestr,
