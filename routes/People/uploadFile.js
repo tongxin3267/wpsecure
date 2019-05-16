@@ -142,6 +142,9 @@ module.exports = function (app) {
                 res.jsonp({
                     sucess: true
                 });
+            })
+            .catch(err => {
+                console.log(err.message || err);
             });
     });
 
@@ -185,7 +188,7 @@ module.exports = function (app) {
                         } else {
                             // 新增工资项
                             var attrs = {},
-                                obj = {},
+                                obj = [],
                                 strUpdate = "INSERT INTO salarys (companyId,createdBy,employeeName,employeeId,mobile,year,month,other,createdDate,updatedDate",
                                 strValue = "values (:companyId, :createdBy, :employeeName,:employeeId,:mobile,:year,:month,:other,now(),now()",
                                 replacement = {
