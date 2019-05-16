@@ -123,14 +123,16 @@ module.exports = function (app) {
                 .then(company => {
                     if (!company) {
                         // 此公司第一次安装套件
-                        // 创建folder
-                        fs.mkdir('public/uploads/' + company._id + "/client/images");
+
                         // 创建工资项
                         Company.create({
                                 name: result.auth_corp_info.corp_name,
                                 we_appId: corpid
                             })
                             .then(company => {
+                                // 创建folder
+                                fs.mkdir('public/uploads/' + company._id + "/client/images");
+
                                 var curDate = new Date();
                                 SystemConfigure.bulkCreate([{
                                     name: "salaryMonth",
