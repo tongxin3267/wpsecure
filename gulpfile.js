@@ -80,10 +80,6 @@ gulp.task('js', ['js-rev'], function () {
     return gulp.src(['build/public/**/*.json', 'build/views/**/*.html'])
         .pipe(revCollector({
             replaceReved: true, //允许替换, 已经被替换过的文件
-            dirReplacements: {
-                'css': '/build/public/css',
-                'js': '/build/public/js'
-            }
         }))
         .pipe(gulp.dest('build/views'));
 });
