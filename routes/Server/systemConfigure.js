@@ -3,6 +3,7 @@ var model = require("../../model.js"),
     SystemConfigure = model.systemConfigure,
     Company = model.company,
     Employee = model.employee,
+    fs = require('fs'),
     wechat = require('../../util/wechatHelper'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
