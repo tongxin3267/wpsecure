@@ -87,7 +87,7 @@ module.exports = function (app) {
     app.post('/people/salary', upload.single('avatar'), function (req, res, next) {
         clearFails(req);
 
-        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/temps/", req.file.filename));
         // item 单独设置值，其他存到others
         var year = req.body.year,
             month = req.body.month,
@@ -258,7 +258,7 @@ module.exports = function (app) {
     app.post('/people/batchAddemployee', upload.single('avatar'), function (req, res, next) {
         clearFails(req);
 
-        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/temps/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [],
@@ -340,7 +340,7 @@ module.exports = function (app) {
     app.post('/people/batchAddContract', upload.single('avatar'), function (req, res, next) {
         clearFails(req);
 
-        var list = xlsx.parse(path.join(serverPath, "../public/uploads/", req.file.filename));
+        var list = xlsx.parse(path.join(serverPath, "../public/uploads/temps/", req.file.filename));
         //list[0].data[0] [0] [1] [2]
         var length = list[0].data.length,
             pArray = [],
