@@ -139,7 +139,8 @@ module.exports = function (app) {
                                 }, {
                                     name: "jsapi_ticket",
                                     appId: corpid,
-                                    companyId: company._id
+                                    companyId: company._id,
+                                    updatedDate: '2019-05-16'
                                 }, {
                                     name: "permanent_code",
                                     suiteId: SuiteId,
@@ -152,7 +153,8 @@ module.exports = function (app) {
                                     suiteId: SuiteId,
                                     appId: corpid,
                                     value: result.access_token,
-                                    companyId: company._id
+                                    companyId: company._id,
+                                    updatedDate: '2019-05-16'
                                 }]);
                             });
                     } else {
@@ -180,7 +182,8 @@ module.exports = function (app) {
                                         suiteId: SuiteId,
                                         appId: corpid,
                                         value: result.access_token,
-                                        companyId: company._id
+                                        companyId: company._id,
+                                        updatedDate: '2019-05-16'
                                     }]);
                                 }
                             });

@@ -47,11 +47,13 @@ module.exports = function (app) {
                             return SystemConfigure.bulkCreate([{
                                     companyId: 0,
                                     name: 'suite_ticket',
-                                    suiteId: suiteId
+                                    suiteId: suiteId,
+                                    updatedDate: '2019-05-16'
                                 }, {
                                     companyId: 0,
                                     name: "suite_access_token",
-                                    suiteId: suiteId
+                                    suiteId: suiteId,
+                                    updatedDate: '2019-05-16'
                                 }])
                                 .then(() => {
                                     res.jsonp(result);
