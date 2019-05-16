@@ -37,7 +37,7 @@ module.exports = function (app) {
             });
     };
 
-    function exportExcel(items, companyId) {
+    function exportExcel(items, companyId, res) {
         var workbook = new excel.Workbook();
         var worksheet = workbook.addWorksheet('隐患列表');
         worksheet.column(5).setWidth(30);
@@ -86,21 +86,21 @@ module.exports = function (app) {
 
         iterator(0)
             .then(() => {
-                workbook.write('exportWithimage.xlsx');
+                workbook.write('exportWithimage.xlsx', res);
             })
             .catch(err => {
 
             });
     };
 
-    app.post('/danger/exportWithimage', checkLogin)
-    app.post('/danger/exportWithimage', function (req, res) {
+    app.get('/danger/exportWithimage', checkLogin)
+    app.get('/danger/exportWithimage', function (req, res) {
         // 不能超过2000条
         SecureUpload.count({
                 where: {
                     isDeleted: 0,
                     companyId: req.session.company._id,
-                    secureStatus: req.body.secureStatus
+                    secureStatus: req.query.secureStatus
                 }
             })
             .then(count => {
@@ -115,14 +115,14 @@ module.exports = function (app) {
                 } else {
                     SecureUpload.getFilters({
                             companyId: req.session.company._id,
-                            secureStatus: req.body.secureStatus
+                            secureStatus: req.query.secureStatus
                         })
                         .then(items => {
-                            exportExcel(items, req.session.company._id);
+                            exportExcel(items, req.session.company._id, res);
                         });
-                    return res.jsonp({
-                        sucess: true
-                    });
+                    // return res.jsonp({
+                    //     sucess: true
+                    // });
                 }
             })
     });

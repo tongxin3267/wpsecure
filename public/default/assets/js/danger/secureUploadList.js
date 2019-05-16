@@ -23,15 +23,8 @@ $(document).ready(function () {
             $(".toolbar #btnExport").on("click", function (e) {
                 showConfirm("确定要导出吗？");
                 $("#btnConfirmSave").off("click").on("click", function (e) {
-                    selfAjax("post", "/danger/exportWithimage", {
-                        secureStatus: $("#secureStatus").val()
-                    }, function (data) {
-                        if (data.error) {
-                            showAlert(data.error);
-                            return;
-                        }
-                        showAlert("sucess");
-                    });
+                    location.href = "/danger/exportWithimage?secureStatus=" + $("#secureStatus").val();
+                    $('#confirmModal').modal('hide');
                 });
             });
 
