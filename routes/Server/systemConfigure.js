@@ -131,6 +131,8 @@ module.exports = function (app) {
                             })
                             .then(company => {
                                 // 创建folder
+                                fs.mkdirSync('public/uploads/' + company._id);
+                                fs.mkdirSync('public/uploads/' + company._id + "/client");
                                 fs.mkdir('public/uploads/' + company._id + "/client/images");
 
                                 var curDate = new Date();

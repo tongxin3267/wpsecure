@@ -59,11 +59,12 @@ $(document).ready(function () {
                             $cells = $(' <div class="weui-cells"></div>');
                             d.append('<div class="weui-cells__title">' + item.parent + '</div>');
                             d.append($cells);
+                            $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
                         } else {
                             $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
                         }
                     } else {
-                        $cells.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
+                        d.append('<div class="weui-cell"><div class="weui-cell__bd"><p>' + item.title + '</p></div><div class="weui-cell__ft">' + item.value + '</div></div>');
                     }
                 })
                 $(".salaryItems").append(d);
