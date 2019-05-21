@@ -233,9 +233,16 @@ module.exports = function (app) {
                                             return admin.auth_type == 1 && admin.userid == userid;
                                         })) {
                                         return Company.getFilter({
-                                                we_appId: corpid
+                                                we_appId: corpid,
+                                                endDate: {
+                                                    $gt: new Date()
+                                                }
                                             })
                                             .then(company => {
+                                                if (!company) {
+                                                    // 试用过期
+                                                    return;
+                                                }
                                                 req.session.company = company;
                                                 return Employee.findOne({
                                                         where: {

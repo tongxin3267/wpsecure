@@ -127,7 +127,8 @@ $(document).ready(function () {
                     var d = $(document.createDocumentFragment());
                     data.records.forEach(function (record) {
                         var $tr = $('<tr id=' + record._id + '><td>' + record.name + '</td><td>' +
-                            (record.we_appId || 0) + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
+                            (record.we_appId || 0) + '</td><td>' +
+                            moment(record.endDate).format("YYYY-MM-DD") + '</td><td><div class="btn-group">' + that.pageGetButtons() + '</div></td></tr>');
                         $tr.find(".btn-group").data("obj", record);
                         d.append($tr);
                     });

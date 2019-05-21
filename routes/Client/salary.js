@@ -61,7 +61,10 @@ module.exports = function (app) {
                     CorpId = results.CorpId,
                     user_ticket = results.user_ticket;
                 Company.getFilter({
-                        we_appId: CorpId
+                        we_appId: CorpId,
+                        endDate: {
+                            $gt: new Date()
+                        }
                     })
                     .then(company => {
                         if (company) {
