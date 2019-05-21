@@ -41,6 +41,9 @@ ADD COLUMN `password` VARCHAR(50) NOT NULL DEFAULT '' AFTER `version`;
 ALTER TABLE `systemConfigures` 
 ADD COLUMN `suiteId` VARCHAR(50) NOT NULL DEFAULT '' AFTER `version`;
 
+ALTER TABLE `wpsecure`.`companys` 
+ADD COLUMN `endDate` DATETIME NULL AFTER `version`;
+
 1. 业务设置URL  后台自动登录，需要每个suit独立起来
 2. 应用主页 可以独立，可以分开
 3. 数据回调URL 独立

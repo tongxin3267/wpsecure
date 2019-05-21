@@ -3,6 +3,7 @@ var model = require("../../model.js"),
     SystemConfigure = model.systemConfigure,
     Company = model.company,
     Employee = model.employee,
+    moment = require("moment"),
     fs = require('fs'),
     wechat = require('../../util/wechatHelper'),
     auth = require("./auth"),
@@ -123,11 +124,12 @@ module.exports = function (app) {
                 .then(company => {
                     if (!company) {
                         // 此公司第一次安装套件
-
+                        var expireDate = moment().add(7, 'd');
                         // 创建工资项
                         Company.create({
                                 name: result.auth_corp_info.corp_name,
-                                we_appId: corpid
+                                we_appId: corpid,
+                                endDate: expireDate
                             })
                             .then(company => {
                                 // 创建folder

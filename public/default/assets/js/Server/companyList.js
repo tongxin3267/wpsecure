@@ -11,6 +11,10 @@ $(document).ready(function () {
         pageInitStyle: function () {
             $("#left_btnCompany").addClass("active");
 
+            $("#myModal #endDate").datepicker({
+                changeMonth: true,
+                dateFormat: "yy-mm-dd"
+            });
             $("#myModal").find(".modal-content").draggable(); //为模态对话框添加拖拽
             $("#myModal").css("overflow", "hidden"); //禁止模态对话框的半透明背景滚动
         },
@@ -30,6 +34,7 @@ $(document).ready(function () {
                 $('#myModal #name').val("");
                 $('#myModal #sequence').val(0);
                 $('#myModal #description').val("");
+                $("#myModal #endDate").val(moment().format("YYYY-MM-DD"));
                 $('#myModal #we_appId').val("");
                 $('#myModal #we_appSecret').val("");
                 $('#myModal #we_mch_id').val("");
@@ -48,6 +53,7 @@ $(document).ready(function () {
                             name: $.trim($('#myModal #name').val()),
                             sequence: $.trim($('#myModal #sequence').val()),
                             description: $('#myModal #description').val(),
+                            endDate: $.trim($("#myModal #endDate").val()),
                             we_appId: $('#myModal #we_appId').val(),
                             we_appSecret: $('#myModal #we_appSecret').val(),
                             we_mch_id: $('#myModal #we_mch_id').val(),
@@ -77,6 +83,7 @@ $(document).ready(function () {
                 $('#myModal #name').val(entity.name);
                 $('#myModal #sequence').val(entity.sequence);
                 $('#myModal #id').val(entity._id);
+                $("#myModal #endDate").val(moment(entity.endDate).format("YYYY-MM-DD"));
                 $('#myModal #description').val(entity.description);
                 $('#myModal #we_appId').val(entity.we_appId);
                 $('#myModal #we_appSecret').val(entity.we_appSecret);

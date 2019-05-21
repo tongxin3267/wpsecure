@@ -36,6 +36,12 @@ const Company = db.defineModel('companys', {
         type: db.STRING(50),
         defaultValue: ''
     },
+    endDate: {
+        type: db.DATE,
+        allowNull: true,
+        defaultValue: db.NOW,
+        comment: "到期时间"
+    }
     // peoplePassword: {
     //     type: db.STRING(50),
     //     defaultValue: ''

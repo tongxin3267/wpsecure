@@ -45,6 +45,7 @@ module.exports = function (app) {
                 we_mch_id: req.body.we_mch_id,
                 we_Mch_key: req.body.we_Mch_key,
                 sequence: req.body.sequence,
+                endDate: req.body.endDate,
                 createdBy: req.session.admin._id
             })
             .then(function (result) {
@@ -65,6 +66,7 @@ module.exports = function (app) {
                 we_appSecret: req.body.we_appSecret,
                 we_mch_id: req.body.we_mch_id,
                 we_Mch_key: req.body.we_Mch_key,
+                endDate: req.body.endDate,
                 deletedBy: req.session.admin._id,
                 updatedDate: new Date()
             }, {

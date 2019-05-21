@@ -15,7 +15,8 @@ const SystemConfigure = db.defineModel('systemConfigures', {
     },
     companyId: {
         type: db.INTEGER,
-        comment: "公司Id"
+        comment: "公司Id",
+        defaultValue: 0
     },
     appId: {
         type: db.STRING(50),
