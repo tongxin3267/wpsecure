@@ -91,6 +91,21 @@ $(document).ready(function () {
                     });
                 });
             });
+
+            // btnQR
+            $("#gridBody").on("click", "td .btnQR", function (e) {
+                var obj = e.currentTarget;
+                var entity = $(obj).parent().data("obj");
+                selfAjax("post", "/admin/sysSuit/QRAuthUrl", {
+                    suiteId: entity.suiteId
+                }, function (data) {
+                    $('#qrModal .qr-image').attr("src", "/admin/getQRCode?q=" + encodeURI(data));
+                    $('#qrModal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                });
+            });
         },
         pageInitData: function () {
             this.pageSearch();
@@ -117,7 +132,7 @@ $(document).ready(function () {
             });
         },
         pageGetButtons: function () {
-            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a>';
+            var buttons = '<a class="btn btn-default btnEdit">编辑</a><a class="btn btn-default btnDelete">删除</a><a class="btn btn-default btnQR">生成QR</a>';
             return buttons;
         },
         pageDestroy: function () {

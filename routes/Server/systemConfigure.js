@@ -5,6 +5,7 @@ var model = require("../../model.js"),
     Employee = model.employee,
     moment = require("moment"),
     fs = require('fs'),
+    qr = require('qr-image'),
     wechat = require('../../util/wechatHelper'),
     auth = require("./auth"),
     checkLogin = auth.checkLogin;
@@ -92,8 +93,43 @@ module.exports = function (app) {
                 res.jsonp(obj);
             });
     });
+
+    // 获取授权链接
+    app.post('/admin/sysSuit/QRAuthUrl', checkLogin);
+    app.post('/admin/sysSuit/QRAuthUrl', function (req, res) {
+        var suiteId = req.body.suiteId;
+        wechat.getpre_auth_code(suiteId)
+            .then(code => {
+                var authUrl = "https://open.work.weixin.qq.com/3rdapp/install?suite_id=" + suiteId + "&pre_auth_code=" + code + "&redirect_uri=" + model.db.config.localUrl + "/admin/sysSuit/AuthFeedBack/" + suiteId + "&state=STAT";
+                res.jsonp(authUrl);
+            });
+    });
+
+    // 反馈授权结果，添加公司信息
+    app.get('/admin/sysSuit/AuthFeedBack/:suiteId', function (req, res) {
+        var AuthCode = req.query.auth_code,
+            SuiteId = req.params.suiteId;
+        wechat.refresh_permanent_code(AuthCode, SuiteId)
+            .then(result => {
+                createCompany(result, SuiteId)
+                    .then(() => {
+                        res.send("授权成功，请登录企业微信后台进行管理");
+                    });
+            });
+    });
+
     // util functions
     {
+        // usefult
+        // 获取二维码
+        app.get('/admin/getQRCode', function (req, res) {
+            var code = qr.image(req.query.q, {
+                type: 'png'
+            })
+            res.setHeader('Content-type', 'image/png'); //sent qr image to client side
+            code.pipe(res);
+        });
+
         function removeEmployee(toAppId, userId) {
             Company.getFilter({
                     we_appId: toAppId
@@ -116,7 +152,7 @@ module.exports = function (app) {
         function createCompany(result, SuiteId) {
             var corpid = result.auth_corp_info.corpid,
                 agentId = result.auth_info.agent[0].agentid;
-            Company.findOne({
+            return Company.findOne({
                     where: {
                         we_appId: corpid
                     }
@@ -126,7 +162,7 @@ module.exports = function (app) {
                         // 此公司第一次安装套件
                         var expireDate = moment().add(7, 'd');
                         // 创建工资项
-                        Company.create({
+                        return Company.create({
                                 name: result.auth_corp_info.corp_name,
                                 we_appId: corpid,
                                 endDate: expireDate
@@ -138,7 +174,7 @@ module.exports = function (app) {
                                 fs.mkdir('public/uploads/' + company._id + "/client/images");
 
                                 var curDate = new Date();
-                                SystemConfigure.bulkCreate([{
+                                return SystemConfigure.bulkCreate([{
                                     name: "salaryMonth",
                                     appId: corpid,
                                     value: curDate.getFullYear() + "-" + (curDate.getMonth() + 1) + "-1",
@@ -166,7 +202,7 @@ module.exports = function (app) {
                             });
                     } else {
                         // 此公司多次安装套件
-                        SystemConfigure.getFilter({
+                        return SystemConfigure.getFilter({
                                 name: "permanent_code",
                                 suiteId: SuiteId,
                                 appId: corpid,
@@ -177,7 +213,7 @@ module.exports = function (app) {
                                     // 有历史配置
                                 } else {
                                     // 重新配置
-                                    SystemConfigure.bulkCreate([{
+                                    return SystemConfigure.bulkCreate([{
                                         name: "permanent_code",
                                         suiteId: SuiteId,
                                         appId: corpid,
