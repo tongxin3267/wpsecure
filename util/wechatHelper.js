@@ -227,7 +227,7 @@ var weapi = {
         var that = this;
         return this.checksuite_access_token(suiteId)
             .then(token => {
-                return that.getURl(that.pre_auth_codeURL + token);
+                return that.getURL(that.pre_auth_codeURL + token);
             })
             .then(result => {
                 return result.pre_auth_code;
