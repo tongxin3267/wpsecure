@@ -75,6 +75,9 @@ module.exports = function (app) {
                                 weUserId: userId
                             });
                         } else {
+                            req.session.company = {
+                                name: ""
+                            };
                             return Promise.reject("您的公司没有获得授权！");
                         }
                     })
