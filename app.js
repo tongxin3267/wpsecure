@@ -21,10 +21,10 @@ var path = require('path'),
 
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 var accessLogStream = rfs('access.log', {
-    size: '500M',
-    interval: '1d', // rotate daily
-    path: logDirectory
-}),
+        size: '500M',
+        interval: '1d', // rotate daily
+        path: logDirectory
+    }),
     errorLog = fs.createWriteStream(path.join(logDirectory, 'error.log'), {
         flags: 'a'
     });
@@ -53,9 +53,10 @@ app.use(session({
     secret: settings.cookieSecret,
     key: settings.db, //cookie name
     cookie: {
-        maxAge: 1000 * 60 * 60 * 60 * 1
-    }, //1 days
+        maxAge: 1000 * 60 * 60 * 1 * 1
+    }, //1 hour
     resave: false,
+    rolling: true,
     saveUninitialized: true,
     store: new MongoStore({
         url: uri
