@@ -3,6 +3,8 @@ var model = require("../../model.js"),
     Company = model.company,
     SystemConfigure = model.systemConfigure,
     Employee = model.employee,
+    Sequelize = require('sequelize'),
+    Op = Sequelize.Op,
     querystring = require('querystring'),
     moment = require("moment"),
     wechat = require('../../util/wechatHelper'),
@@ -63,7 +65,7 @@ module.exports = function (app) {
                 Company.getFilter({
                         we_appId: CorpId,
                         endDate: {
-                            $gt: new Date()
+                            [Op.gt]: new Date()
                         }
                     })
                     .then(company => {

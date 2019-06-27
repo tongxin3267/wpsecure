@@ -3,6 +3,8 @@ var model = require("../../model.js"),
     SystemConfigure = model.systemConfigure,
     Company = model.company,
     Employee = model.employee,
+    Sequelize = require('sequelize'),
+    Op = Sequelize.Op,
     moment = require("moment"),
     fs = require('fs'),
     qr = require('qr-image'),
@@ -271,7 +273,7 @@ module.exports = function (app) {
                                         return Company.getFilter({
                                                 we_appId: corpid,
                                                 endDate: {
-                                                    $gt: new Date()
+                                                    [Op.gt]: new Date()
                                                 }
                                             })
                                             .then(company => {
