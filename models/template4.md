@@ -10,7 +10,8 @@ const #Name# = db.defineModel('#name#s', {
     },
     description: {
         type: db.STRING(100),
-        defaultValue: ""
+        defaultValue: "",
+        comment: "描述信息"
     }, // 描述信息，用于seo
     sequence: {
         type: db.INTEGER,
